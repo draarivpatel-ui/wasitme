@@ -380,19 +380,26 @@ test("status line: it never starts node and is several times faster than node's 
   try {
     writeGlance(h, { ...glanceOf("you"), generatedAt: new Date().toISOString().replace(/\.\d{3}Z$/, "Z") });
     const env = { HOME: h.root, WASITME_HOME: h.wh, PATH: "/usr/bin:/bin" };
-    const time = (cmd: string, args: string[], n: number): number => {
-      spawnSync(cmd, args, { env }); // warm up
+    // Medians of runs taken in turns, so a busy machine (a shared CI runner) slows all three alike and one slow run
+    // cannot decide the outcome; a mean of back-to-back batches failed there at 24 ms against 48 ms.
+    const runs: Record<"sh" | "node" | "empty", number[]> = { sh: [], node: [], empty: [] };
+    const once = (cmd: string, args: string[]): number => {
       const t0 = process.hrtime.bigint();
-      for (let i = 0; i < n; i++) spawnSync(cmd, args, { env, input: "{}" });
-      return Number(process.hrtime.bigint() - t0) / 1e6 / n;
+      spawnSync(cmd, args, { env, input: "{}" });
+      return Number(process.hrtime.bigint() - t0) / 1e6;
     };
-    const sh = time("/bin/sh", [SCRIPT], 60);
-    const node = time(process.execPath, ["-e", "0"], 15);
-    const empty = time("/bin/sh", ["-c", ":"], 60);
+    once("/bin/sh", [SCRIPT]); once(process.execPath, ["-e", "0"]); // warm up
+    for (let i = 0; i < 15; i++) {
+      for (let j = 0; j < 4; j++) runs.sh.push(once("/bin/sh", [SCRIPT]));
+      runs.node.push(once(process.execPath, ["-e", "0"]));
+      for (let j = 0; j < 4; j++) runs.empty.push(once("/bin/sh", ["-c", ":"]));
+    }
+    const median = (xs: number[]): number => { const v = [...xs].sort((a, b) => a - b); return v[Math.floor(v.length / 2)] ?? NaN; };
+    const sh = median(runs.sh), node = median(runs.node), empty = median(runs.empty);
     const out = spawnSync("/bin/sh", [SCRIPT], { env, encoding: "utf8" }).stdout;
     assert.equal(out, "wasitme: your side\n", "the timed run printed the segment (fresh, real clock)");
     console.log(`# status line: ${sh.toFixed(1)} ms per run (an empty sh: ${empty.toFixed(1)} ms; node -e 0: ${node.toFixed(1)} ms); own part ≈ ${(sh - empty).toFixed(1)} ms`);
-    assert.ok(sh < node / 2, `the script (${sh.toFixed(1)} ms) should be far below node's startup (${node.toFixed(1)} ms)`);
+    assert.ok(sh < node / 2, `the script (median ${sh.toFixed(1)} ms) should be far below node's startup (median ${node.toFixed(1)} ms)`);
   } finally {
     h.cleanup();
   }
