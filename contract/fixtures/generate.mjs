@@ -524,9 +524,14 @@ function snapshotAgent(a) {
     observation: d.partial
       ? { fullyObservedDays: 9, partiallyObservedDays: 5, note: `${UNSEEN} ${PARTIAL}` }
       : { fullyObservedDays: a.calibrated ? 14 : 0, partiallyObservedDays: a.calibrated ? 0 : 9, note: UNSEEN },
+    // Exactly the keys a real scan writes for the agent, in its order (engine/src/contract/vocab.ts SETUP_KEYS, D80;
+    // engine/test/output/setup-keys.test.ts holds these goldens to a scan of synthetic logs). The version is the one
+    // the golden's timeline last moved to.
     setup: a.agent === "codex"
-      ? { agentVersion: "Codex 0.160", model: "gpt-6-luna", effort: "medium", mcpServers: 2, skills: 3 }
-      : { agentVersion: "Claude Code 2.1.289", model: "opus-5-5", effort: "medium", mcpServers: 6, skills: 14, instructionsKTokens: 3.1 },
+      ? { version: "0.160", model: "gpt-6-luna", effort: "medium", mode: "on-request", entrypoint: "cli", mcpServers: 2, skills: 3, pluginsEnabled: 1,
+          instructions: true, instructionsBytes: 2100 }
+      : { version: "2.1.281", model: "opus-5-5", effort: "medium", mode: "default", entrypoint: "cli", mcpServers: 6, skills: 14, hooks: 2,
+          pluginsEnabled: 2, pluginsInstalled: 3, instructions: true, instructionsBytes: 12400 },
     trace,
     disclaimer: d.disclaimer ? DISCLAIMER : null,
   };

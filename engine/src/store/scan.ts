@@ -47,7 +47,7 @@ import { MAX_SPAN_DAYS } from "../analysis/metrics/windows.js";
 import { nextHistory, type EtaRecord } from "../analysis/gates/eta.js";
 import type { Glance } from "../contract/glance.js";
 import type { Health, Paused, Snapshot, SourceError, SourceHealth } from "../contract/snapshot.js";
-import { GLANCE_SCHEMA_ID, SNAPSHOT_SCHEMA_ID, type Lead, type ScanError } from "../contract/vocab.js";
+import { GLANCE_SCHEMA_ID, SNAPSHOT_SCHEMA_ID, type Lead, type ScanError, type SetupKey } from "../contract/vocab.js";
 import { buildOutputs, SNAPSHOT_METRICS, type BuiltOutputs } from "../words/build.js";
 import { claudeReader } from "../readers/claude.js";
 import { codexReader } from "../readers/codex.js";
@@ -318,7 +318,9 @@ export function parseOrder<T extends { reader: Pick<Reader, "agent">; s: Pick<So
 
 /** Setup labels (version, model, effort, mode, entrypoint): id-shaped; `@` only as a Vertex-style version suffix. */
 const SETUP_LABEL_RE = /^[A-Za-z0-9][A-Za-z0-9._:+-]{0,59}(@(?:\d{8}|latest|default))?$/;
-const SETUP_COUNTS: Readonly<Record<AgentId, readonly [string, string][]>> = {
+/** The setup keys taken from the last kept exchange; the rest come from the config snapshot (SETUP_KEYS, D80). */
+const SETUP_LABELS = ["version", "model", "effort", "mode", "entrypoint"] as const satisfies readonly SetupKey[];
+const SETUP_COUNTS: Readonly<Record<AgentId, readonly [string, SetupKey][]>> = {
   "claude-code": [
     ["claudejson.mcp.count", "mcpServers"], ["skills.count", "skills"], ["settings.hooks.total", "hooks"],
     ["settings.plugins.count", "pluginsEnabled"], ["plugins.installed.count", "pluginsInstalled"],
@@ -334,7 +336,7 @@ function setupOf(agent: AgentId, kept: readonly Exchange[], cfg: ConfigHistory):
   const out: Record<string, string | number | boolean> = {};
   const last = kept[kept.length - 1];
   if (last) {
-    for (const k of ["version", "model", "effort", "mode", "entrypoint"] as const) {
+    for (const k of SETUP_LABELS) {
       const v = last[k];
       if (typeof v === "string" && v !== "unknown" && SETUP_LABEL_RE.test(v)) out[k] = v;
     }

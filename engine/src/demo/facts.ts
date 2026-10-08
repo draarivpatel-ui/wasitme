@@ -13,7 +13,7 @@
 import type { TraceCondition, TraceRow } from "../analysis/attribution/types.js";
 import { VOTING_FAMILIES, type MetricId } from "../analysis/metrics/defs.js";
 import type { Confounder, Health } from "../contract/snapshot.js";
-import type { IneligibleReason } from "../contract/vocab.js";
+import { SETUP_KEYS, type IneligibleReason, type SetupKey } from "../contract/vocab.js";
 import { contractCalibration, readCalibration, SHIPPED_CALIBRATION } from "../store/calflags.js";
 import { SCAN_ERRORS_VOTE } from "../store/settings.js";
 import { currentVersions, healthParserVersions } from "../store/versions.js";
@@ -260,17 +260,41 @@ export function demoFacts(name: DemoCase): Facts {
 }
 
 /**
- * The demo agent's setup, its own: the installed version is the one its demo timeline last moved to (Claude Code
- * 2.1.281, Codex 0.95), never one agent's number on the other's Setup page, and none when the timeline has no update.
- * Hooks are a Claude Code count only: a real scan reports none for Codex (engine/src/store/scan.ts SETUP_COUNTS).
+ * The demo agent's setup, its own, under exactly the keys a real scan writes for that agent (SETUP_KEYS, D80; held
+ * equal to a scan of synthetic logs by engine/test/output/setup-keys.test.ts). Whatever the demo timeline moved shows
+ * the value it moved to: the installed version is the one its timeline last moved to (Claude Code 2.1.281, Codex
+ * 0.95), never one agent's number on the other's Setup page, and none when the timeline has no update; the same for the
+ * model, the effort and the MCP server count. The rest are fixed demo numbers. Hooks and installed plugins are Claude
+ * Code counts only: a real scan reports none for Codex (engine/src/store/scan.ts SETUP_COUNTS).
  */
-function demoSetup(facts: Facts): Record<string, string | number> {
-  const version = facts.events.filter((e) => e.kind === "version" && e.to !== "").at(-1)?.to;
-  return {
-    ...(version !== undefined ? { agentVersion: version } : {}),
-    mcpServers: 6, skills: 14,
-    ...(facts.agent === "claude-code" ? { hooks: 2 } : {}),
+function demoSetup(facts: Facts): Record<string, string | number | boolean> {
+  const moved = (kind: string): string | undefined => facts.events.filter((e) => e.kind === kind && e.to !== "").at(-1)?.to;
+  const count = (kind: string, fallback: number): number => {
+    const to = moved(kind);
+    return to !== undefined && /^\d+$/.test(to) ? Number(to) : fallback;
   };
+  const claude = facts.agent === "claude-code";
+  const version = moved("version");
+  const values: Readonly<Record<SetupKey, string | number | boolean | undefined>> = {
+    version,
+    model: moved("model") ?? (claude ? "opus-5-5" : "gpt-6-luna"),
+    effort: moved("effort") ?? "medium",
+    mode: claude ? "default" : "on-request",
+    entrypoint: "cli",
+    mcpServers: count("mcp", claude ? 6 : 2),
+    skills: claude ? 14 : 3,
+    hooks: 2,
+    pluginsEnabled: claude ? 2 : 1,
+    pluginsInstalled: 3,
+    instructions: true,
+    instructionsBytes: claude ? 12_400 : 2_100,
+  };
+  const out: Record<string, string | number | boolean> = {};
+  for (const key of SETUP_KEYS[facts.agent as AgentId]) {
+    const v = values[key];
+    if (v !== undefined) out[key] = v;
+  }
+  return out;
 }
 
 /** Engine output (glance, snapshot, words) for one demo case, or `all` the Claude Code cases plus Codex. */

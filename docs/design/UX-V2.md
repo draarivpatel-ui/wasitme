@@ -464,7 +464,10 @@ a later version" (a plan, not evidence).
 
 ### 8.4 Setup
 
-Budget: **80** visible words (today 148).
+Budget: **95** visible words (today 148). Raised from 80 to the measured count by D80: the table has a row for every
+part a real scan records (11 for Claude Code, in the order of `SETUP_KEYS`, [CONTRACT.md](../CONTRACT.md#setup-keys)); the 80
+was met on a golden with six rows no scan writes; a scan of synthetic logs (with a one-line synthetic CLAUDE.md) gives
+a 92-word Claude Code page.
 
 **Visible by default**
 

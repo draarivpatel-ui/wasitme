@@ -11,7 +11,7 @@ import { realCsp } from "./cdp.mjs";
 
 const B = join(UI, "build");
 const { decodeSnapshot } = await import(join(B, "decode.js"));
-const { renderApp, landingPage, MOD_CALLS, PLUGIN_CAN } = await import(join(B, "pages.js"));
+const { renderApp, landingPage, MOD_CALLS, PLUGIN_CAN, SETUP_ROWS, setupLabel } = await import(join(B, "pages.js"));
 const { forest, strip, badgeName, laneMarks, markWidth } = await import(join(B, "charts.js"));
 const { clean, bound, isBridgeId } = await import(join(B, "sanitize.js"));
 const { materialize, actKey } = await import(join(B, "dom.js"));
@@ -490,6 +490,45 @@ test("Codex while calibration is pending: Timeline only, no ledger, an events-on
   const svg = find(tree, (n) => n.tag === "svg" && n.attrs.role === "img")[0];
   assert.match(svg.attrs["aria-label"], /^changes on each side/, "an events-only strip");
   assert.equal(find(svg, (n) => n.attrs.class === "c-tick").length, 0);
+});
+
+test("Setup: every key a scan writes has a row of its own; the version row is the agent's and links to its last update (D80)", () => {
+  // The keys a scan writes: the engine's own list, held to a real scan of synthetic logs, to `wasitme demo` and to these
+  // goldens by engine/test/output/setup-keys.test.ts. Before D80 the canvas read `agentVersion` while a scan wrote
+  // `version`: a real Setup page said "Version" with no link, and "Instructions bytes", "Entrypoint", "on".
+  const vocab = readFileSync(join(ROOT, "engine/src/contract/vocab.ts"), "utf8");
+  const block = /export const SETUP_KEYS = \{([\s\S]*?)\} as const;/.exec(vocab)?.[1];
+  assert.ok(block, "SETUP_KEYS in engine/src/contract/vocab.ts");
+  const keys = Object.fromEntries([...block.matchAll(/^\s*"?([a-z-]+)"?: \[([^\]]*)\]/gm)].map((m) => [m[1], [...m[2].matchAll(/"(\w+)"/g)].map((x) => x[1])]));
+  assert.deepEqual(Object.keys(keys), ["claude-code", "codex"]);
+  for (const k of new Set(Object.values(keys).flat())) assert.ok(Object.hasOwn(SETUP_ROWS, k), `${k}: a Setup row of its own, not the fallback words`);
+
+  const c = byName.get("snapshot-you-and-codex");
+  const want = { "claude-code": { file: "CLAUDE.md", bytes: "12,400 bytes" }, codex: { file: "AGENTS.md", bytes: "2,100 bytes" } };
+  for (const [i, id] of [[0, "claude-code"], [1, "codex"]]) {
+    const { d, tree } = renderOpen(c.name, "setup", { agent: i });
+    const a = d.agents[i];
+    assert.deepEqual(a.setup.map((x) => x.key), keys[id], `${id}: the golden carries every key a scan writes`);
+    const rows = find(tree, (n) => n.tag === "tr" && find(n, (m) => m.tag === "td" && cls(m).includes("sig")).length > 0);
+    const cell = (r, k) => textOf(find(r, (m) => m.tag === "td" && cls(m).includes(k))[0]);
+    const labels = rows.map((r) => cell(r, "sig"));
+    assert.equal(rows.length, keys[id].length - 1, `${id}: one row per key; the file's size shares its presence row`);
+    assert.equal(keys[id].at(-1), "instructionsBytes");
+    assert.deepEqual(labels, keys[id].slice(0, -1).map((k) => setupLabel(a, k)), `${id}: rows in the order the scan writes them`);
+    for (const l of labels) assert.ok(!/[a-z][A-Z]/.test(l) && !/^(Version|Entrypoint|Instructions( bytes)?)$/.test(l), `${id}: "${l}" is a label, not a key`);
+    assert.equal(labels[0], a.name, `${id}: the version row is named after the agent`);
+    const last = [...a.timeline].reverse().find((e) => e.kind === "version" && e.side === "agent");
+    assert.ok(last && find(rows[0], (n) => n.attrs["aria-label"] === badgeName(last, a.name)).length === 1, `${id}: the version row links to the last update`);
+    const file = rows[labels.indexOf(want[id].file)];
+    assert.ok(file, `${id}: a ${want[id].file} row`);
+    assert.equal(cell(file, "x"), want[id].bytes, `${id}: the file's size in bytes, never tokens`);
+    assert.ok(!/from h:/.test(textOf(tree)), `${id}: a hashed value is never printed as "from"`);
+  }
+  // A key a newer engine adds still shows, under its own words; a boolean reads on/off.
+  const doc = JSON.parse(JSON.stringify(c.doc));
+  doc.agents[0].setup = { ...doc.agents[0].setup, outputStyleCustom: true };
+  const tree = renderApp(decodeSnapshot(doc, { nowMs: Date.parse(c.now) }), ui(c, "setup"));
+  assert.ok(textOf(tree).includes("Output style custom"));
 });
 
 test("stale: the last known state is shown dimmed beside the stale mark, never as current", () => {

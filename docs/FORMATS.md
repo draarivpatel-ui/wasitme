@@ -57,8 +57,9 @@ Every glance field, with the same name and the same shape (a test holds the two 
   counts the artifact recorded);
 - per agent: `tier`, `windows` (the recent and baseline day ranges), `metrics` (every indicator with eligibility, the
   standardised ratio and range, and a daily series), `onset`, `timeline` (the full change list, oldest first), `candidates`,
-  `confounders`, `observation` (which days were fully observed), `setup` (counts and allow-listed labels), `trace` ("Why
-  this finding": the decision-table rows in order, ending at the one that matched) and `disclaimer`.
+  `confounders`, `observation` (which days were fully observed), `setup` (allow-listed labels and counts; the keys are
+  listed in [CONTRACT.md](CONTRACT.md#setup-keys)), `trace` ("Why this finding": the decision-table rows in order, ending
+  at the one that matched) and `disclaimer`.
 
 How each part is worked out is in [METHOD.md](METHOD.md).
 

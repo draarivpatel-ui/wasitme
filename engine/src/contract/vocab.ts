@@ -79,6 +79,19 @@ export const INELIGIBLE_REASONS = [
 ] as const;
 export type IneligibleReason = (typeof INELIGIBLE_REASONS)[number];
 
+/**
+ * The keys a scan writes in each agent's `setup` (D80, docs/CONTRACT.md "Setup keys"), in the order it writes them.
+ * The first five are the last kept exchange's allow-listed labels; the rest come from the agent's last config snapshot:
+ * counts, whether the global instructions file (CLAUDE.md / AGENTS.md) exists, and its size in bytes (only when it does).
+ * A key whose value is unknown is left out. `wasitme demo` writes exactly these keys, and every surface that shows
+ * setup labels each one (engine/test/output/setup-keys.test.ts, ui/test/model.test.mjs).
+ */
+export const SETUP_KEYS = {
+  "claude-code": ["version", "model", "effort", "mode", "entrypoint", "mcpServers", "skills", "hooks", "pluginsEnabled", "pluginsInstalled", "instructions", "instructionsBytes"],
+  codex: ["version", "model", "effort", "mode", "entrypoint", "mcpServers", "skills", "pluginsEnabled", "instructions", "instructionsBytes"],
+} as const;
+export type SetupKey = (typeof SETUP_KEYS)[keyof typeof SETUP_KEYS][number];
+
 function member<T extends string>(list: readonly T[], value: unknown): value is T {
   return typeof value === "string" && (list as readonly string[]).includes(value);
 }

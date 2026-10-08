@@ -555,21 +555,61 @@ function comparePage(c: Ctx, a: Agent): Kid[] {
   ];
 }
 
-const SETUP_LABEL: { [k: string]: string } = {
-  agentVersion: "", model: "Model", effort: "Effort", mcpServers: "MCP servers", skills: "Skills", instructionsKTokens: "Instructions",
-  hooks: "Hooks", plugins: "Plugins", mode: "Mode", outputStyle: "Output style",
+/**
+ * The Setup page's rows: every key a scan writes in an agent's `setup` (engine/src/contract/vocab.ts SETUP_KEYS, D80;
+ * ui/test/model.test.mjs holds this table to that list), with its label and the timeline kind whose last change the
+ * row links to. A null label is the agent's own word: its name for the installed version, its instructions file
+ * (CLAUDE.md / AGENTS.md) for the file's presence and size, which share one row. Labels are the engine's words for
+ * the same parts (engine/src/words/names.ts). A key this version doesn't know (a newer engine's) still shows, under
+ * its own words and with no link.
+ */
+export const SETUP_ROWS: { readonly [key: string]: { readonly label: string | null; readonly kind: string } } = {
+  version: { label: null, kind: "version" },
+  model: { label: "Model", kind: "model" },
+  effort: { label: "Effort", kind: "effort" },
+  mode: { label: "Permission mode", kind: "mode" },
+  entrypoint: { label: "Entry point", kind: "entrypoint" },
+  mcpServers: { label: "MCP servers", kind: "mcp" },
+  skills: { label: "Skills", kind: "skills" },
+  hooks: { label: "Hooks", kind: "hooks" },
+  pluginsEnabled: { label: "Plugins enabled", kind: "plugins" },
+  pluginsInstalled: { label: "Plugins installed", kind: "plugins" },
+  instructions: { label: null, kind: "instructions" },
+  instructionsBytes: { label: null, kind: "instructions" },
 };
-const SETUP_KIND: { [k: string]: string } = { agentVersion: "version", model: "model", effort: "effort", mcpServers: "mcp", skills: "skills", instructionsKTokens: "instructions", hooks: "hooks", plugins: "plugins", mode: "mode" };
+const setupKind = (key: string): string | undefined => (Object.hasOwn(SETUP_ROWS, key) ? SETUP_ROWS[key]!.kind : undefined);
+
+/** A setup row's label: the agent's name for its version, its instructions file's name, else the key's own words. */
+export function setupLabel(a: Agent, key: string): string {
+  if (key === "version") return a.name;
+  if (key === "instructions" || key === "instructionsBytes") return a.id === "codex" ? "AGENTS.md" : a.id === "claude-code" ? "CLAUDE.md" : "Instructions file";
+  const known = Object.hasOwn(SETUP_ROWS, key) ? SETUP_ROWS[key]!.label : null;
+  return known ?? cap(key.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase());
+}
+
+const bytesWords = (n: number): string => `${num(n)} ${n === 1 ? "byte" : "bytes"}`;
+/** A `from` value worth printing: a label or a count, never a short hash, "absent" or "unknown". */
+const readableFrom = (v: string): boolean => v !== "" && v !== "unknown" && v !== "absent" && !v.startsWith("h:");
 
 function setupPage(a: Agent): Kid[] {
   const open = openCandidates(a);
-  const rows = a.setup.map(({ key, value }) => {
-    const label = key === "agentVersion" ? a.name : SETUP_LABEL[key] ?? cap(key.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase());
-    const shown = key === "instructionsKTokens" && typeof value === "number" ? `${value}k tokens` : typeof value === "boolean" ? (value ? "on" : "off") : String(value);
-    const kind = SETUP_KIND[key];
-    const e = kind ? [...a.timeline].reverse().find((x) => x.kind === kind && (key === "agentVersion" ? x.side === "agent" : true)) : undefined;
-    return h("tr", null, h("td", { cls: "sig" }, label), h("td", { cls: "x" }, shown),
-      h("td", { cls: "when" }, e ? [badge(e, open.has(e.id), a.name), h("span", { cls: "kn" }, fdate(e.day)), e.from && e.side !== "agent" ? h("span", { cls: "t-small" }, fill(T.setup.from, { value: e.from })) : null]
+  const size = a.setup.find((x) => x.key === "instructionsBytes");
+  const bytes = size && typeof size.value === "number" ? size.value : null;
+  const hasFile = a.setup.some((x) => x.key === "instructions");
+  // The file's size shows in its presence row; on its own (no presence key) it is that row.
+  const shown = a.setup.filter((x) => !(x.key === "instructionsBytes" && hasFile));
+  const rows = shown.map(({ key, value }) => {
+    const text = key === "instructions" ? (value === false ? "none" : bytes !== null ? bytesWords(bytes) : "present")
+      : key === "instructionsBytes" && typeof value === "number" ? bytesWords(value)
+      : typeof value === "boolean" ? (value ? "on" : "off") : String(value);
+    const kind = setupKind(key);
+    // Two rows of one kind (Claude Code's enabled and installed plugins) each link only to a change that ended at their
+    // own value. Setup is the global setup: a project's own files (project_snapshot events) are not among its parts.
+    const shared = kind !== undefined && shown.filter((x) => setupKind(x.key) === kind).length > 1;
+    const e = kind ? [...a.timeline].reverse().find((x) => x.kind === kind && x.provenance !== "project_snapshot"
+      && (key === "version" ? x.side === "agent" : true) && (!shared || x.to === String(value))) : undefined;
+    return h("tr", null, h("td", { cls: "sig" }, setupLabel(a, key)), h("td", { cls: "x" }, text),
+      h("td", { cls: "when" }, e ? [badge(e, open.has(e.id), a.name), h("span", { cls: "kn" }, fdate(e.day)), e.side !== "agent" && readableFrom(e.from) ? h("span", { cls: "t-small" }, fill(T.setup.from, { value: e.from })) : null]
         : h("span", { cls: "t-small" }, T.setup.noneRecorded)));
   });
   return [

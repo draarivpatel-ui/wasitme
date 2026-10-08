@@ -117,11 +117,13 @@ test("demo: each agent's Setup is its own, its installed version the last one it
     const a = demoOutputs(name, { engine: "0.1.0" }).snapshot.agents[0]!;
     const last = a.timeline.filter((e) => e.kind === "version").at(-1);
     assert.ok(last, `${name}: the timeline has an update`);
-    assert.equal(a.setup.agentVersion, last.to, `${name}: Setup says ${a.agent} ${String(a.setup.agentVersion)}, the timeline ends at ${last.to}`);
-    // A real scan reports hooks for Claude Code only (engine/src/store/scan.ts SETUP_COUNTS).
+    assert.equal(a.setup.version, last.to, `${name}: Setup says ${a.agent} ${String(a.setup.version)}, the timeline ends at ${last.to}`);
+    // A real scan reports hooks and installed plugins for Claude Code only (engine/src/store/scan.ts SETUP_COUNTS; every
+    // key is held to a real scan by setup-keys.test.ts).
     assert.equal(Object.hasOwn(a.setup, "hooks"), a.agent === "claude-code", `${name}: hooks only for Claude Code`);
+    assert.equal(Object.hasOwn(a.setup, "pluginsInstalled"), a.agent === "claude-code", `${name}: installed plugins only for Claude Code`);
   }
-  assert.equal(demoOutputs("codex", { engine: "0.1.0" }).snapshot.agents[0]!.setup.agentVersion, "0.95");
+  assert.equal(demoOutputs("codex", { engine: "0.1.0" }).snapshot.agents[0]!.setup.version, "0.95");
 });
 
 function cli(args: string[], env: NodeJS.ProcessEnv) {

@@ -177,7 +177,11 @@ async function shot(c, { page, agent = 0, theme, width = 1280, height = 800, chr
 // nothing left on those pages could go without breaking a §12 hold: the Finding 130 → 135 (132 on `wasitme demo`), the
 // agent-side Finding 270 → 280 (276 here), Compare 200 → 220 (219 here: Compare's ledger stays open with a row per
 // signal, and this golden has more signals than the demo's 184).
-const BUDGETS = { timeline: 100, verdict: 135, compare: 220, setup: 80, report: 386, sources: 60, settings: 180 };
+// Setup 80 → 95 (95 here, D80): the golden now carries every part a real scan records (11 rows for Claude Code: one per
+// key, the instructions file's size sharing its row). The 80 was met on six rows that no scan writes; a scan of the
+// synthetic tiny-both seed plus a one-line synthetic CLAUDE.md gives a 92-word Claude Code page, and dropping a part
+// would leave its value unreachable (§12, every number reachable).
+const BUDGETS = { timeline: 100, verdict: 135, compare: 220, setup: 95, report: 386, sources: 60, settings: 180 };
 const AGENT_FINDING_BUDGET = 280;
 async function budgets(theme) {
   for (const [file, pages] of [["snapshot/insufficient-timeline.json", Object.keys(BUDGETS)], ["snapshot/agent-by_elimination.json", ["verdict"]]]) {

@@ -124,6 +124,37 @@ nasty as the schema allows; it must render safely everywhere.
   "nerf(ed)", "proves", "caused by", "nothing changed on your side", "look(s) like", `after … doubled|rose|fell`, a bare
   "no change", "99%".
 
+## Setup keys
+`setup` is an open map in the schema (at most 40 keys named `^[A-Za-z][A-Za-z0-9]{0,31}$`, each a string, number or
+boolean), so a newer engine can add a key without a schema change, and a consumer shows a key it doesn't know under its own
+words. The keys v1 writes ([D80](DECISIONS.md); `SETUP_KEYS` in `engine/src/contract/vocab.ts`), in this order; a key whose
+value is unknown is left out:
+
+| Key | Agents | Value | Read from |
+|---|---|---|---|
+| `version` | both | the installed version as logged, e.g. `2.1.281` (no agent name) | the last kept exchange |
+| `model` | both | the model as logged | the last kept exchange |
+| `effort` | both | the effort level | the last kept exchange |
+| `mode` | both | the permission mode (Claude Code) or approval policy (Codex) | the last kept exchange |
+| `entrypoint` | both | where the session ran from, e.g. `cli`, `claude-desktop`, `claude-vscode`, `exec` | the last kept exchange |
+| `mcpServers` | both | how many MCP servers the user-level config lists | the last config snapshot |
+| `skills` | both | how many skills the user-level skills folder holds | the last config snapshot |
+| `hooks` | Claude Code | how many hook handlers settings.json defines | the last config snapshot |
+| `pluginsEnabled` | both | how many plugins are enabled | the last config snapshot |
+| `pluginsInstalled` | Claude Code | how many plugins are installed | the last config snapshot |
+| `instructions` | both | whether the global instructions file exists (`CLAUDE.md` in the Claude Code config folder; `AGENTS.override.md` or `AGENTS.md` in the Codex home) | the last config snapshot |
+| `instructionsBytes` | both | that file's size in bytes, only when it exists | the last config snapshot |
+
+Labels pass the same allow-list as the scan's other labels; counts are non-negative integers. `wasitme demo` and the goldens
+write exactly these keys (`engine/test/output/setup-keys.test.ts` holds both to a scan of synthetic logs). The canvas's
+Setup page has a row for each (`SETUP_ROWS` in `ui/src/pages.ts`, held to this list by `ui/test/model.test.mjs`): `version`
+under the agent's name, linked to its last update; `instructions` and `instructionsBytes` as one row named after the file.
+Before D80 the demo and the goldens wrote `agentVersion` ("Claude Code 2.1.289"), `instructionsKTokens`, `plugins` and
+`outputStyle`, which no scan wrote. No consumer of a glance or snapshot reads those names now: the Swift app decodes
+`setup` as a generic map, the Claude Code mod and the terminal, Markdown and HTML reports do not show it, and the canvas
+uses the keys above. The design system's own mock data (`design/system/demo-data.v3.json` and the screens made from it)
+still uses the old shape; it never reaches a document.
+
 ## Goldens
 34 files + manifest. Valid glance (25): every state × lead (`{state}-{timeline|verdict}`), every remaining reason
 (`insufficient-single_indicator`, `unclear-{mixed,workload,unknown_provenance,nothing_recorded_on_your_side,blind_spot}`,
