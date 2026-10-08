@@ -1,0 +1,64 @@
+# wasitme hostile-corpus canaries (all synthetic).
+# One literal string per line; lines starting with '# ' are comments. Multi-line values (private key blocks) are listed by their unique body line.
+# NO output of the engine (reports, JSON, snapshots, logs, errors, caches) may contain any of these strings.
+# Also scan for the generic shapes in HOSTILE-MANIFEST.json (patterns) and for the raw poison strings (poison[]).
+hostile-SYNTHCANARY00001
+feature/SYNTHCANARY00002-branch
+synthcanary00003-quiet-parser
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCSYNTHCANARY00004Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSw
+sk-ant-api03-SYNTHCANARY00005-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+sk-proj-SYNTHCANARY00006Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+ghp_SYNTHCANARY00007Zx9QkLm3Rt7VbN2cWd5Y
+AKIASYNTHCANARY00008
+canary.synthcanary00009@example.invalid
+sk-ant-api03-SYNTHCANARY00010-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+/Users/syn-user/SYNTHCANARY00011
+/Users/syn-user/.claude/skills/SYNTHCANARY00012/SKILL.md
+the launch codename is SYNTHCANARY00013
+sk-proj-SYNTHCANARY00014Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+the launch codename is SYNTHCANARY00015
+ghp_SYNTHCANARY00016Zx9QkLm3Rt7VbN2cWd5Y
+the launch codename is SYNTHCANARY00017
+sk-ant-api03-SYNTHCANARY00018-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+canary.synthcanary00019@example.invalid
+sk-ant-api03-SYNTHCANARY00020-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+the launch codename is SYNTHCANARY00021
+sk-proj-SYNTHCANARY00022Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+AKIASYNTHCANARY00023
+the launch codename is SYNTHCANARY00024
+ghp_SYNTHCANARY00025Zx9QkLm3Rt7VbN2cWd5Y
+/Users/syn-user/code/hostile-SYNTHCANARY00001/SYNTHCANARY00026-private-notes.md
+sk-ant-api03-SYNTHCANARY00027-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+ghp_SYNTHCANARY00028Zx9QkLm3Rt7VbN2cWd5Y
+the launch codename is SYNTHCANARY00029
+AKIASYNTHCANARY00030
+canary.synthcanary00031@example.invalid
+the launch codename is SYNTHCANARY00032
+the launch codename is SYNTHCANARY00033
+canary.synthcanary00034@example.invalid
+canary.synthcanary00035@example.invalid
+the launch codename is SYNTHCANARY00036
+the launch codename is SYNTHCANARY00037
+/Users/syn-user/code/hostile-SYNTHCANARY00038
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCSYNTHCANARY00039Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSw
+feature/SYNTHCANARY00040-branch
+the launch codename is SYNTHCANARY00041
+sk-ant-api03-SYNTHCANARY00042-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+mcp__synthcanary00043__search
+sk-proj-SYNTHCANARY00044Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+ghp_SYNTHCANARY00045Zx9QkLm3Rt7VbN2cWd5Y
+canary.synthcanary00046@example.invalid
+the launch codename is SYNTHCANARY00047
+AKIASYNTHCANARY00048
+the launch codename is SYNTHCANARY00049
+sk-proj-SYNTHCANARY00050Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+sk-ant-api03-SYNTHCANARY00051-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+the launch codename is SYNTHCANARY00052
+ghp_SYNTHCANARY00053Zx9QkLm3Rt7VbN2cWd5Y
+SYNTHCANARY00054-notes.md
+sk-ant-api03-SYNTHCANARY00055-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN
+canary.synthcanary00056@example.invalid
+sk-proj-SYNTHCANARY00057Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH
+the launch codename is SYNTHCANARY00058
+canary.synthcanary00059@example.invalid
+the launch codename is SYNTHCANARY00060

@@ -1,0 +1,38 @@
+wasitme                                                           Claude Code   checked Oct 4, 14:14
+════════════════════════════════════════════════════════════════════════════════════════════════════
+DEMO            analytic demo data run through the engine; not your logs
+What changed    yours numbered above the line, Claude Code's lettered below
+your side                                       [1]                     [2]
+                ┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┬┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄
+Claude Code             [D]         [E]                 [F] [G]                         [H]
+                Sep 13                      Sep 20                      Sep 27                Oct 3
+errors            9   9   7  10  10   7   8   7  18  24  26  24  22  18  27   5  25  21  20  23  26
+tool calls      263 247 188 282 287 193 227 199 191 254 268 252 233 186 280  57 260 218 207 245 270
+                └───────── before ─────────┘└────────────────── recent, 14 days ───────────────────┘
+
+                [D] Sep 15   Claude Code 2.1.266 → 2.1.270               agent side · routine update
+                [E] Sep 18   Claude Code 2.1.270 → 2.1.274               agent side · routine update
+                [1] Sep 21   Effort high → medium                your side · lines up with the shift
+                [F] Sep 23   Served model differs from the on…  agent side · lines up with the shift
+                [G] Sep 24   Claude Code 2.1.274 → 2.1.277               agent side · routine update
+                [2] Sep 27   MCP server added                                              your side
+                [H] Oct 1    Claude Code 2.1.277 → 2.1.281               agent side · routine update
+                Routine updates alone aren't evidence.
+
+Finding         ■─▲ Can't tell which
+                Your numbers moved, but changes on both sides landed the same week.
+                Your effort change (Sep 21) and Claude Code's model switch (Sep 23) both line up
+                with the shift: tool errors ×2.6, edits without reading first ×1.9.
+                Based on 922 exchanges over 80 session-days (20 sessions) on this Mac.
+                Sessions on other machines aren't visible.
+
+Signals                recent       before   change  range         ×0.5 ×1  ×2  ×4      status
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Tool errors       286 / 3,120  201 / 5,610   ×2.56  ×1.59–×4.12      ░░░░│░░├─●──┤      moved, more
+Edits without        74 / 410     79 / 820   ×1.87  ×1.30–×2.70       ░░░│░├─●─┤        moved, more
+reading first
+Pushback prompts     29 / 402     31 / 520   ×1.21  ×0.63–×2.34    ░░░├──┼○───┤░        context
+                                   ○ estimate, not detected  ● moved  ├─┤ range  ░ too small to show
+
+Next            Undo your effort change to separate them.
+Share           wasitme report --md | pbcopy   numbers only: no prompts, code or paths

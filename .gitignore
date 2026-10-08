@@ -1,0 +1,22 @@
+node_modules
+dist/
+.DS_Store
+*.log
+.build/
+*.xcodeproj/xcuserdata/
+.claude/worktrees/
+/spikes/
+**/out/
+design/directions/
+design/_blind/
+.ci-local.env
+
+# Private, per-checkout notes: never committed
+docs/private/
+CLAUDE.local.md
+
+# Calibration run caches (synthetic, resumable runs; large): kept locally, never committed
+docs/calibration/*.cache.jsonl
+
+# Release assets written by scripts/release.sh (never committed; release.yml uploads them)
+/release/

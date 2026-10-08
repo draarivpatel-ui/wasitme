@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; media-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>wasitme: Was it me, or the model?</title>
+<meta name="description" content="A free, offline tool that reads your own Claude Code and Codex session logs on your Mac and says which side changed, yours or the agent’s, only when the evidence supports it. Otherwise it says Too early to tell.">
+<link rel="canonical" href="https://draarivpatel-ui.github.io/wasitme/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F1F0EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#23242A" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="wasitme">
+<meta property="og:title" content="Was it me, or the model?">
+<meta property="og:description" content="wasitme reads your own Claude Code and Codex logs on your Mac and says which side changed, only when the evidence supports it. Free, MIT, no network code.">
+<meta property="og:url" content="https://draarivpatel-ui.github.io/wasitme/">
+<meta property="og:image" content="https://draarivpatel-ui.github.io/wasitme/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The wasitme wordmark over the question Was it me, or the model?, set on a line with a yellow square above it and a blue tag below it, beside the wasitme Mac window on demo data.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Was it me, or the model?">
+<meta name="twitter:description" content="wasitme reads your own Claude Code and Codex logs on your Mac and says which side changed, only when the evidence supports it.">
+<meta name="twitter:image" content="https://draarivpatel-ui.github.io/wasitme/assets/og.png">
+<meta name="twitter:image:alt" content="The wasitme wordmark over the question Was it me, or the model?, beside the wasitme Mac window on demo data.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/WasitmeSerif-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/WasitmeMono-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/boot.js"></script>
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="bar" id="bar">
+  <div class="bar__in">
+    <a class="bar__home is-tucked" href="#top"><svg class="markglyph" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="5" y="6" width="29" height="29" rx="3" transform="rotate(-5 19.5 20.5)" class="fill-you" stroke="currentColor" stroke-width="2.5"/><path d="M45 30 L60 57 L30 57 Z" class="fill-agent" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg><svg class="wordmark wordmark--small" role="img" aria-label="wasitme" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 203.6 56"><title>wasitme</title><path d="M0.336 15.232H6.24L8.016 35.296H8.496L11.424 15.232H17.664L20.544 35.296H21.024L22.848 15.232H28.464000000000002L25.536 40.0H17.088L14.64 22.912H14.16L11.712 40.0H3.2640000000000002ZM52.176 40.0Q49.968 40.0 48.624 38.872Q47.28 37.744 47.040000000000006 35.632H46.8Q46.128 38.08 44.135999999999996 39.328Q42.144 40.576 39.264 40.576Q35.664 40.576 33.480000000000004 38.632000000000005Q31.296 36.688 31.296 33.184Q31.296 29.296 34.128 27.424Q36.96 25.552 42.432 25.552H46.416V24.304000000000002Q46.416 22.096 45.384 20.968Q44.352000000000004 19.84 41.904 19.84Q39.648 19.84 38.256 20.704Q36.864000000000004 21.567999999999998 35.856 22.96L31.968 19.504Q33.216 17.392 35.879999999999995 16.024Q38.544 14.655999999999999 42.72 14.655999999999999Q47.808 14.655999999999999 50.664 16.984Q53.519999999999996 19.312 53.519999999999996 24.016V34.864H56.256V40.0ZM41.952 35.92Q43.824 35.92 45.12 35.008Q46.416 34.096000000000004 46.416 32.368V29.392H42.624Q38.256 29.392 38.256 32.32V33.28Q38.256 34.576 39.263999999999996 35.248000000000005Q40.272 35.92 41.952 35.92ZM71.712 40.576Q67.584 40.576 64.536 39.328Q61.488 38.08 59.952 35.92L63.936 32.224000000000004Q65.376 33.808 67.32 34.696Q69.264 35.584 71.76 35.584Q73.872 35.584 75.072 34.936Q76.272 34.288 76.272 32.944Q76.272 31.887999999999998 75.456 31.479999999999997Q74.64 31.072 73.2 30.832L69.21600000000001 30.208Q67.536 29.968 66.096 29.464Q64.656 28.96 63.60000000000001 28.096Q62.544000000000004 27.232 61.92 25.983999999999998Q61.296 24.735999999999997 61.296 22.96Q61.296 19.072 64.272 16.863999999999997Q67.248 14.655999999999999 72.624 14.655999999999999Q76.272 14.655999999999999 78.84 15.639999999999999Q81.408 16.624 82.944 18.448L79.392 22.48Q78.288 21.28 76.56 20.464Q74.832 19.648 72.384 19.648Q68.256 19.648 68.256 22.144Q68.256 23.248 69.072 23.656Q69.888 24.064 71.328 24.304000000000002L75.26400000000001 24.927999999999997Q76.944 25.168 78.384 25.672Q79.824 26.176000000000002 80.904 27.04Q81.98400000000001 27.904 82.608 29.152Q83.232 30.4 83.232 32.176Q83.232 36.064 80.232 38.32Q77.232 40.576 71.712 40.576ZM102.33600000000001 12.064Q99.936 12.064 99.0 11.08Q98.06400000000001 10.096 98.06400000000001 8.704V7.311999999999998Q98.06400000000001 5.872 99.0 4.911999999999999Q99.936 3.951999999999998 102.33600000000001 3.951999999999998Q104.736 3.951999999999998 105.672 4.911999999999999Q106.608 5.872 106.608 7.311999999999998V8.704Q106.608 10.096 105.672 11.08Q104.736 12.064 102.33600000000001 12.064ZM90.912 34.48H98.784V20.752H90.912V15.232H105.888V34.48H113.184V40.0H90.912ZM131.52 40.0Q127.68 40.0 125.808 37.984Q123.936 35.968 123.936 32.848V20.752H117.21600000000001V15.232H121.584Q123.168 15.232 123.84 14.607999999999999Q124.512 13.983999999999998 124.512 12.303999999999998V6.496000000000002H131.04V15.232H140.688V20.752H131.04V34.48H140.688V40.0Z" fill="currentColor"/><path d="M145.44 40.0V15.232H151.152V18.88H151.488Q152.064 17.152 153.144 15.904Q154.224 14.655999999999999 156.192 14.655999999999999Q159.792 14.655999999999999 160.608 18.88H160.89600000000002Q161.184 18.016 161.61599999999999 17.247999999999998Q162.048 16.48 162.672 15.904Q163.296 15.328 164.16 14.991999999999999Q165.024 14.655999999999999 166.176 14.655999999999999Q171.36 14.655999999999999 171.36 22.288V40.0H165.648V23.008Q165.648 21.28 165.048 20.584Q164.448 19.887999999999998 163.488 19.887999999999998Q162.576 19.887999999999998 161.928 20.488Q161.28 21.088 161.28 22.336V40.0H155.52V23.008Q155.52 21.28 154.96800000000002 20.584Q154.416 19.887999999999998 153.456 19.887999999999998Q152.496 19.887999999999998 151.824 20.488Q151.152 21.088 151.152 22.336V40.0ZM187.872 40.576Q181.632 40.576 178.416 37.120000000000005Q175.20000000000002 33.664 175.20000000000002 27.712Q175.20000000000002 24.688 176.04000000000002 22.264Q176.88000000000002 19.84 178.44 18.136Q180.0 16.432 182.232 15.543999999999999Q184.464 14.655999999999999 187.24800000000002 14.655999999999999Q190.032 14.655999999999999 192.24 15.543999999999999Q194.448 16.432 195.984 18.064Q197.52 19.695999999999998 198.36 22.024Q199.20000000000002 24.352 199.20000000000002 27.232V29.344H182.256V29.776Q182.256 32.176 183.744 33.64Q185.232 35.104 188.11200000000002 35.104Q190.32000000000002 35.104 191.904 34.263999999999996Q193.488 33.424 194.64000000000001 32.032L198.48000000000002 36.208Q197.04000000000002 37.984 194.44800000000004 39.28Q191.85600000000002 40.576 187.872 40.576ZM187.29600000000002 19.744Q184.99200000000002 19.744 183.62400000000002 21.16Q182.256 22.576 182.256 24.976V25.36H192.24V24.976Q192.24 22.528 190.92000000000002 21.136Q189.60000000000002 19.744 187.29600000000002 19.744Z" fill="currentColor"/><rect x="145" y="47" width="55.6" height="6" class="fill-you"/></svg></a>
+    <nav class="bar__nav" aria-label="Sections">
+      <ul role="list">
+        <li class="bar__opt"><a href="#film">Film</a></li>
+        <li class="bar__opt"><a href="#case">The case line</a></li>
+        <li class="bar__opt"><a href="#decides">How it decides</a></li>
+        <li class="bar__opt"><a href="#privacy">Privacy</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme">GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<section class="hero ground-paper" id="top" aria-labelledby="hero-h">
+  <h1 class="hero__logo" id="hero-h"><svg class="markglyph markglyph--hero" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="5" y="6" width="29" height="29" rx="3" transform="rotate(-5 19.5 20.5)" class="fill-you" stroke="currentColor" stroke-width="2.5"/><path d="M45 30 L60 57 L30 57 Z" class="fill-agent" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg><svg class="wordmark" role="img" aria-label="wasitme" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 203.6 56"><title>wasitme</title><path d="M0.336 15.232H6.24L8.016 35.296H8.496L11.424 15.232H17.664L20.544 35.296H21.024L22.848 15.232H28.464000000000002L25.536 40.0H17.088L14.64 22.912H14.16L11.712 40.0H3.2640000000000002ZM52.176 40.0Q49.968 40.0 48.624 38.872Q47.28 37.744 47.040000000000006 35.632H46.8Q46.128 38.08 44.135999999999996 39.328Q42.144 40.576 39.264 40.576Q35.664 40.576 33.480000000000004 38.632000000000005Q31.296 36.688 31.296 33.184Q31.296 29.296 34.128 27.424Q36.96 25.552 42.432 25.552H46.416V24.304000000000002Q46.416 22.096 45.384 20.968Q44.352000000000004 19.84 41.904 19.84Q39.648 19.84 38.256 20.704Q36.864000000000004 21.567999999999998 35.856 22.96L31.968 19.504Q33.216 17.392 35.879999999999995 16.024Q38.544 14.655999999999999 42.72 14.655999999999999Q47.808 14.655999999999999 50.664 16.984Q53.519999999999996 19.312 53.519999999999996 24.016V34.864H56.256V40.0ZM41.952 35.92Q43.824 35.92 45.12 35.008Q46.416 34.096000000000004 46.416 32.368V29.392H42.624Q38.256 29.392 38.256 32.32V33.28Q38.256 34.576 39.263999999999996 35.248000000000005Q40.272 35.92 41.952 35.92ZM71.712 40.576Q67.584 40.576 64.536 39.328Q61.488 38.08 59.952 35.92L63.936 32.224000000000004Q65.376 33.808 67.32 34.696Q69.264 35.584 71.76 35.584Q73.872 35.584 75.072 34.936Q76.272 34.288 76.272 32.944Q76.272 31.887999999999998 75.456 31.479999999999997Q74.64 31.072 73.2 30.832L69.21600000000001 30.208Q67.536 29.968 66.096 29.464Q64.656 28.96 63.60000000000001 28.096Q62.544000000000004 27.232 61.92 25.983999999999998Q61.296 24.735999999999997 61.296 22.96Q61.296 19.072 64.272 16.863999999999997Q67.248 14.655999999999999 72.624 14.655999999999999Q76.272 14.655999999999999 78.84 15.639999999999999Q81.408 16.624 82.944 18.448L79.392 22.48Q78.288 21.28 76.56 20.464Q74.832 19.648 72.384 19.648Q68.256 19.648 68.256 22.144Q68.256 23.248 69.072 23.656Q69.888 24.064 71.328 24.304000000000002L75.26400000000001 24.927999999999997Q76.944 25.168 78.384 25.672Q79.824 26.176000000000002 80.904 27.04Q81.98400000000001 27.904 82.608 29.152Q83.232 30.4 83.232 32.176Q83.232 36.064 80.232 38.32Q77.232 40.576 71.712 40.576ZM102.33600000000001 12.064Q99.936 12.064 99.0 11.08Q98.06400000000001 10.096 98.06400000000001 8.704V7.311999999999998Q98.06400000000001 5.872 99.0 4.911999999999999Q99.936 3.951999999999998 102.33600000000001 3.951999999999998Q104.736 3.951999999999998 105.672 4.911999999999999Q106.608 5.872 106.608 7.311999999999998V8.704Q106.608 10.096 105.672 11.08Q104.736 12.064 102.33600000000001 12.064ZM90.912 34.48H98.784V20.752H90.912V15.232H105.888V34.48H113.184V40.0H90.912ZM131.52 40.0Q127.68 40.0 125.808 37.984Q123.936 35.968 123.936 32.848V20.752H117.21600000000001V15.232H121.584Q123.168 15.232 123.84 14.607999999999999Q124.512 13.983999999999998 124.512 12.303999999999998V6.496000000000002H131.04V15.232H140.688V20.752H131.04V34.48H140.688V40.0Z" fill="currentColor"/><path d="M145.44 40.0V15.232H151.152V18.88H151.488Q152.064 17.152 153.144 15.904Q154.224 14.655999999999999 156.192 14.655999999999999Q159.792 14.655999999999999 160.608 18.88H160.89600000000002Q161.184 18.016 161.61599999999999 17.247999999999998Q162.048 16.48 162.672 15.904Q163.296 15.328 164.16 14.991999999999999Q165.024 14.655999999999999 166.176 14.655999999999999Q171.36 14.655999999999999 171.36 22.288V40.0H165.648V23.008Q165.648 21.28 165.048 20.584Q164.448 19.887999999999998 163.488 19.887999999999998Q162.576 19.887999999999998 161.928 20.488Q161.28 21.088 161.28 22.336V40.0H155.52V23.008Q155.52 21.28 154.96800000000002 20.584Q154.416 19.887999999999998 153.456 19.887999999999998Q152.496 19.887999999999998 151.824 20.488Q151.152 21.088 151.152 22.336V40.0ZM187.872 40.576Q181.632 40.576 178.416 37.120000000000005Q175.20000000000002 33.664 175.20000000000002 27.712Q175.20000000000002 24.688 176.04000000000002 22.264Q176.88000000000002 19.84 178.44 18.136Q180.0 16.432 182.232 15.543999999999999Q184.464 14.655999999999999 187.24800000000002 14.655999999999999Q190.032 14.655999999999999 192.24 15.543999999999999Q194.448 16.432 195.984 18.064Q197.52 19.695999999999998 198.36 22.024Q199.20000000000002 24.352 199.20000000000002 27.232V29.344H182.256V29.776Q182.256 32.176 183.744 33.64Q185.232 35.104 188.11200000000002 35.104Q190.32000000000002 35.104 191.904 34.263999999999996Q193.488 33.424 194.64000000000001 32.032L198.48000000000002 36.208Q197.04000000000002 37.984 194.44800000000004 39.28Q191.85600000000002 40.576 187.872 40.576ZM187.29600000000002 19.744Q184.99200000000002 19.744 183.62400000000002 21.16Q182.256 22.576 182.256 24.976V25.36H192.24V24.976Q192.24 22.528 190.92000000000002 21.136Q189.60000000000002 19.744 187.29600000000002 19.744Z" fill="currentColor"/><rect x="145" y="47" width="55.6" height="6" class="fill-you"/></svg></h1>
+  <div class="film" id="film">
+    <div class="film__media">
+      <video class="film__video" id="film-video" controls preload="none" playsinline poster="assets/img/film-poster-wide.jpg" data-tall-src="media/wasitme-ad-vertical.mp4" data-tall-poster="assets/img/film-poster-tall.jpg" aria-describedby="film-cap">
+        <source src="media/wasitme-ad.mp4" type="video/mp4">
+        <p>Your browser can’t play this video. <a href="media/wasitme-ad.mp4">Download the film</a>.</p>
+      </video>
+      <button class="film__play" type="button" id="film-play" hidden><span class="film__playicon" aria-hidden="true"></span><span>Play the film</span></button>
+    </div>
+  </div>
+  <div class="film__under on-ink">
+    <p class="film__cap" id="film-cap"><span class="film__status" id="film-status" role="status"></span>Every product shot in the film is wasitme running its own demo data, not anyone’s logs.</p>
+    <details class="ftext ftext--wide" id="film-text">
+      <summary>Read the film as text</summary>
+      <div class="ftext__body">
+        <p>The film is silent and runs 42 seconds. Every product shot in it carries a “Demo data” label.</p>
+      <ol class="ftext__list" role="list">
+        <li><span class="ftext__t">0:00</span><span class="ftext__b"><strong>Cold open.</strong> A hairline draws across a dark frame: the case line. The complaint lands below it, on the agent’s side, and the doubt above it, on your side. On screen: “Your agent feels worse this week.” “Or did you change something?”</span></li>
+        <li><span class="ftext__t">0:04</span><span class="ftext__b"><strong>The question.</strong> The question, large, with a yellow underline under “me”. On screen: “Was it me, or the model?”</span></li>
+        <li><span class="ftext__t">0:07</span><span class="ftext__b"><strong>The case line.</strong> The line becomes the case line of the demo, day by day. Claude Code’s updates hang below it as lettered blue tags; your two changes sit above it as yellow squares, 1 (effort, Sep 21) and 2 (an MCP server, Sep 27); the tool errors for each day rise between them, higher after change 1. The engine’s sentence for the case appears, then the Control Center’s own chart of the same days. On screen: “The agent’s updates hang below the line.” “Your changes sit above it.” “Your numbers moved around the time of your effort change (Sep 21).”</span></li>
+        <li><span class="ftext__t">0:15</span><span class="ftext__b"><strong>Your side changed.</strong> The Mac app’s Control Center window on the finding “Your side changed.” On screen: “Sometimes it’s your side.”</span></li>
+        <li><span class="ftext__t">0:18</span><span class="ftext__b"><strong>The agent changed.</strong> The same window on the other answer, “The agent changed.”, moving to tag E at the 2.1.277 update. On screen: “Sometimes it’s the agent.”</span></li>
+        <li><span class="ftext__t">0:22</span><span class="ftext__b"><strong>Too early to tell.</strong> The Control Center on “Too early to tell.” On screen: “When the evidence is thin,” “it says so.” “It names a side only when the evidence supports it.”</span></li>
+        <li><span class="ftext__t">0:26</span><span class="ftext__b"><strong>Five answers.</strong> The five menu bar marks, one per answer, beside the menu bar popover. On screen: “Five answers, one line.” “Too early to tell” “No detectable change” “Can't tell which” “Your side” “Agent side”</span></li>
+        <li><span class="ftext__t">0:30</span><span class="ftext__b"><strong>In the terminal.</strong> A terminal. The command types out, its real output prints, and the view moves in on the table of signals. On screen: “The same finding, in your terminal.” <code>wasitme demo --case you --lead finding</code></span></li>
+        <li><span class="ftext__t">0:33</span><span class="ftext__b"><strong>Local only.</strong> Three short lines on dark. On screen: “Reads your own logs.” “On your Mac.” “No network code.”</span></li>
+        <li><span class="ftext__t">0:37</span><span class="ftext__b"><strong>End card.</strong> The wordmark and the tagline, then the license, the address and the small print. On screen: “Measure twice, blame once.” “Free and open source (MIT)” “github.com/draarivpatel-ui/wasitme” “wasitme is an independent project, not affiliated with or endorsed by Anthropic or OpenAI.” “Product shots: demo data from wasitme demo”</span></li>
+      </ol>
+      </div>
+    </details>
+    <details class="ftext ftext--tall" id="film-text-tall">
+      <summary>Read the film as text</summary>
+      <div class="ftext__body">
+        <p>The film is silent and runs 29 seconds. Every product shot in it carries a “Demo data” label.</p>
+      <ol class="ftext__list" role="list">
+        <li><span class="ftext__t">0:00</span><span class="ftext__b"><strong>Cold open.</strong> A hairline draws across a dark frame: the case line. The complaint lands below it, on the agent’s side, and the doubt above it, on your side. On screen: “Your agent feels worse this week.” “Or did you change something?”</span></li>
+        <li><span class="ftext__t">0:04</span><span class="ftext__b"><strong>The question.</strong> The question, large, with a yellow underline under “me”. On screen: “Was it me, or the model?”</span></li>
+        <li><span class="ftext__t">0:07</span><span class="ftext__b"><strong>The case line.</strong> The line becomes the case line of the demo, day by day. Claude Code’s updates hang below it as lettered blue tags; your two changes sit above it as yellow squares, 1 (effort, Sep 21) and 2 (an MCP server, Sep 27); the tool errors for each day rise between them, higher after change 1. The engine’s sentence for the case appears, then the Control Center’s own chart of the same days. On screen: “The agent’s updates hang below the line.” “Your changes sit above it.” “Your numbers moved around the time of your effort change (Sep 21).”</span></li>
+        <li><span class="ftext__t">0:12</span><span class="ftext__b"><strong>Your side changed.</strong> The Mac app’s Control Center window on the finding “Your side changed.” On screen: “Sometimes it’s your side.”</span></li>
+        <li><span class="ftext__t">0:16</span><span class="ftext__b"><strong>The agent changed.</strong> The same window on the other answer, “The agent changed.”, moving to tag E at the 2.1.277 update. On screen: “Sometimes it’s the agent.”</span></li>
+        <li><span class="ftext__t">0:19</span><span class="ftext__b"><strong>Too early to tell.</strong> The Control Center on “Too early to tell.” On screen: “When the evidence is thin,” “it says so.”</span></li>
+        <li><span class="ftext__t">0:22</span><span class="ftext__b"><strong>Local only.</strong> Three short lines on dark. On screen: “Reads your own logs.” “On your Mac.” “No network code.”</span></li>
+        <li><span class="ftext__t">0:25</span><span class="ftext__b"><strong>End card.</strong> The wordmark and the tagline, then the license, the address and the small print. On screen: “Measure twice, blame once.” “Free and open source (MIT)” “github.com/draarivpatel-ui/wasitme” “wasitme is an independent project, not affiliated with or endorsed by Anthropic or OpenAI.” “Product shots: demo data from wasitme demo”</span></li>
+      </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section class="ask ground-ink" id="question" aria-labelledby="q">
+  <div class="q-wrap">
+    <h2 class="q" id="q" aria-label="Was it me, or the model?">
+      <span class="q__line q__line--you"><span class="q__words"><span class="q__in">Was it <span class="me">me</span>,</span></span><span class="sticker sticker--hero" aria-hidden="true">1</span></span>
+      <span class="q__line q__line--agent"><span class="q-side q-side--you" aria-hidden="true">Your side</span><span class="q-side q-side--agent" aria-hidden="true">Agent side</span><span class="tag tag--hero" aria-hidden="true">A</span><span class="q__words"><span class="q__in">or the model?</span></span></span>
+    </h2>
+    <span class="q-rule" aria-hidden="true"></span>
+  </div>
+  <p class="ask__tagline">Measure twice, blame once.</p>
+  <p class="ask__lead">wasitme reads your own Claude Code and Codex session logs on your Mac. It keeps a timeline of what changed on your side and on the agent’s side, compares your recent weeks with the weeks before, and names a side only when the evidence supports it.</p>
+  <p class="actions">
+    <a class="btn btn--primary" href="#install">Install</a>
+    <a class="btn" href="https://github.com/draarivpatel-ui/wasitme">Read the code on GitHub</a>
+  </p>
+  <p class="ask__facts">Free and open source under the MIT license. No network code. No account, no telemetry.</p>
+</section>
+
+<section class="sides ground-paper" id="sides" aria-labelledby="sides-h">
+  <div class="wrap">
+    <div class="sides__head">
+      <h2 class="display" id="sides-h">Two sides. One line.</h2>
+      <p class="deck">When your agent starts to feel different, one of two things moved: your setup, or the agent. wasitme files every change on the side it came from, and draws the line between them on every screen.</p>
+    </div>
+    <div class="ledger" role="group" aria-label="What goes on each side">
+      <div class="ledger__half ledger__half--you">
+        <div class="ledger__key">
+          <h3 class="ledger__title">Your side, above the line</h3>
+          <p class="ledger__how">Your changes are square stickers, numbered 1, 2, 3.</p>
+        </div>
+        <ul class="ledger__list" role="list">
+          <li><span class="sticker sticker--sm" aria-hidden="true"></span>The model you picked</li>
+          <li><span class="sticker sticker--sm" aria-hidden="true"></span>Effort and mode</li>
+          <li><span class="sticker sticker--sm" aria-hidden="true"></span>Instruction files</li>
+          <li><span class="sticker sticker--sm" aria-hidden="true"></span>MCP servers</li>
+          <li><span class="sticker sticker--sm" aria-hidden="true"></span>Skills, plugins and hooks</li>
+        </ul>
+      </div>
+      <div class="ledger__rule" aria-hidden="true"><span></span></div>
+      <div class="ledger__half ledger__half--agent">
+        <div class="ledger__key">
+          <h3 class="ledger__title">The agent’s side, below it</h3>
+          <p class="ledger__how">Its updates are pointed tags, lettered A, B, C.</p>
+        </div>
+        <ul class="ledger__list" role="list">
+          <li><span class="tag tag--sm" aria-hidden="true"></span>Version updates</li>
+          <li><span class="tag tag--sm" aria-hidden="true"></span>Which model was actually served</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="answers">
+      <h3 class="title">Five answers, the same on every screen</h3>
+      <table class="answers__table">
+        <thead><tr><th scope="col">Mark</th><th scope="col">You see</th><th scope="col">It means</th></tr></thead>
+        <tbody>
+          <tr><td><span class="answers__mark"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="3" width="2" height="2"/><rect x="2" y="8" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="10" y="8" width="2" height="2"/><rect x="14" y="8" width="2" height="2"/><rect x="8" y="14" width="2" height="2"/></svg><span class="sr-only">Dashed rule, two specks</span></span></td><th scope="row"><span class="chip chip--insufficient">Too early to tell</span></th><td>Not enough data in both windows to compare yet. It says what it can already rule out, and what is missing.</td></tr>
+          <tr><td><span class="answers__mark"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/></svg><span class="sr-only">Bare rule</span></span></td><th scope="row"><span class="chip chip--none">No detectable change</span></th><td>It compared, and changes bigger than the stated size would have shown.</td></tr>
+          <tr><td><span class="answers__mark"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="6"/><rect x="1" y="8" width="16" height="2"/><path d="M9 11 L14 18 L4 18 Z"/></svg><span class="sr-only">Square above, triangle below</span></span></td><th scope="row"><span class="chip chip--unclear">Can’t tell which</span></th><td>Your numbers moved, but it can’t say which side. It gives the reason.</td></tr>
+          <tr><td><span class="answers__mark"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="6"/><rect x="1" y="8" width="16" height="2"/></svg><span class="sr-only">Square above the rule</span></span></td><th scope="row"><span class="chip chip--you">Your side</span></th><td>Your numbers moved around the time of a change you made, and nothing recorded on the agent’s side explains it.</td></tr>
+          <tr><td><span class="answers__mark"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/><path d="M9 11 L14 18 L4 18 Z"/></svg><span class="sr-only">Triangle below the rule</span></span></td><th scope="row"><span class="chip chip--agent">Agent side</span></th><td>Nothing recorded changed on your side, and the agent’s side did: a different model served, or an update that shows in several projects.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="peak ground-ink" id="case" aria-labelledby="peak-h">
+  <div class="wrap peak__intro">
+    <h2 class="display" id="peak-h">The answer goes on its side of the line.</h2>
+    <p class="deck">Three cases from <code>wasitme demo</code>, run through the real engine. Each one is filed day by day: tool errors per day on the line, your changes above it, Claude Code’s updates below it. Then the finding lands where the evidence puts it.</p>
+  </div>
+  <div class="peak__track" id="peak-track">
+    <div class="peak__stage" id="peak-stage">
+      <div class="peak__tabs" id="peak-tabs" role="group" aria-label="Demo cases" hidden>
+        <button type="button" class="peak__tab peak__tab--you" data-go="0" aria-pressed="true"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="6"/><rect x="1" y="8" width="16" height="2"/></svg><span>Your side</span></button>
+        <button type="button" class="peak__tab peak__tab--agent" data-go="1" aria-pressed="false"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/><path d="M9 11 L14 18 L4 18 Z"/></svg><span>Agent side</span></button>
+        <button type="button" class="peak__tab peak__tab--insufficient" data-go="2" aria-pressed="false"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="3" width="2" height="2"/><rect x="2" y="8" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="10" y="8" width="2" height="2"/><rect x="14" y="8" width="2" height="2"/><rect x="8" y="14" width="2" height="2"/></svg><span>Too early to tell</span></button>
+      </div>
+      <div class="peak__cases" id="peak-cases">
+
+    <figure class="case case--you" id="case-you" data-case="you" data-days="28" aria-labelledby="case-you-h">
+      <div class="case__zone case__zone--before"></div>
+      <div class="case__zone case__zone--above">
+      <div class="finding finding--you">
+        <p class="chip chip--you"><svg class="glyph" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="5" y="0" width="6" height="6"/><rect x="1" y="7" width="14" height="2"/></svg><span>Your side</span></p>
+        <h3 class="finding__head" id="case-you-h">Your side changed.</h3>
+        <p class="finding__deck">Your numbers moved around the time of your effort change (Sep 21).</p>
+      </div></div>
+      <div class="case__plot">
+        <p class="case__side case__side--you">Your side</p>
+        <ol class="row row--marks row--you" aria-hidden="true"><li class="mark mark--you c-16 is-filled is-cand" data-day="16"><span class="sticker">1</span><span class="mark__label">effort</span></li><li class="mark mark--you c-22 is-filled" data-day="22"><span class="sticker">2</span><span class="mark__label">MCP</span></li></ol>
+        <div class="row row--bars k-max-33" role="img" aria-label="Tool errors per day, Sep 6 to Oct 3: 391 errors in 5,881 tool calls; 7 changes marked" aria-describedby="case-you-days" data-dates="Sep 6,Sep 7,Sep 8,Sep 9,Sep 10,Sep 11,Sep 12,Sep 13,Sep 14,Sep 15,Sep 16,Sep 17,Sep 18,Sep 19,Sep 20,Sep 21,Sep 22,Sep 23,Sep 24,Sep 25,Sep 26,Sep 27,Sep 28,Sep 29,Sep 30,Oct 1,Oct 2,Oct 3"><span class="day k-8 c-1"></span><span class="day k-5 c-2"></span><span class="day k-11 c-3"></span><span class="day k-7 c-4"></span><span class="day k-6 c-5"></span><span class="day k-9 c-6"></span><span class="day k-4 c-7"></span><span class="day k-0 day--narrow c-8"></span><span class="day k-7 c-9"></span><span class="day k-10 c-10"></span><span class="day k-8 c-11"></span><span class="day k-6 c-12"></span><span class="day k-9 c-13"></span><span class="day k-5 c-14"></span><span class="day k-7 c-15"></span><span class="day k-19 c-16"></span><span class="day k-24 c-17"></span><span class="day k-22 c-18"></span><span class="day k-18 c-19"></span><span class="day k-15 c-20"></span><span class="day k-26 c-21"></span><span class="day k-21 c-22"></span><span class="day k-6 day--narrow c-23"></span><span class="day k-23 c-24"></span><span class="day k-25 c-25"></span><span class="day k-27 c-26"></span><span class="day k-30 c-27"></span><span class="day k-33 c-28"></span><span class="conn conn--solid conn--you c-16" data-day="16"></span><span class="conn conn--dotted conn--you c-22" data-day="22"></span><span class="cursor" aria-hidden="true"><span class="cursor__date"></span></span></div>
+        <div class="row row--rule" aria-hidden="true"><span class="rule"></span></div>
+        <p class="case__side case__side--agent">Claude Code</p>
+        <ol class="row row--marks row--agent" aria-hidden="true"><li class="mark mark--agent c-7" data-day="7"><span class="tag">C</span><span class="mark__label">2.1.266</span></li><li class="mark mark--agent c-10" data-day="10"><span class="tag">D</span><span class="mark__label">2.1.270</span></li><li class="mark mark--agent c-13" data-day="13"><span class="tag">E</span><span class="mark__label">2.1.274</span></li><li class="mark mark--agent c-19" data-day="19"><span class="tag">F</span><span class="mark__label">2.1.277</span></li><li class="mark mark--agent c-26" data-day="26"><span class="tag">G</span><span class="mark__label">2.1.281</span></li></ol>
+        <div class="row row--axis" aria-hidden="true"><span class="c-1">Sep 6</span><span class="c-8">Sep 13</span><span class="c-15">Sep 20</span><span class="c-22">Sep 27</span><span class="c-28">Oct 3</span></div>
+        <div class="row row--windows" aria-hidden="true"><span class="win win--before">before: last 14 of 28 days shown</span><span class="win win--recent">recent, 14 days</span></div>
+      </div>
+      <div class="case__zone case__zone--below"></div>
+      <ul class="sr-only" role="list" id="case-you-days"><li>Sep 6: 8 errors in 231 tool calls</li><li>Sep 7: 5 errors in 160 tool calls</li><li>Sep 8: 11 errors in 290 tool calls</li><li>Sep 9: 7 errors in 214 tool calls</li><li>Sep 10: 6 errors in 188 tool calls</li><li>Sep 11: 9 errors in 247 tool calls</li><li>Sep 12: 4 errors in 121 tool calls; Claude Code update C: Claude Code 2.1.262 → 2.1.266</li><li>Sep 13: 0 errors in 38 tool calls</li><li>Sep 14: 7 errors in 205 tool calls</li><li>Sep 15: 10 errors in 262 tool calls; Claude Code update D: Claude Code 2.1.266 → 2.1.270</li><li>Sep 16: 8 errors in 230 tool calls</li><li>Sep 17: 6 errors in 176 tool calls</li><li>Sep 18: 9 errors in 219 tool calls; Claude Code update E: Claude Code 2.1.270 → 2.1.274</li><li>Sep 19: 5 errors in 150 tool calls</li><li>Sep 20: 7 errors in 201 tool calls</li><li>Sep 21: 19 errors in 224 tool calls; your change 1: Effort high → medium, lines up with the shift</li><li>Sep 22: 24 errors in 251 tool calls</li><li>Sep 23: 22 errors in 230 tool calls</li><li>Sep 24: 18 errors in 196 tool calls; Claude Code update F: Claude Code 2.1.274 → 2.1.277</li><li>Sep 25: 15 errors in 171 tool calls</li><li>Sep 26: 26 errors in 262 tool calls</li><li>Sep 27: 21 errors in 228 tool calls; your change 2: MCP server added</li><li>Sep 28: 6 errors in 64 tool calls</li><li>Sep 29: 23 errors in 244 tool calls</li><li>Sep 30: 25 errors in 259 tool calls</li><li>Oct 1: 27 errors in 276 tool calls; Claude Code update G: Claude Code 2.1.277 → 2.1.281</li><li>Oct 2: 30 errors in 296 tool calls</li><li>Oct 3: 33 errors in 248 tool calls</li></ul>
+      <figcaption class="case__cap"><span class="mono">×2.69, range ×1.67 to ×4.34; changes under ×2 wouldn’t show</span> <span class="case__demo">Demo data from <code>wasitme demo --case you</code>, drawn from the snapshot it prints.</span> <span class="case__conf">Based on 1,057 exchanges over 83 session-days (22 sessions) on this Mac. Sessions on other machines aren't visible.</span></figcaption>
+    </figure>
+
+    <figure class="case case--agent" id="case-agent" data-case="agent" data-days="28" aria-labelledby="case-agent-h">
+      <div class="case__zone case__zone--before"></div>
+      <div class="case__zone case__zone--above"></div>
+      <div class="case__plot">
+        <p class="case__side case__side--you">Your side</p>
+        <ol class="row row--marks row--you" aria-hidden="true"><li class="row__note">No recorded change on your side in the recent window.</li></ol>
+        <div class="row row--bars k-max-30" role="img" aria-label="Tool errors per day, Sep 6 to Oct 3: 375 errors in 5,943 tool calls; 4 changes marked" aria-describedby="case-agent-days" data-dates="Sep 6,Sep 7,Sep 8,Sep 9,Sep 10,Sep 11,Sep 12,Sep 13,Sep 14,Sep 15,Sep 16,Sep 17,Sep 18,Sep 19,Sep 20,Sep 21,Sep 22,Sep 23,Sep 24,Sep 25,Sep 26,Sep 27,Sep 28,Sep 29,Sep 30,Oct 1,Oct 2,Oct 3"><span class="day k-7 c-1"></span><span class="day k-7 c-2"></span><span class="day k-8 c-3"></span><span class="day k-7 c-4"></span><span class="day k-8 c-5"></span><span class="day k-6 c-6"></span><span class="day day--none c-7"></span><span class="day k-8 c-8"></span><span class="day k-9 c-9"></span><span class="day k-8 c-10"></span><span class="day k-7 c-11"></span><span class="day k-8 c-12"></span><span class="day k-9 c-13"></span><span class="day k-9 c-14"></span><span class="day k-7 c-15"></span><span class="day k-10 c-16"></span><span class="day k-8 c-17"></span><span class="day k-26 c-18"></span><span class="day k-19 c-19"></span><span class="day k-24 c-20"></span><span class="day k-28 c-21"></span><span class="day k-6 day--narrow c-22"></span><span class="day k-22 c-23"></span><span class="day k-30 c-24"></span><span class="day k-25 c-25"></span><span class="day k-23 c-26"></span><span class="day k-23 c-27"></span><span class="day k-23 c-28"></span><span class="conn conn--solid conn--agent c-18" data-day="18"></span><span class="cursor" aria-hidden="true"><span class="cursor__date"></span></span></div>
+        <div class="row row--rule" aria-hidden="true"><span class="rule"></span></div>
+        <p class="case__side case__side--agent">Claude Code</p>
+        <ol class="row row--marks row--agent" aria-hidden="true"><li class="mark mark--agent c-7" data-day="7"><span class="tag">C</span><span class="mark__label">2.1.266</span></li><li class="mark mark--agent c-13" data-day="13"><span class="tag">D</span><span class="mark__label">2.1.274</span></li><li class="mark mark--agent c-18 is-filled is-cand" data-day="18"><span class="tag">E</span><span class="mark__label">2.1.277</span></li><li class="mark mark--agent c-25" data-day="25"><span class="tag">F</span><span class="mark__label">2.1.281</span></li></ol>
+        <div class="row row--axis" aria-hidden="true"><span class="c-1">Sep 6</span><span class="c-8">Sep 13</span><span class="c-15">Sep 20</span><span class="c-22">Sep 27</span><span class="c-28">Oct 3</span></div>
+        <div class="row row--windows" aria-hidden="true"><span class="win win--before">before: last 14 of 28 days shown</span><span class="win win--recent">recent, 14 days</span></div>
+      </div>
+      <div class="case__zone case__zone--below">
+      <div class="finding finding--agent">
+        <p class="chip chip--agent"><svg class="glyph" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="7" width="14" height="2"/><path d="M8 10 L13 16 L3 16 Z"/></svg><span>Agent side</span></p>
+        <h3 class="finding__head" id="case-agent-h">The agent changed.</h3>
+        <p class="finding__deck">Nothing recorded changed on your side; tool errors rose at the 2.1.277 update.</p>
+      </div></div>
+      <ul class="sr-only" role="list" id="case-agent-days"><li>Sep 6: 7 errors in 206 tool calls</li><li>Sep 7: 7 errors in 205 tool calls</li><li>Sep 8: 8 errors in 229 tool calls</li><li>Sep 9: 7 errors in 190 tool calls</li><li>Sep 10: 8 errors in 215 tool calls</li><li>Sep 11: 6 errors in 169 tool calls</li><li>Sep 12: no sessions; Claude Code update C: Claude Code 2.1.262 → 2.1.266</li><li>Sep 13: 8 errors in 225 tool calls</li><li>Sep 14: 9 errors in 252 tool calls</li><li>Sep 15: 8 errors in 242 tool calls</li><li>Sep 16: 7 errors in 186 tool calls</li><li>Sep 17: 8 errors in 222 tool calls</li><li>Sep 18: 9 errors in 256 tool calls; Claude Code update D: Claude Code 2.1.266 → 2.1.274</li><li>Sep 19: 9 errors in 266 tool calls</li><li>Sep 20: 7 errors in 204 tool calls</li><li>Sep 21: 10 errors in 290 tool calls</li><li>Sep 22: 8 errors in 223 tool calls</li><li>Sep 23: 26 errors in 243 tool calls; Claude Code update E: Claude Code 2.1.274 → 2.1.277, lines up with the shift</li><li>Sep 24: 19 errors in 179 tool calls</li><li>Sep 25: 24 errors in 232 tool calls</li><li>Sep 26: 28 errors in 262 tool calls</li><li>Sep 27: 6 errors in 58 tool calls</li><li>Sep 28: 22 errors in 207 tool calls</li><li>Sep 29: 30 errors in 286 tool calls</li><li>Sep 30: 25 errors in 240 tool calls; Claude Code update F: Claude Code 2.1.277 → 2.1.281</li><li>Oct 1: 23 errors in 219 tool calls</li><li>Oct 2: 23 errors in 215 tool calls</li><li>Oct 3: 23 errors in 222 tool calls</li></ul>
+      <figcaption class="case__cap"><span class="mono">×2.52, range ×1.57 to ×4.07; changes under ×2 wouldn’t show</span> <span class="case__demo">Demo data from <code>wasitme demo --case agent</code>, drawn from the snapshot it prints.</span> <span class="case__conf">Based on 1,195 exchanges over 87 session-days (24 sessions) on this Mac. Sessions on other machines aren't visible.</span></figcaption>
+    </figure>
+
+    <figure class="case case--insufficient" id="case-insufficient" data-case="insufficient" data-days="28" aria-labelledby="case-insufficient-h">
+      <div class="case__zone case__zone--before">
+      <div class="finding finding--insufficient">
+        <p class="chip chip--insufficient"><svg class="glyph" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="7" y="2" width="2" height="2"/><rect x="1" y="7" width="2" height="2"/><rect x="5" y="7" width="2" height="2"/><rect x="9" y="7" width="2" height="2"/><rect x="13" y="7" width="2" height="2"/><rect x="7" y="12" width="2" height="2"/></svg><span>Too early to tell</span></p>
+        <h3 class="finding__head" id="case-insufficient-h">Too early to tell.</h3>
+        <p class="finding__deck">wasitme can already rule out changes bigger than about ×2.5 in tool errors.</p>
+      </div></div>
+      <div class="case__zone case__zone--above"></div>
+      <div class="case__plot">
+        <p class="case__side case__side--you">Your side</p>
+        <ol class="row row--marks row--you" aria-hidden="true"><li class="mark mark--you c-16 is-filled" data-day="16"><span class="sticker">1</span><span class="mark__label">effort</span></li><li class="mark mark--you c-22 is-filled" data-day="22"><span class="sticker">2</span><span class="mark__label">MCP</span></li></ol>
+        <div class="row row--bars k-max-10" role="img" aria-label="Tool errors per day, Sep 6 to Oct 3: 191 errors in 6,161 tool calls; 7 changes marked" aria-describedby="case-insufficient-days" data-dates="Sep 6,Sep 7,Sep 8,Sep 9,Sep 10,Sep 11,Sep 12,Sep 13,Sep 14,Sep 15,Sep 16,Sep 17,Sep 18,Sep 19,Sep 20,Sep 21,Sep 22,Sep 23,Sep 24,Sep 25,Sep 26,Sep 27,Sep 28,Sep 29,Sep 30,Oct 1,Oct 2,Oct 3"><span class="day k-2 day--narrow c-1"></span><span class="day k-8 c-2"></span><span class="day k-9 c-3"></span><span class="day k-9 c-4"></span><span class="day k-9 c-5"></span><span class="day k-10 c-6"></span><span class="day day--none c-7"></span><span class="day k-2 day--narrow c-8"></span><span class="day k-9 c-9"></span><span class="day k-9 c-10"></span><span class="day k-10 c-11"></span><span class="day k-9 c-12"></span><span class="day k-7 c-13"></span><span class="day k-10 c-14"></span><span class="day k-7 c-15"></span><span class="day k-2 day--narrow c-16"></span><span class="day k-8 c-17"></span><span class="day k-6 c-18"></span><span class="day k-7 c-19"></span><span class="day k-8 c-20"></span><span class="day k-8 c-21"></span><span class="day k-2 day--narrow c-22"></span><span class="day day--none c-23"></span><span class="day k-8 c-24"></span><span class="day k-9 c-25"></span><span class="day k-9 c-26"></span><span class="day k-7 c-27"></span><span class="day k-7 c-28"></span><span class="conn conn--dotted conn--you c-16" data-day="16"></span><span class="conn conn--dotted conn--you c-22" data-day="22"></span><span class="cursor" aria-hidden="true"><span class="cursor__date"></span></span></div>
+        <div class="row row--rule is-dashed" aria-hidden="true"><span class="rule"></span></div>
+        <p class="case__side case__side--agent">Claude Code</p>
+        <ol class="row row--marks row--agent" aria-hidden="true"><li class="mark mark--agent c-7" data-day="7"><span class="tag">C</span><span class="mark__label">2.1.266</span></li><li class="mark mark--agent c-10" data-day="10"><span class="tag">D</span><span class="mark__label">2.1.270</span></li><li class="mark mark--agent c-13" data-day="13"><span class="tag">E</span><span class="mark__label">2.1.274</span></li><li class="mark mark--agent c-19" data-day="19"><span class="tag">F</span><span class="mark__label">2.1.277</span></li><li class="mark mark--agent c-26" data-day="26"><span class="tag">G</span><span class="mark__label">2.1.281</span></li></ol>
+        <div class="row row--axis" aria-hidden="true"><span class="c-1">Sep 6</span><span class="c-8">Sep 13</span><span class="c-15">Sep 20</span><span class="c-22">Sep 27</span><span class="c-28">Oct 3</span></div>
+        <div class="row row--windows" aria-hidden="true"><span class="win win--before">before: last 14 of 28 days shown</span><span class="win win--recent">recent, 14 days</span></div>
+      </div>
+      <div class="case__zone case__zone--below"></div>
+      <ul class="sr-only" role="list" id="case-insufficient-days"><li>Sep 6: 2 errors in 64 tool calls</li><li>Sep 7: 8 errors in 227 tool calls</li><li>Sep 8: 9 errors in 238 tool calls</li><li>Sep 9: 9 errors in 237 tool calls</li><li>Sep 10: 9 errors in 258 tool calls</li><li>Sep 11: 10 errors in 274 tool calls</li><li>Sep 12: no sessions; Claude Code update C: Claude Code 2.1.262 → 2.1.266</li><li>Sep 13: 2 errors in 64 tool calls</li><li>Sep 14: 9 errors in 242 tool calls</li><li>Sep 15: 9 errors in 253 tool calls; Claude Code update D: Claude Code 2.1.266 → 2.1.270</li><li>Sep 16: 10 errors in 277 tool calls</li><li>Sep 17: 9 errors in 243 tool calls</li><li>Sep 18: 7 errors in 208 tool calls; Claude Code update E: Claude Code 2.1.270 → 2.1.274</li><li>Sep 19: 10 errors in 286 tool calls</li><li>Sep 20: 7 errors in 266 tool calls</li><li>Sep 21: 2 errors in 77 tool calls; your change 1: Effort high → medium</li><li>Sep 22: 8 errors in 286 tool calls</li><li>Sep 23: 6 errors in 235 tool calls</li><li>Sep 24: 7 errors in 247 tool calls; Claude Code update F: Claude Code 2.1.274 → 2.1.277</li><li>Sep 25: 8 errors in 288 tool calls</li><li>Sep 26: 8 errors in 320 tool calls</li><li>Sep 27: 2 errors in 77 tool calls; your change 2: MCP server added</li><li>Sep 28: no sessions</li><li>Sep 29: 8 errors in 308 tool calls</li><li>Sep 30: 9 errors in 326 tool calls</li><li>Oct 1: 9 errors in 323 tool calls; Claude Code update G: Claude Code 2.1.277 → 2.1.281</li><li>Oct 2: 7 errors in 271 tool calls</li><li>Oct 3: 7 errors in 266 tool calls</li></ul>
+      <figcaption class="case__cap"><span class="mono">×0.75, range ×0.40 to ×1.41; changes under ×2.5 wouldn’t show</span> <span class="case__demo">Demo data from <code>wasitme demo --case insufficient</code>, drawn from the snapshot it prints.</span> <span class="case__conf">Based on 734 exchanges over 66 session-days (16 sessions) on this Mac. Sessions on other machines aren't visible.</span></figcaption>
+    </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="early ground-paper" id="early" aria-labelledby="early-h">
+  <div class="wrap early__grid">
+    <div class="early__text">
+      <h2 class="display early__head" id="early-h">Too early to tell.</h2>
+      <p class="early__rule" aria-hidden="true"><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="3" width="2" height="2"/><rect x="2" y="8" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="10" y="8" width="2" height="2"/><rect x="14" y="8" width="2" height="2"/><rect x="8" y="14" width="2" height="2"/></svg><span></span></p>
+      <p class="deck">It is a common answer, and it is on purpose.</p>
+      <p>One person’s logs rarely hold enough data to separate a real change from noise, and wasitme would rather say so than invent a cause. A comparison needs your last 14 days against the 28 before them, and enough events, session-days and sessions in each.</p>
+      <p>Until then it tells you what it can already rule out, and counts what is still missing, as in “31 of 40 edits”. It doesn’t predict a date. The timeline works from day one.</p>
+    </div>
+    <figure class="early__shot">
+      <div class="shot">
+        <picture><source type="image/avif" media="(prefers-color-scheme: dark)" srcset="assets/img/cc-insufficient-dark-800.avif 800w, assets/img/cc-insufficient-dark-1280.avif 1280w, assets/img/cc-insufficient-dark-2000.avif 2000w" sizes="(min-width: 901px) 62vw, 92vw"><source type="image/webp" media="(prefers-color-scheme: dark)" srcset="assets/img/cc-insufficient-dark-800.webp 800w, assets/img/cc-insufficient-dark-1280.webp 1280w, assets/img/cc-insufficient-dark-2000.webp 2000w" sizes="(min-width: 901px) 62vw, 92vw"><source type="image/avif" srcset="assets/img/cc-insufficient-light-800.avif 800w, assets/img/cc-insufficient-light-1280.avif 1280w, assets/img/cc-insufficient-light-2000.avif 2000w" sizes="(min-width: 901px) 62vw, 92vw"><source type="image/webp" srcset="assets/img/cc-insufficient-light-800.webp 800w, assets/img/cc-insufficient-light-1280.webp 1280w, assets/img/cc-insufficient-light-2000.webp 2000w" sizes="(min-width: 901px) 62vw, 92vw"><img src="assets/img/cc-insufficient-light-1280.jpg" width="2000" height="1250" alt="The Control Center's Finding page on demo data: Too early to tell. wasitme can already rule out changes bigger than about ×2.5 in tool errors. Tool errors per day with your two changes above the dashed line and Claude Code's updates below it, then Next to unlock: reads per edit, 31 of 40 edits." loading="lazy" decoding="async"></picture>
+      </div>
+      <figcaption>The Control Center on <code>wasitme demo</code>. Demo data, not anyone’s logs.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="surfaces ground-ink" id="surfaces" aria-labelledby="surfaces-h">
+  <div class="wrap">
+    <div class="surfaces__head">
+      <h2 class="display" id="surfaces-h">Wherever you look.</h2>
+      <p class="deck">The same finding on the same line, on every surface. Everything here is the real Mac app or the real command line running on demo data, not a drawing of it.</p>
+    </div>
+    <ul class="index" role="list">
+      <li class="index__item index__item--cc">
+        <div class="index__text">
+          <h3 class="index__t">Control Center</h3>
+          <p>One window with seven pages: Timeline, Finding, Compare, Setup, Report, Sources and Settings.</p>
+        </div>
+        <div class="stack">
+          <figure class="stack__win stack__win--back" data-depth="0.05">
+            <div class="native"><picture><source type="image/avif" srcset="assets/img/win-agent-dark-800.avif 800w, assets/img/win-agent-dark-1280.avif 1280w, assets/img/win-agent-dark-1800.avif 1800w" sizes="(min-width: 1240px) 760px, (min-width: 901px) 62vw, 92vw"><source type="image/webp" srcset="assets/img/win-agent-dark-800.webp 800w, assets/img/win-agent-dark-1280.webp 1280w, assets/img/win-agent-dark-1800.webp 1800w" sizes="(min-width: 1240px) 760px, (min-width: 901px) 62vw, 92vw"><img src="assets/img/win-agent-dark-1280.jpg" width="1800" height="1198" alt="The Mac app's Control Center window in dark mode on demo data: The agent changed. Nothing recorded changed on your side; tool errors rose at the 2.1.277 update. A filled blue tag E marks the update that lines up with the shift." loading="lazy" decoding="async"></picture></div>
+            <figcaption>Agent side, in dark mode. The filled tag E lines up with the shift.</figcaption>
+          </figure>
+          <figure class="stack__win stack__win--front" data-depth="-0.04">
+            <div class="native"><picture><source type="image/avif" srcset="assets/img/win-you-light-800.avif 800w, assets/img/win-you-light-1280.avif 1280w, assets/img/win-you-light-1800.avif 1800w" sizes="(min-width: 1240px) 760px, (min-width: 901px) 62vw, 92vw"><source type="image/webp" srcset="assets/img/win-you-light-800.webp 800w, assets/img/win-you-light-1280.webp 1280w, assets/img/win-you-light-1800.webp 1800w" sizes="(min-width: 1240px) 760px, (min-width: 901px) 62vw, 92vw"><img src="assets/img/win-you-light-1280.jpg" width="1800" height="1198" alt="The Mac app's Control Center window in light mode on demo data: Your side changed. Your numbers moved around the time of your effort change on Sep 21, marked by yellow sticker 1 above the line." loading="lazy" decoding="async"></picture></div>
+            <figcaption>Your side. Sticker 1 is the effort change on Sep 21.</figcaption>
+          </figure>
+        </div>
+      </li>
+      <li class="index__item index__item--menubar">
+        <div class="index__text">
+          <h3 class="index__t">Menu bar</h3>
+          <p>The mark for the current state, with “+n” when new changes land on the timeline. Click it for the popover.</p>
+          <ul class="glyphs" role="list" aria-label="The menu bar marks">
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="8" y="3" width="2" height="2"/><rect x="2" y="8" width="2" height="2"/><rect x="6" y="8" width="2" height="2"/><rect x="10" y="8" width="2" height="2"/><rect x="14" y="8" width="2" height="2"/><rect x="8" y="14" width="2" height="2"/></svg><span>Too early to tell</span></li>
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/></svg><span>No detectable change</span></li>
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="6"/><rect x="1" y="8" width="16" height="2"/><path d="M9 11 L14 18 L4 18 Z"/></svg><span>Can’t tell which</span></li>
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="6" y="1" width="6" height="6"/><rect x="1" y="8" width="16" height="2"/></svg><span>Your side</span></li>
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/><path d="M9 11 L14 18 L4 18 Z"/></svg><span>Agent side</span></li>
+          <li><svg class="glyph glyph--18" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><rect x="1" y="8" width="16" height="2"/><path d="M4 17.5 L14 0.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>Out of date</span></li>
+        </ul>
+        </div>
+        <figure class="index__fig index__fig--pop">
+          <picture><source type="image/avif" media="(prefers-color-scheme: dark)" srcset="assets/img/popover-you-dark-352.avif 352w, assets/img/popover-you-dark-704.avif 704w" sizes="320px"><source type="image/webp" media="(prefers-color-scheme: dark)" srcset="assets/img/popover-you-dark-352.webp 352w, assets/img/popover-you-dark-704.webp 704w" sizes="320px"><source type="image/avif" srcset="assets/img/popover-you-light-352.avif 352w, assets/img/popover-you-light-704.avif 704w" sizes="320px"><source type="image/webp" srcset="assets/img/popover-you-light-352.webp 352w, assets/img/popover-you-light-704.webp 704w" sizes="320px"><img src="assets/img/popover-you-light-704.jpg" width="704" height="960" alt="The menu bar popover on demo data: Your side changed, a 14-day strip with stickers 1 and 2, and three indicators with their ranges." loading="lazy" decoding="async"></picture>
+          <figcaption>The menu bar popover. Demo data.</figcaption>
+        </figure>
+      </li>
+      <li class="index__item">
+        <div class="index__text">
+          <h3 class="index__t">Desktop panel</h3>
+          <p>A small panel that stays on your desktop: the mark, the state and the latest change.</p>
+        </div>
+        <figure class="index__fig index__fig--panel">
+          <picture><source type="image/avif" media="(prefers-color-scheme: dark)" srcset="assets/img/panel-you-dark-360.avif 360w, assets/img/panel-you-dark-720.avif 720w" sizes="360px"><source type="image/webp" media="(prefers-color-scheme: dark)" srcset="assets/img/panel-you-dark-360.webp 360w, assets/img/panel-you-dark-720.webp 720w" sizes="360px"><source type="image/avif" srcset="assets/img/panel-you-light-360.avif 360w, assets/img/panel-you-light-720.avif 720w" sizes="360px"><source type="image/webp" srcset="assets/img/panel-you-light-360.webp 360w, assets/img/panel-you-light-720.webp 720w" sizes="360px"><img src="assets/img/panel-you-light-720.jpg" width="720" height="340" alt="The medium desktop panel on demo data: Your side, with a 14-day strip of tool errors, stickers 1 and 2 above the line and tags B and C below it." loading="lazy" decoding="async"></picture>
+          <figcaption>Demo data</figcaption>
+        </figure>
+      </li>
+      <li class="index__item">
+        <div class="index__text">
+          <h3 class="index__t">Claude Code</h3>
+          <p><code>/wasitme</code> opens a pane. A status line shows the state and nothing else, and <code>/wasitme:report</code> prints the numbers-only report into the conversation.</p>
+        </div>
+        <p class="index__line" aria-label="Example status line, from the demo"><code>wasitme: your side</code></p>
+      </li>
+      <li class="index__item">
+        <div class="index__text">
+          <h3 class="index__t">Codex</h3>
+          <p>A skill: <code>$wasitme:report</code> prints the same report inside Codex. No hooks.</p>
+        </div>
+      </li>
+      <li class="index__item index__item--cli" id="terminal">
+        <div class="index__text">
+          <h3 class="index__t">Command line</h3>
+          <p><code>wasitme</code> for the findings, <code>wasitme status</code> for one line, <code>wasitme report</code> for a shareable report in Markdown or HTML, <code>wasitme demo</code> to see it all on sample data.</p>
+          <p>It draws the case line in text: your changes numbered above it, the agent’s lettered below, the daily counts under the days.</p>
+        </div>
+        <figure class="term__frame">
+          <div class="term__bar" aria-hidden="true"><span class="term__dots"><i></i><i></i><i></i></span><span class="term__title">wasitme demo</span></div>
+          <div class="term__scroll" tabindex="0" role="region" aria-label="Terminal output of wasitme demo, 100 columns">
+<pre class="term__pre"><span class="term__prompt" aria-hidden="true">% </span><span class="term__cmd">wasitme demo --case you --lead timeline</span>
+wasit<span class="t-u">me</span>                                                           <span class="t-muted">Claude Code   checked Oct 4, 14:14</span>
+<span class="t-rule">════════════════════════════════════════════════════════════════════════════════════════════════════</span>
+<span class="t-b">DEMO</span>            <span class="t-muted">analytic demo data run through the engine; not your logs</span>
+<span class="t-b">What changed</span>    <span class="t-muted">yours numbered above the line, Claude Code's lettered below</span>
+<span class="t-muted">your side</span>                                       <span class="t-you"> 1 </span>                     <span class="t-you"> 2 </span>
+                <span class="t-rule">┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄</span>
+<span class="t-muted">Claude Code</span>             <span class="t-agent"> D </span>         <span class="t-agent"> E </span>                     <span class="t-agent"> F </span>                         <span class="t-agent"> G </span>
+                <span class="t-muted">Sep 13</span>                      <span class="t-muted">Sep 20</span>                      <span class="t-muted">Sep 27</span>                <span class="t-muted">Oct 3</span>
+<span class="t-muted">errors</span>            0   7  10   8   6   9   5   7  19  24  22  18  15  26  21   6  23  25  27  30  33
+<span class="t-muted">tool calls</span>       <span class="t-muted">38</span> <span class="t-muted">205</span> <span class="t-muted">262</span> <span class="t-muted">230</span> <span class="t-muted">176</span> <span class="t-muted">219</span> <span class="t-muted">150</span> <span class="t-muted">201</span> <span class="t-muted">224</span> <span class="t-muted">251</span> <span class="t-muted">230</span> <span class="t-muted">196</span> <span class="t-muted">171</span> <span class="t-muted">262</span> <span class="t-muted">228</span>  <span class="t-muted">64</span> <span class="t-muted">244</span> <span class="t-muted">259</span> <span class="t-muted">276</span> <span class="t-muted">296</span> <span class="t-muted">248</span>
+                <span class="t-muted">└───────── before ─────────┘└────────────────── recent, 14 days ───────────────────┘</span>
+
+                <span class="t-agent"> D </span> <span class="t-muted">Sep 15</span>   Claude Code 2.1.266 → 2.1.270               <span class="t-muted">agent side · routine update</span>
+                <span class="t-agent"> E </span> <span class="t-muted">Sep 18</span>   Claude Code 2.1.270 → 2.1.274               <span class="t-muted">agent side · routine update</span>
+                <span class="t-you"> 1 </span> <span class="t-muted">Sep 21</span>   Effort high → medium                <span class="t-muted">your side · lines up with the shift</span>
+                <span class="t-agent"> F </span> <span class="t-muted">Sep 24</span>   Claude Code 2.1.274 → 2.1.277               <span class="t-muted">agent side · routine update</span>
+                <span class="t-you"> 2 </span> <span class="t-muted">Sep 27</span>   MCP server added                                              <span class="t-muted">your side</span>
+                <span class="t-agent"> G </span> <span class="t-muted">Oct 1</span>    Claude Code 2.1.277 → 2.1.281               <span class="t-muted">agent side · routine update</span>
+                <span class="t-muted">Routine updates alone aren't evidence.</span>
+
+<span class="t-b">Finding</span>         ■── <span class="t-you"> Your side </span>
+                Your numbers moved around the time of your effort change (Sep 21).
+                <span class="t-muted">Tool errors (×2.7) and edits without reading first (×1.8) rose and reads per edit</span>
+                <span class="t-muted">(×0.53) fell; nothing recorded changed on Claude Code's side in the same window.</span>
+                <span class="t-muted">Based on 1,057 exchanges over 83 session-days (22 sessions) on this Mac.</span>
+                <span class="t-muted">Sessions on other machines aren't visible.</span>
+                <span class="t-muted">These indicators don't measure answer quality. Evidence, not proof.</span>
+
+<span class="t-b">Signals</span>                <span class="t-muted">recent</span>       <span class="t-muted">before</span>   <span class="t-muted">change  range</span>         <span class="t-muted">×0.5</span> <span class="t-muted">×1</span>  <span class="t-muted">×2</span>  <span class="t-muted">×4</span>      <span class="t-muted">status</span>
+<span class="t-rule">────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+Tool errors       296 / 3,150  193 / 5,528   ×2.69  ×1.67–×4.34      ░░░░│░░├──●─┤      moved, more
+Reads per edit    1,240 / 400  4,830 / 820   ×0.53  ×0.40–×0.70     ├●─┤░│░░            moved, fewer
+Edits without        71 / 400     79 / 820   ×1.84  ×1.28–×2.66       ░░░│├──●─┤        moved, more
+reading first
+Interruptions         4 / 402     13 / 655   <span class="t-muted">only 4 in the recent window</span>                <span class="t-muted">context</span>
+                                   <span class="t-muted">○ estimate, not detected  ● moved  ├─┤ range  ░ too small to show</span>
+
+<span class="t-b">Next</span>            To check, set effort back to high.
+<span class="t-b">Share</span>           wasitme report --md | pbcopy   <span class="t-muted">numbers only: no prompts, code or paths</span></pre>
+          </div>
+          <figcaption>The real output of <code>wasitme demo --case you --lead timeline</code>, 100 columns wide. Demo data.<span class="term__hint"> Scroll it sideways to see every column.</span></figcaption>
+        </figure>
+      </li>
+    </ul>
+    <p class="surfaces__os">The menu bar app, desktop panel and Control Center are for macOS. The command line also works on Linux.</p>
+  </div>
+</section>
+
+<section class="decides ground-paper" id="decides" aria-labelledby="decides-h">
+  <div class="wrap">
+    <div class="decides__head">
+      <h2 class="display" id="decides-h">How it decides.</h2>
+      <p class="deck">Plain counts from your own logs, compared carefully. The whole method, every gate and every number behind it, is in <a href="https://github.com/draarivpatel-ui/wasitme/blob/main/docs/METHOD.md">METHOD.md</a>.</p>
+    </div>
+    <ol class="steps" role="list">
+      <li class="step"><span class="step__n" aria-hidden="true">1</span><h3 class="step__t">Two windows</h3><p>Your last 14 days against the 28 before them. Complete local days only: today is left out, because half a day is not a day.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">2</span><h3 class="step__t">Enough in each</h3><p>At least 10 events, 10 session-days and 5 sessions in each window, and no single session supplying half. Short of that, the answer is Too early to tell.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">3</span><h3 class="step__t">Two kinds agree</h3><p>Tool errors, reads per edit and edits without reading first are the indicators that vote. A change counts only when two different kinds move the same way and none moves the other way.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">4</span><h3 class="step__t">Then, both sides</h3><p>It asks what else changed around that time: your model, effort, instruction files and MCP servers above the line, the agent’s versions and served model below it.</p></li>
+      <li class="step"><span class="step__n" aria-hidden="true">5</span><h3 class="step__t">One side, or it says so</h3><p>It names a side only when the recorded evidence points one way. Routine agent updates alone are never enough.</p></li>
+    </ol>
+    <figure class="decides__ledger">
+      <picture><source type="image/avif" media="(prefers-color-scheme: dark)" srcset="assets/img/ledger-you-dark-900.avif 900w, assets/img/ledger-you-dark-1500.avif 1500w, assets/img/ledger-you-dark-2400.avif 2400w" sizes="(min-width: 1240px) 1128px, 92vw"><source type="image/webp" media="(prefers-color-scheme: dark)" srcset="assets/img/ledger-you-dark-900.webp 900w, assets/img/ledger-you-dark-1500.webp 1500w, assets/img/ledger-you-dark-2400.webp 2400w" sizes="(min-width: 1240px) 1128px, 92vw"><source type="image/avif" srcset="assets/img/ledger-you-light-900.avif 900w, assets/img/ledger-you-light-1500.avif 1500w, assets/img/ledger-you-light-2400.avif 2400w" sizes="(min-width: 1240px) 1128px, 92vw"><source type="image/webp" srcset="assets/img/ledger-you-light-900.webp 900w, assets/img/ledger-you-light-1500.webp 1500w, assets/img/ledger-you-light-2400.webp 2400w" sizes="(min-width: 1240px) 1128px, 92vw"><img src="assets/img/ledger-you-light-1500.jpg" width="2400" height="864" alt="The evidence ledger on demo data: tool errors ×2.69 with range ×1.67 to ×4.34, edits without reading first ×1.84, reads per edit ×0.53, each with recent and before counts, a range bar, and a hatched band for changes too small to show." loading="lazy" decoding="async"></picture>
+      <figcaption><span class="demo-label">Demo data</span> Every comparison prints a range: where the true ratio could plausibly be at this volume of data. The hatched band is what is too small to show.</figcaption>
+    </figure>
+    <div class="decides__notes">
+      <p>Interruptions and pushback are shown beside the indicators but never decide. Every finding ends the same way: <em>These indicators don't measure answer quality. Evidence, not proof.</em></p>
+      <p>On synthetic users followed for 90 days with no real change on either side, none of 7,000 saw a false change or a false agent-side finding. Those users are made up: it shows the rules behave as designed, not that real logs behave the same way.</p>
+    </div>
+  </div>
+</section>
+
+<section class="privacy ground-sheet" id="privacy" aria-labelledby="privacy-h">
+  <div class="wrap">
+    <div class="privacy__head">
+      <h2 class="display" id="privacy-h">It reads your logs. It keeps the numbers.</h2>
+      <p class="deck privacy__net"><strong>No network code.</strong> Only the installer downloads, and only when you run it. No account, no telemetry.</p>
+    </div>
+    <div class="form">
+      <div class="form__col">
+        <h3 class="form__label">Reads</h3>
+        <p>Your Claude Code and Codex session logs, read-only. A short list of each agent’s configuration files, turned into counts and hashes. At the start of a Claude Code session, a few fixed-name files in that project, hashed and then dropped.</p>
+      </div>
+      <div class="form__col">
+        <h3 class="form__label">Keeps</h3>
+        <p>Counts, durations, short allow-listed labels such as a version number, and salted hashes. Everything stays in one folder, <code>~/.wasitme</code>, and the history outlives the logs.</p>
+      </div>
+      <div class="form__col">
+        <h3 class="form__label">Never</h3>
+        <p>Never keeps prompt or reply text, tool input or output, code, file paths, project names or secrets. Never opens <code>auth.json</code> or <code>.credentials.json</code>. Never runs a hook, skill, MCP command or setting it finds.</p>
+      </div>
+    </div>
+    <p class="privacy__vendor">One thing to know: anything you run inside Claude Code or Codex, such as <code>/wasitme:report</code>, becomes part of that conversation and is sent to Anthropic or OpenAI like any message. The report holds numbers only: no prompts, code or paths.</p>
+    <p class="privacy__links">Exactly what is read and kept: <a href="https://github.com/draarivpatel-ui/wasitme/blob/main/docs/PRIVACY.md">PRIVACY.md</a>. Threat model and how to report a problem: <a href="https://github.com/draarivpatel-ui/wasitme/blob/main/SECURITY.md">SECURITY.md</a>.</p>
+  </div>
+</section>
+
+<section class="install ground-ink" id="install" aria-labelledby="install-h">
+  <div class="wrap install__grid">
+    <div class="install__text">
+      <h2 class="display" id="install-h">Install.</h2>
+      <p class="deck">One line. It needs Node.js 22 or newer, and it asks before each step.</p>
+    </div>
+    <div class="install__cmds">
+      <div class="cmd">
+        <div class="cmd__bar"><span>In Terminal</span><button class="cmd__copy" type="button" data-copy="cmd-quick" hidden>Copy</button></div>
+        <pre class="cmd__pre"><code id="cmd-quick">curl -fsSL https://github.com/draarivpatel-ui/wasitme/releases/latest/download/install.sh | sh</code></pre>
+      </div>
+      <p class="install__note">The release’s <code>install.sh</code> checks the download against the SHA-256 it carries. That catches a corrupted download, not a compromised source.</p>
+      <h3 class="install__sub">Or read it first</h3>
+      <div class="cmd">
+        <div class="cmd__bar"><span>Download, read, rehearse, install</span><button class="cmd__copy" type="button" data-copy="cmd-careful" hidden>Copy</button></div>
+        <pre class="cmd__pre"><code id="cmd-careful">curl -fsSL -o install.sh https://github.com/draarivpatel-ui/wasitme/releases/latest/download/install.sh
+less install.sh
+sh install.sh --dry-run
+sh install.sh</code></pre>
+      </div>
+      <p class="sr-only" role="status" id="copy-status"></p>
+      <p class="install__note"><code>--dry-run</code> prints every command and file write and changes nothing.</p>
+      <ul class="install__list" role="list">
+        <li>The engine and the <code>wasitme</code> command</li>
+        <li>The menu bar app, built on your Mac from source and signed ad hoc (needs Swift 6 tools)</li>
+        <li>A background scan every 15 minutes</li>
+        <li>The Claude Code plugin, and a status line only if you have none</li>
+        <li>The Codex skill</li>
+      </ul>
+      <p class="install__note">Each part is a separate yes or no. It never uses <code>sudo</code>. To remove it, run <code>sh ~/.wasitme/current/scripts/uninstall.sh</code>; your agent logs are never touched.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="colophon ground-paper">
+  <div class="wrap colophon__grid">
+    <div class="colophon__brand">
+      <p class="colophon__mark"><svg class="wordmark" role="img" aria-label="wasitme" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 203.6 56"><title>wasitme</title><path d="M0.336 15.232H6.24L8.016 35.296H8.496L11.424 15.232H17.664L20.544 35.296H21.024L22.848 15.232H28.464000000000002L25.536 40.0H17.088L14.64 22.912H14.16L11.712 40.0H3.2640000000000002ZM52.176 40.0Q49.968 40.0 48.624 38.872Q47.28 37.744 47.040000000000006 35.632H46.8Q46.128 38.08 44.135999999999996 39.328Q42.144 40.576 39.264 40.576Q35.664 40.576 33.480000000000004 38.632000000000005Q31.296 36.688 31.296 33.184Q31.296 29.296 34.128 27.424Q36.96 25.552 42.432 25.552H46.416V24.304000000000002Q46.416 22.096 45.384 20.968Q44.352000000000004 19.84 41.904 19.84Q39.648 19.84 38.256 20.704Q36.864000000000004 21.567999999999998 35.856 22.96L31.968 19.504Q33.216 17.392 35.879999999999995 16.024Q38.544 14.655999999999999 42.72 14.655999999999999Q47.808 14.655999999999999 50.664 16.984Q53.519999999999996 19.312 53.519999999999996 24.016V34.864H56.256V40.0ZM41.952 35.92Q43.824 35.92 45.12 35.008Q46.416 34.096000000000004 46.416 32.368V29.392H42.624Q38.256 29.392 38.256 32.32V33.28Q38.256 34.576 39.263999999999996 35.248000000000005Q40.272 35.92 41.952 35.92ZM71.712 40.576Q67.584 40.576 64.536 39.328Q61.488 38.08 59.952 35.92L63.936 32.224000000000004Q65.376 33.808 67.32 34.696Q69.264 35.584 71.76 35.584Q73.872 35.584 75.072 34.936Q76.272 34.288 76.272 32.944Q76.272 31.887999999999998 75.456 31.479999999999997Q74.64 31.072 73.2 30.832L69.21600000000001 30.208Q67.536 29.968 66.096 29.464Q64.656 28.96 63.60000000000001 28.096Q62.544000000000004 27.232 61.92 25.983999999999998Q61.296 24.735999999999997 61.296 22.96Q61.296 19.072 64.272 16.863999999999997Q67.248 14.655999999999999 72.624 14.655999999999999Q76.272 14.655999999999999 78.84 15.639999999999999Q81.408 16.624 82.944 18.448L79.392 22.48Q78.288 21.28 76.56 20.464Q74.832 19.648 72.384 19.648Q68.256 19.648 68.256 22.144Q68.256 23.248 69.072 23.656Q69.888 24.064 71.328 24.304000000000002L75.26400000000001 24.927999999999997Q76.944 25.168 78.384 25.672Q79.824 26.176000000000002 80.904 27.04Q81.98400000000001 27.904 82.608 29.152Q83.232 30.4 83.232 32.176Q83.232 36.064 80.232 38.32Q77.232 40.576 71.712 40.576ZM102.33600000000001 12.064Q99.936 12.064 99.0 11.08Q98.06400000000001 10.096 98.06400000000001 8.704V7.311999999999998Q98.06400000000001 5.872 99.0 4.911999999999999Q99.936 3.951999999999998 102.33600000000001 3.951999999999998Q104.736 3.951999999999998 105.672 4.911999999999999Q106.608 5.872 106.608 7.311999999999998V8.704Q106.608 10.096 105.672 11.08Q104.736 12.064 102.33600000000001 12.064ZM90.912 34.48H98.784V20.752H90.912V15.232H105.888V34.48H113.184V40.0H90.912ZM131.52 40.0Q127.68 40.0 125.808 37.984Q123.936 35.968 123.936 32.848V20.752H117.21600000000001V15.232H121.584Q123.168 15.232 123.84 14.607999999999999Q124.512 13.983999999999998 124.512 12.303999999999998V6.496000000000002H131.04V15.232H140.688V20.752H131.04V34.48H140.688V40.0Z" fill="currentColor"/><path d="M145.44 40.0V15.232H151.152V18.88H151.488Q152.064 17.152 153.144 15.904Q154.224 14.655999999999999 156.192 14.655999999999999Q159.792 14.655999999999999 160.608 18.88H160.89600000000002Q161.184 18.016 161.61599999999999 17.247999999999998Q162.048 16.48 162.672 15.904Q163.296 15.328 164.16 14.991999999999999Q165.024 14.655999999999999 166.176 14.655999999999999Q171.36 14.655999999999999 171.36 22.288V40.0H165.648V23.008Q165.648 21.28 165.048 20.584Q164.448 19.887999999999998 163.488 19.887999999999998Q162.576 19.887999999999998 161.928 20.488Q161.28 21.088 161.28 22.336V40.0H155.52V23.008Q155.52 21.28 154.96800000000002 20.584Q154.416 19.887999999999998 153.456 19.887999999999998Q152.496 19.887999999999998 151.824 20.488Q151.152 21.088 151.152 22.336V40.0ZM187.872 40.576Q181.632 40.576 178.416 37.120000000000005Q175.20000000000002 33.664 175.20000000000002 27.712Q175.20000000000002 24.688 176.04000000000002 22.264Q176.88000000000002 19.84 178.44 18.136Q180.0 16.432 182.232 15.543999999999999Q184.464 14.655999999999999 187.24800000000002 14.655999999999999Q190.032 14.655999999999999 192.24 15.543999999999999Q194.448 16.432 195.984 18.064Q197.52 19.695999999999998 198.36 22.024Q199.20000000000002 24.352 199.20000000000002 27.232V29.344H182.256V29.776Q182.256 32.176 183.744 33.64Q185.232 35.104 188.11200000000002 35.104Q190.32000000000002 35.104 191.904 34.263999999999996Q193.488 33.424 194.64000000000001 32.032L198.48000000000002 36.208Q197.04000000000002 37.984 194.44800000000004 39.28Q191.85600000000002 40.576 187.872 40.576ZM187.29600000000002 19.744Q184.99200000000002 19.744 183.62400000000002 21.16Q182.256 22.576 182.256 24.976V25.36H192.24V24.976Q192.24 22.528 190.92000000000002 21.136Q189.60000000000002 19.744 187.29600000000002 19.744Z" fill="currentColor"/><rect x="145" y="47" width="55.6" height="6" class="fill-you"/></svg></p>
+      <p class="colophon__tag">Measure twice, blame once.</p>
+    </div>
+    <nav class="colophon__nav" aria-label="Project">
+      <ul role="list">
+        <li><a href="https://github.com/draarivpatel-ui/wasitme">Source on GitHub</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme/blob/main/README.md">README</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme/blob/main/docs/METHOD.md">Method</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme/blob/main/docs/PRIVACY.md">Privacy</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme/blob/main/SECURITY.md">Security</a></li>
+        <li><a href="https://github.com/draarivpatel-ui/wasitme/blob/main/LICENSE">MIT license</a></li>
+      </ul>
+    </nav>
+    <div class="colophon__small">
+      <p>Demo data from <code>wasitme demo</code>: every product image on this page is a render of synthetic logs run through the real engine, not anyone’s results.</p>
+      <p>Set in IBM Plex Serif and IBM Plex Mono under the <a href="assets/fonts/OFL.txt">SIL Open Font License</a>, subset as Wasitme Serif and Wasitme Mono. This page loads nothing from other servers and sets no cookies.</p>
+      <p>Copyright (c) 2026 Aariv Patel. MIT license.</p>
+      <p>wasitme is an independent project, not affiliated with or endorsed by Anthropic or OpenAI.</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

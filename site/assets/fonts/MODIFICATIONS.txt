@@ -1,0 +1,23 @@
+This site ships five of the six web subsets described below (all but WasitmeSerif-BoldItalic), unchanged.
+
+wasitme fonts: IBM Plex Serif + IBM Plex Mono, SIL Open Font License 1.1 (see OFL.txt)
+
+Copyright 2017 IBM Corp. (Plex Mono 2.3) and 2020 IBM Corp. (Plex Serif 2.6), with Reserved Font Name "Plex".
+
+app/   Unmodified upstream TrueType files, bundled in the Mac app (the OFL allows bundling unmodified fonts
+       with software, with the licence alongside). Name tables untouched.
+         IBMPlexSerif-Regular.ttf     sha256 77cd233a2af8dc6b1022faea3bb3b01f3c75af68bcf530cb6aeb15982ff3dbb7
+         IBMPlexSerif-Italic.ttf      sha256 b11f1048745e715a55c9d837b3f10226ca3d78867b7db7251ddad8f98dcf0f38
+         IBMPlexSerif-Bold.ttf        sha256 b8d294e9b5c5a0940f167c3ced0f7ef2e3f57082ca3ff096ef30e86e26c1c159
+         IBMPlexSerif-BoldItalic.ttf  sha256 da64b75f4284f53e7b5c71fa190a35b8bf3494fe19f1804c81c3a53340bca570
+         IBMPlexMono-Regular.ttf      sha256 ab08018ccd276b79fb2c636bb95b9c543598f9d50505fe92506fcb4dae7810cd
+         IBMPlexMono-Bold.ttf         sha256 dbd2a2fb024579438d6400a84e57579bfd2dbe67c306c8fd9fde92a61e4f2eea
+       Upstream project: https://github.com/IBM/plex
+
+web/   Modified Versions (subsets) for the HTML report, README images and mockups, made by subset.py:
+       - glyphs limited to Basic Latin, Latin-1, common punctuation, arrows and math signs
+         (+ box drawing, block elements and geometric shapes in the mono);
+       - hinting removed; all OpenType layout features kept for the remaining glyphs;
+       - renamed "Wasitme Serif" / "Wasitme Mono" (name IDs 1, 3, 4, 6, 16, 17, 21, 22), because a
+         Modified Version may not use the Reserved Font Name "Plex"; version string gains "; wasitme subset".
+       Copyright, licence, designer and trademark name records are kept as upstream wrote them.

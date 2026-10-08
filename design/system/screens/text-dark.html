@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1280">
+<title>wasitme · Dark terminal, xterm-256 colours</title>
+<script>document.documentElement.dataset.theme = location.hash === '#dark' ? 'dark' : 'light';</script>
+<link rel="stylesheet" href="../generated/tokens.css">
+<link rel="stylesheet" href="components.css">
+<style>
+
+.ts { padding: 28px 40px 16px; background: var(--surface-page); height: 100%; display: flex; flex-direction: column; gap: 16px; }
+.ts header { display: flex; align-items: baseline; gap: 24px; white-space: nowrap; }
+.ts header .t-note { white-space: normal; }
+.ts .row { display: flex; gap: 32px; align-items: flex-start; }
+.sl { display: flex; flex-direction: column; gap: 8px; max-width: 520px; }
+.tw { background: var(--t-bg); color: var(--t-fg); border-radius: var(--radius-window); overflow: hidden; border: 1px solid var(--rule-strong); width: max-content; flex: none; }
+.tw-bar { height: 28px; display: flex; align-items: center; gap: 7px; padding: 0 12px; border-bottom: 1px solid var(--rule-strong); background: var(--t-bg); }
+.tw-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--t-fg); opacity: .25; display: block; }
+.tw-bar span { margin-left: 10px; font: 12px/1 var(--font-terminal); color: var(--t-muted); }
+.ct { background: var(--t-bg); color: var(--t-fg); border-radius: 14px; border: 1px solid var(--rule-strong); width: max-content; overflow: hidden; flex: none; }
+.ct-head { padding: 10px 16px; font: var(--type-typed-sm); color: var(--t-muted); border-bottom: 1px solid var(--rule-hair); }
+.ct-prompt { margin: 0 14px 14px; padding: 10px 14px; border: 1px solid var(--rule-strong); border-radius: 10px; font: var(--type-note); color: var(--t-muted); }
+.term { margin: 0; padding: 12px 16px; font: 13px/17px var(--font-terminal); color: var(--t-fg); background: var(--t-bg); white-space: pre; }
+.stamp2 { margin-top: auto; display: flex; justify-content: space-between; font: var(--type-typed-sm); color: var(--ink-muted); border-top: 1px solid var(--rule-hair); padding-top: 8px; }
+</style>
+</head>
+<body class="" style="width:1280px;height:1100px;overflow:hidden">
+<div class="ts" style="--t-bg:var(--term-dark-mock-bg);--t-fg:var(--term-dark-mock-fg);--t-muted:var(--term-dark-mock-muted)">
+  <header><h1 class="t-title">Dark terminal, xterm-256 colours</h1><p class="t-note">Mod pane 64 × 18 cells, status line one row per state, CLI 100 columns. Colour only inside the stickers; everything else is the terminal’s own foreground.</p></header>
+  <div class="row"><div class="tw"><div class="tw-bar"><i></i><i></i><i></i><span>Claude Code mod pane, 64 × 18</span></div><pre class="term term--mod"><span style="font-weight:700">[ Report ]</span>  [ Check again ]  [ Hide ]                    wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>
+                                                                
+·┄· <span style="font-weight:700">too early to tell</span>                 <span style="color:var(--x256-246)">Claude Code, 14 days vs 28</span>
+Can already rule out changes bigger than ×2.5 in tool errors.   
+                                                                
+<span style="color:var(--x256-246)">yours</span>       <span style="color:var(--x256-16);background:var(--x256-221)"> 1 </span>                     <span style="color:var(--x256-16);background:var(--x256-221)"> 2 </span>                         
+        <span style="color:var(--x256-243)">┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄</span>
+<span style="color:var(--x256-246)">agent</span>                   <span style="color:var(--x256-16);background:var(--x256-117)"> F </span>                         <span style="color:var(--x256-16);background:var(--x256-117)"> G </span>         
+        <span style="color:var(--x256-246)">Sep 20</span>                      <span style="color:var(--x256-246)">Sep 27</span>                 <span style="color:var(--x256-246)">Oct 3</span>
+<span style="color:var(--x256-246)">errors</span>    7   2   8   6   7   8   8   2   –   8   9   9   7   7 
+<span style="color:var(--x256-246)">calls</span>   <span style="color:var(--x256-246)">266</span>  <span style="color:var(--x256-246)">77</span> <span style="color:var(--x256-246)">286</span> <span style="color:var(--x256-246)">235</span> <span style="color:var(--x256-246)">247</span> <span style="color:var(--x256-246)">288</span> <span style="color:var(--x256-246)">320</span>  <span style="color:var(--x256-246)">77</span>   <span style="color:var(--x256-246)">0</span> <span style="color:var(--x256-246)">308</span> <span style="color:var(--x256-246)">326</span> <span style="color:var(--x256-246)">323</span> <span style="color:var(--x256-246)">271</span> <span style="color:var(--x256-246)">266</span> 
+                                                                
+Tool errors ×0.75, range ×0.40–×1.41; under ×2.5 won’t show     
+Reads per edit: 31 of 40 edits ███████████████████████<span style="color:var(--x256-246)">░░░░░░░</span>   
+<span style="color:var(--x256-246)">No date yet: it depends on how your sessions go.</span>                
+                                                                
+<span style="color:var(--x256-16);background:var(--x256-221)"> 1 </span> yours  <span style="color:var(--x256-16);background:var(--x256-117)"> A </span> Claude Code’s                          <span style="color:var(--x256-246)">local only</span>
+<span style="color:var(--x256-246)">updated 4 min ago; checks every 15 minutes</span>                      </pre></div>
+    <div class="sl"><div class="tw"><div class="tw-bar"><i></i><i></i><i></i><span>Status line, one row per state</span></div><pre class="term term--sl">wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ·┄· too early to tell  <span style="color:var(--x256-246)">+2</span>
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ─── no detectable change
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ■─▲ can't tell which
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ■── <span style="color:var(--x256-16);background:var(--x256-221)"> your side </span>
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ──▲ <span style="color:var(--x256-16);background:var(--x256-117)"> agent side </span>
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>  ─╱─ out of date</pre></div><p class="t-note">Only the state and a count of new changes. Never a cause, never “worse” or “better”.</p></div></div>
+  <div class="tw"><div class="tw-bar"><i></i><i></i><i></i><span>wasitme, 100 columns</span></div><pre class="term term--cli"><span style="color:var(--x256-246)">~/code/api $ </span>wasitme                                                                                
+wasit<span style="text-decoration:underline;text-underline-offset:2px">me</span>                                                           <span style="color:var(--x256-246)">Claude Code   checked Oct 4, 09:14</span>
+<span style="color:var(--x256-243)">════════════════════════════════════════════════════════════════════════════════════════════════════</span>
+<span style="font-weight:700">What changed</span>    <span style="color:var(--x256-246)">yours numbered above the line, Claude Code’s lettered below</span>                         
+<span style="color:var(--x256-246)">your side</span>                                       <span style="color:var(--x256-16);background:var(--x256-221)"> 1 </span>                     <span style="color:var(--x256-16);background:var(--x256-221)"> 2 </span>                         
+                <span style="color:var(--x256-243)">┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄</span>
+<span style="color:var(--x256-246)">Claude Code</span>             <span style="color:var(--x256-16);background:var(--x256-117)"> D </span>         <span style="color:var(--x256-16);background:var(--x256-117)"> E </span>                     <span style="color:var(--x256-16);background:var(--x256-117)"> F </span>                         <span style="color:var(--x256-16);background:var(--x256-117)"> G </span>         
+                <span style="color:var(--x256-246)">Sep 13</span>                      <span style="color:var(--x256-246)">Sep 20</span>                      <span style="color:var(--x256-246)">Sep 27</span>                <span style="color:var(--x256-246)">Oct 3</span> 
+<span style="color:var(--x256-246)">errors</span>            2   9   9  10   9   7  10   7   2   8   6   7   8   8   2   –   8   9   9   7   7 
+<span style="color:var(--x256-246)">tool calls</span>       <span style="color:var(--x256-246)">64</span> <span style="color:var(--x256-246)">242</span> <span style="color:var(--x256-246)">253</span> <span style="color:var(--x256-246)">277</span> <span style="color:var(--x256-246)">243</span> <span style="color:var(--x256-246)">208</span> <span style="color:var(--x256-246)">286</span> <span style="color:var(--x256-246)">266</span>  <span style="color:var(--x256-246)">77</span> <span style="color:var(--x256-246)">286</span> <span style="color:var(--x256-246)">235</span> <span style="color:var(--x256-246)">247</span> <span style="color:var(--x256-246)">288</span> <span style="color:var(--x256-246)">320</span>  <span style="color:var(--x256-246)">77</span>   <span style="color:var(--x256-246)">0</span> <span style="color:var(--x256-246)">308</span> <span style="color:var(--x256-246)">326</span> <span style="color:var(--x256-246)">323</span> <span style="color:var(--x256-246)">271</span> <span style="color:var(--x256-246)">266</span> 
+                <span style="color:var(--x256-246)">└───────── before ─────────┘</span><span style="color:var(--x256-246)">└─────────────────── recent, 14 days ──────────────────┘</span>
+                                                                                                    
+<span style="font-weight:700">Finding</span>         ·┄· <span style="font-weight:700">too early to tell</span>                                                               
+                wasitme can already rule out changes bigger than about ×2.5 in tool errors.         
+                <span style="color:var(--x256-246)">Reads per edit and edits without reading first need 40 edits; you have 31.</span>          
+                <span style="color:var(--x256-246)">Based on 734 exchanges over 66 session-days (16 sessions) on this Mac.</span>              
+                <span style="color:var(--x256-246)">Sessions on other machines aren’t visible.</span>                                          
+                                                                                                    
+<span style="font-weight:700">Signals</span>               <span style="color:var(--x256-246)">recent</span>       <span style="color:var(--x256-246)">before</span>   <span style="color:var(--x256-246)">change  range</span>         <span style="color:var(--x256-246)">×0.5</span> <span style="color:var(--x256-246)">×1</span>  <span style="color:var(--x256-246)">×2</span>  <span style="color:var(--x256-246)">×4</span>      <span style="color:var(--x256-246)">status</span>       
+<span style="color:var(--x256-243)">────────────────────────────────────────────────────────────────────────────────────────────────────</span>
+Tool errors       88 / 3,290  201 / 5,610   ×0.75  ×0.40–×1.41     ├──○─┼─┤░░░         not detected 
+Reads per edit      131 / 31  1,130 / 233   <span style="color:var(--x256-246)">31 of 40 edits needed</span>                      <span style="color:var(--x256-246)">not yet</span>      
+Interruptions        2 / 214     13 / 520   <span style="color:var(--x256-246)">2 in the recent window (needs 10)</span>          <span style="color:var(--x256-246)">context</span>      
+Pushback prompts     8 / 214     31 / 520   <span style="color:var(--x256-246)">8 in the recent window (needs 10)</span>          <span style="color:var(--x256-246)">context</span>      
+                                            <span style="color:var(--x256-246)">○ estimate, not detected  ├─┤ range  ░ too small to show</span>
+                                                                                                    
+<span style="font-weight:700">Next</span>            Keep working normally; wasitme checks every 15 minutes.                             
+<span style="font-weight:700">Share</span>           wasitme report --md | pbcopy   <span style="color:var(--x256-246)">numbers only: no prompts, code or paths</span>              </pre></div>
+  <footer class="stamp2"><span>demo data v3 (analytic) — not engine output</span><span>case: too early to tell (the most common finding)</span></footer>
+</div>
+<script>document.fonts.ready.then(() => { const faces = [...document.fonts].filter(x => x.family.replace(/"/g, '').startsWith('Wasitme')); const ok = faces.every(x => x.status !== 'error') && faces.some(x => x.status === 'loaded'); document.documentElement.dataset.fonts = ok ? 'ok' : 'missing'; let bad = ''; for (const el of document.body.querySelectorAll('*')) { const r = el.getBoundingClientRect(); if (r.width > 0 && r.height > 0 && (r.right > 1280 + 0.5 || r.bottom > 1100 + 0.5)) { bad = ((el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className) || el.tagName) + '@' + Math.round(r.right) + 'x' + Math.round(r.bottom); break; } } if (!bad) { const boxed = e => { const c = getComputedStyle(e); return ['Top', 'Right', 'Bottom', 'Left'].every(k => parseFloat(c['border' + k + 'Width']) > 0); }; for (const el of document.body.querySelectorAll('*')) { if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue; let a = el.parentElement; while (a && a !== document.body && !boxed(a)) a = a.parentElement; if (!a || a === document.body) continue; const r = el.getBoundingClientRect(), b = a.getBoundingClientRect(); if (r.width > 0 && (r.right > b.right + 1 || r.bottom > b.bottom + 1 || r.left < b.left - 1 || r.top < b.top - 1)) { bad = 'text escapes its box: ' + el.textContent.trim().slice(0, 24); break; } } } document.documentElement.dataset.fit = bad ? (bad.startsWith('text') ? bad : 'overflow:' + bad) : 'ok'; const sizes = [12,13,14,15,17,18,19,26,30,52,84]; let tb = ''; for (const el of document.querySelectorAll('body *')) { if (![...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim())) continue; const cs = getComputedStyle(el), fam = cs.fontFamily.replace(/"/g, ''), px = parseFloat(cs.fontSize); if (!fam.startsWith('Wasitme')) continue; const serif = fam.startsWith('Wasitme Serif'); if (!sizes.includes(px) || (serif && px < 13) || (!serif && px < 12)) { tb = (serif ? 'serif ' : 'mono ') + px + 'px: ' + el.textContent.trim().slice(0, 30); break; } let a = el; while (a && a !== document.body) { if (getComputedStyle(a).transform !== 'none') { tb = 'scaled text: ' + el.textContent.trim().slice(0, 30); break; } a = a.parentElement; } if (tb) break; } document.documentElement.dataset.type = tb ? 'bad:' + tb : 'ok'; });</script>
+</body>
+</html>

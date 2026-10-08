@@ -1,0 +1,12 @@
+{
+  "name": "wasitme-codex",
+  "owner": {
+    "name": "Aariv Patel"
+  },
+  "plugins": [
+    {
+      "name": "wasitme",
+      "source": "./"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "null-few-long": {
+    "seed": 101,
+    "days": 56,
+    "files": 120,
+    "bytes": 17582542,
+    "sha256": "04dc3acca9a2d2127b6d94a60df49ce835653519f80fe5d05ff59f187395f5b3"
+  },
+  "null-many-short": {
+    "seed": 102,
+    "days": 56,
+    "files": 386,
+    "bytes": 23519989,
+    "sha256": "f6d60c982aafe85e758d07a0f462f6fe7fd97d0c81e9d56e96b308441f7e9919"
+  },
+  "effort-drop-you": {
+    "seed": 103,
+    "days": 56,
+    "files": 292,
+    "bytes": 18427210,
+    "sha256": "62bb10ed5397305b5cc88b2879962970bf3a34928bc92ab25002d7a1b09a660a"
+  },
+  "version-regression-agent": {
+    "seed": 104,
+    "days": 56,
+    "files": 121,
+    "bytes": 17043219,
+    "sha256": "733b6ea27f164592c2007690b2c598c53133ac154a1dedc62c7f1411eaf10213"
+  },
+  "confounded-same-week": {
+    "seed": 105,
+    "days": 56,
+    "files": 353,
+    "bytes": 22310490,
+    "sha256": "4ccd0a664ebfa3b60cde83d63b98a49e5c43058e7c4e423ed266f65db60b5f51"
+  },
+  "insufficient-new-user": {
+    "seed": 106,
+    "days": 6,
+    "files": 11,
+    "bytes": 463166,
+    "sha256": "df5f0109430eccc73ce0de4a2ea105187fb45aad38df74dd3dc2578206687527"
+  },
+  "codex-only": {
+    "seed": 107,
+    "days": 56,
+    "files": 276,
+    "bytes": 25019444,
+    "sha256": "f054d255cd19f5839ad84959950504e66706ec38498817df7eb95d9d95a1df1b"
+  },
+  "both-agents": {
+    "seed": 108,
+    "days": 56,
+    "files": 709,
+    "bytes": 44075215,
+    "sha256": "9d45c84bea24a34a4feeb7f109843b03b2feccb71f8f8377f467306d71049608"
+  },
+  "tiny-both": {
+    "seed": 109,
+    "days": 7,
+    "files": 35,
+    "bytes": 920179,
+    "sha256": "816468484149e5b3a1566626a705aa192749b87a6db289770a31b3782d68b110"
+  },
+  "hostile": {
+    "seed": null,
+    "days": null,
+    "files": 25,
+    "bytes": 136199,
+    "sha256": "d3b8397898bcba5ec971699d1893bde028ae370edf91b4237a3559eb4da1eec7"
+  }
+}

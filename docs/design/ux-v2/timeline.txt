@@ -1,0 +1,90 @@
+TIMELINE PAGE: before and after (UX-V2.md section 8.2)
+Data: `wasitme demo` (case insufficient), Claude Code, light. Content pane 1060 pt wide.
+The Codex rows at the bottom use example pre-release versions, to show the short-version rule (section 7.2); their
+dates are illustrative.
+
+Legend
+  [1]   your change: canary rounded square, numbered             /A\   agent update, hollow (routine)
+  /A\*  agent badge, filled (lines up with the shift / strong)   ▸ / ▾ disclosure, closed / open
+  (pre-release) a quiet tag: small text on surface.well           ▮     one event (one tick)
+
+
+BEFORE (today, chrome "content"; 288 visible words)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Showing  Claude Code   signal  Tool errors   over  Aug 23 – Oct 3                             [Check again]  │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Timeline  everything wasitme saw change on each side, over the tool errors strip it is compared with         │
+│ [·┄· Too early to tell]  wasitme can already rule out changes bigger than about ×2.5 in tool errors.         │
+│                          See the finding                                                                     │
+│ Tool errors per day, six weeks   one tick per error; narrow: under 100 calls that day                        │
+│                                                       before 201 / 5,610 calls; recent 88 / 3,290            │
+│   Your side                                                       [1] effort  [2] MCP                        │
+│        10 ┤ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮                                                    │
+│   ────────────────────────────────────────────────────────────────────────── ·······                         │
+│   Claude Code  /A\ 2.1.255  /B\ 2.1.262  2.1.266 /C\  /D\  /E\ 2.1.274  /F\ 2.1.277  /G\ 2.1.281             │
+│       errors   8 8 9 7 10 11 – 2 7 10 7 8 11 – 2 8 9 9 9 10 – 2 9 9 10 9 7 10 7 2 8 6 7 8 8 2 – 8 9 9 7 7    │
+│                Aug 23      Aug 30      Sep 6      Sep 13      Sep 20      Sep 27      Oct 3  today           │
+│                └──────────────── before, 28 days ────────────────┘└──── recent, 14 days ────┘                │
+│ Date     │     │ What changed                     │ Note                 │ Window                            │
+│ Oct 1    │ /G\ │ Claude Code 2.1.277 → 2.1.281    │ Claude Code update   │ recent window                     │
+│ Sep 27   │ [2] │ MCP server added                 │ your change          │ recent window                     │
+│ Sep 24   │ /F\ │ Claude Code 2.1.274 → 2.1.277    │ Claude Code update   │ recent window                     │
+│ Sep 21   │ [1] │ Effort high → medium             │ your change          │ recent window                     │
+│ Sep 18   │ /E\ │ Claude Code 2.1.270 → 2.1.274    │ Claude Code update   │ before                            │
+│ ... four more "Claude Code update / before" rows ...                                                         │
+│ Claude Code updates alone aren't evidence; they are listed so you can see what changed on its side.          │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ demo data (wasitme demo) — not from your logs                                          checked Oct 4, 14:14   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Report page, BEFORE (two Codex rows; Menlo text glyphs in grey code chips):
+│ Timeline (■ your side, ▲ Codex, ? origin unknown)                                                            │
+│ Oct 2    ▲B Codex 0.144.0-alpha.4 → 0.145.0-alpha.18 (update)                                               │
+│ Sep 30   ▲A Codex 0.142.5 → 0.144.0-alpha.4 (update)                                                        │
+
+
+AFTER (chrome "content"; budget 100 visible words)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Demo data from `wasitme demo`, not from your logs.                                                           │
+│                                                                                                              │
+│ Timeline                                                                            (title 30)              │
+│ [·┄· Too early to tell]  wasitme can already rule out changes bigger than about ×2.5 in tool errors.         │
+│                          See the finding →                                          (body 15 + plain link)  │
+│                                                                                                              │
+│ Tool errors per day                                                         Aug 23 – Oct 3                   │
+│   Your side                                                       [1] effort  [2] MCP          (italic)      │
+│        10 ┤ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮                                                    │
+│   ────────────────────────────────────────────────────────────────────────── ·······                         │
+│   Claude Code  /A\ 2.1.255  /B\ 2.1.262  /C\  /D\  /E\ 2.1.274  /F\ 2.1.277  /G\ 2.1.281                     │
+│                Aug 23      Aug 30      Sep 6      Sep 13      Sep 20      Sep 27      Oct 3  today           │
+│                └──────────────── before, 28 days ────────────────┘└──── recent, 14 days ────┘                │
+│   ▮ one error    [1] your change    /A\ Claude Code update                                                   │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ All changes  9                                                                                             │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ Daily counts                                                                                               │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+AFTER, "All changes" opened
+│ ▾ All changes  9                                                                                             │
+│   Recent window · Sep 20 – Oct 3                                                    (small group head)      │
+│     Oct 1    /G\  Claude Code 2.1.277 → 2.1.281                                                              │
+│     Sep 27   [2]  MCP server added                                                                           │
+│     Sep 24   /F\  Claude Code 2.1.274 → 2.1.277                                                              │
+│     Sep 21   [1]  Effort high → medium                                                                       │
+│   Before · Aug 23 – Sep 19                                                                                   │
+│     Sep 18   /E\  Claude Code 2.1.270 → 2.1.274                                                              │
+│     Sep 15   /D\  Claude Code 2.1.266 → 2.1.270                                                              │
+│     Sep 12   /C\  Claude Code 2.1.262 → 2.1.266                                                              │
+│     Sep 3    /B\  Claude Code 2.1.255 → 2.1.262                                                              │
+│     Aug 27   /A\  Claude Code 2.1.249 → 2.1.255                                                              │
+│   Claude Code updates alone aren't evidence.                                         (once, small)          │
+
+The same rows for Codex, AFTER (Timeline list and Report page alike; hover or VoiceOver gives the full version):
+│     Oct 2    /B\  Codex 0.144 → 0.145   (pre-release)                                                        │
+│     Sep 30   /A\  Codex 0.142 → 0.144   (pre-release)                                                        │
+│   accessible name of /B\: "Codex change B, Oct 2: Codex 0.144.0-alpha.4 → 0.145.0-alpha.18"                  │
+
+With a finding that names a change, its row carries one quiet tag:
+│     Oct 1    /D\* Claude Code 2.1.277 → 2.1.281   (lines up with the shift)                                  │
+│     Oct 2    [1]  Settings changed                (ruled out: the numbers moved where it didn't apply)       │

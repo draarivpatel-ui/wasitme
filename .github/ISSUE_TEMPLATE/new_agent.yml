@@ -1,0 +1,35 @@
+name: Support for another coding agent
+description: Ask for a reader for an agent that wasitme does not support yet.
+labels: [new-agent]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the agent's log format in your own words, using field names only. **Do not attach real session logs**:
+        they contain your prompts, code and paths. If you can write a small synthetic example file, that is welcome.
+        See CONTRIBUTING.md, "Adding a reader for a new agent".
+  - type: input
+    id: agent
+    attributes:
+      label: Agent and version
+    validations:
+      required: true
+  - type: textarea
+    id: location
+    attributes:
+      label: Where does it store session history, and in what format?
+      description: Directory layout and file format (JSONL, SQLite, ...). No real paths from your machine.
+    validations:
+      required: true
+  - type: textarea
+    id: fields
+    attributes:
+      label: Which fields describe a prompt, a model reply, a tool call, a tool failure and token usage?
+      description: Field names only, never values.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I have not pasted prompts, file paths, project names, tool output, secrets or log excerpts into this issue.
+          required: true

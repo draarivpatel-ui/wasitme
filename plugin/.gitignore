@@ -1,0 +1,4 @@
+# Written by Claude Code's `/plugin-types` (the mod API declarations); regenerate, never commit.
+.claude/
+# Written by the engine when it loads this folder as a dev mod.
+.claude-plugin/types/

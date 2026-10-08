@@ -1,0 +1,35 @@
+# CSP check for generated/tokens.inline.css
+sha256 0664647653f4cbffaca28b07878ee862a7f790c64e24cec2e96c6d99cfd7a07c
+shipped CSP: default-src 'none'; style-src 'unsafe-inline'; font-src data:
+
+## shipped: ok
+CSP: default-src 'none'; style-src 'unsafe-inline'; font-src data:
+CSP violations reported: 0
+  ok   serif-400: Wasitme Serif / WasitmeSerif-Regular (embedded)
+  ok   serif-400i: Wasitme Serif / WasitmeSerif-Italic (embedded)
+  ok   serif-700: Wasitme Serif / WasitmeSerif-Bold (embedded)
+  ok   serif-700i: Wasitme Serif / WasitmeSerif-BoldItalic (embedded)
+  ok   mono-400: Wasitme Mono / WasitmeMono-Regular (embedded)
+  ok   mono-700: Wasitme Mono / WasitmeMono-Bold (embedded)
+
+## hash: ok
+CSP: default-src 'none'; style-src 'sha256-<style hash>'; font-src data:
+CSP violations reported: 0
+  ok   serif-400: Wasitme Serif / WasitmeSerif-Regular (embedded)
+  ok   serif-400i: Wasitme Serif / WasitmeSerif-Italic (embedded)
+  ok   serif-700: Wasitme Serif / WasitmeSerif-Bold (embedded)
+  ok   serif-700i: Wasitme Serif / WasitmeSerif-BoldItalic (embedded)
+  ok   mono-400: Wasitme Mono / WasitmeMono-Regular (embedded)
+  ok   mono-700: Wasitme Mono / WasitmeMono-Bold (embedded)
+
+## control: default-src none alone: ok (blocked, as expected)
+CSP: default-src 'none'
+CSP violations reported: 1
+  no   serif-400: Times / Times-Roman (system)
+  no   serif-400i: Times / Times-Roman (system)
+  no   serif-700: Times / Times-Roman (system)
+  no   serif-700i: Times / Times-Roman (system)
+  no   mono-400: Times / Times-Roman (system)
+  no   mono-700: Times / Times-Roman (system)
+
+RESULT: PASS

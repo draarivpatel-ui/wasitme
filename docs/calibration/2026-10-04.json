@@ -1,0 +1,3371 @@
+{
+  "formatVersion": 1,
+  "kind": "wasitme-calibration",
+  "synthetic": true,
+  "mode": "custom",
+  "status": "complete",
+  "runSeed": "wp23-2026-10-04",
+  "decider": "wp21-attributeAgent (onset.delta=default(2), fullyObserved=since_install, tripwires=off, persistence=on)",
+  "layout": {
+    "startDay": "2026-03-02",
+    "preDays": 30,
+    "evalDays": 90,
+    "planDays": 120,
+    "evaluation": "daily, today = plan day preDays+1 … preDays+evalDays (today's data excluded), UTC",
+    "tierFirstEvalDay": {
+      "1": 12,
+      "2": 33,
+      "3": 54
+    },
+    "plantedOnsetPlanDay": 75,
+    "plantedOnsetFirstEvalDay": 46,
+    "plantedRegression": {
+      "x2": {
+        "toolError": 2,
+        "blindEdit": 2,
+        "read": 0.5
+      }
+    },
+    "nullBackground": "no-effect version bumps every ~3 days (synth); a no-effect you·strong effort change (p 0.5) and a no-effect unknown·weak model change (p 0.3) at random evaluation days",
+    "estimatorInSimulation": "analytic sandwich for the bootstrap-based candidates (METHOD.md §6); the wild cluster bootstrap runs as itself",
+    "mdeOptimism": 0.1,
+    "sizes": {
+      "nullPilot": 20,
+      "nullFull": 20,
+      "minNullForPass": 1000,
+      "effectPilot": 6,
+      "effectFull": 6,
+      "effectSizes": [
+        2
+      ],
+      "sensitivityNull": 0,
+      "sensitivityEffect": 0,
+      "attrPerScenario": 3,
+      "mdeSequences": 4,
+      "etaSequences": 4,
+      "seSequences": 30
+    }
+  },
+  "persistence": {
+    "rule": "METHOD.md §12 Persistence",
+    "initial": "insufficient:needs_data",
+    "key": "state + reason",
+    "newDenominatorShare": 0.3,
+    "newSessionDays": 2,
+    "denominator": "the voting tool-error construct's denominator (tool calls that ran), selected tier's recent window (tier 1's when none)",
+    "newData": "days [max(t1, second window's first day), t2-1]",
+    "disagreeing": "a different key resets the pending change; an agreeing evaluation without enough new data keeps the first one pending"
+  },
+  "profiles": [
+    {
+      "id": "few-long",
+      "agent": "claude-code",
+      "description": "few very long sessions (FL)"
+    },
+    {
+      "id": "few-long-hd",
+      "agent": "claude-code",
+      "description": "few-long, session effect SD 0.5 (dispersion stress)"
+    },
+    {
+      "id": "many-short",
+      "agent": "claude-code",
+      "description": "many one-day sessions (MS)"
+    },
+    {
+      "id": "single-project",
+      "agent": "claude-code",
+      "description": "many-short, one project"
+    },
+    {
+      "id": "multi-project",
+      "agent": "claude-code",
+      "description": "many-short, 4 projects evenly"
+    },
+    {
+      "id": "sparse-failures",
+      "agent": "claude-code",
+      "description": "tool errors 1.2%, blind edits 5%"
+    },
+    {
+      "id": "codex",
+      "agent": "codex",
+      "description": "Codex: few human sessions + exec threads (CX)"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "session-t95-cr2",
+      "method": {
+        "id": "session-t95-cr2",
+        "clusters": "session",
+        "twoLevel": false,
+        "level": 0.95,
+        "smallSample": "cr2",
+        "keepLargerSe": true,
+        "estimator": "analytic"
+      },
+      "production": {
+        "id": "session-t95-cr2",
+        "clusters": "session",
+        "twoLevel": false,
+        "level": 0.95,
+        "smallSample": "cr2",
+        "keepLargerSe": true
+      },
+      "pilotPowerClaude": 0.5833,
+      "screenedOut": false,
+      "extended": true,
+      "passesClaude": {
+        "toolErrorsNonCmd": false
+      },
+      "passesCodex": {
+        "toolErrorsNonCmd": false
+      }
+    }
+  ],
+  "gNullSeq": [
+    {
+      "profile": "few-long",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 15,
+        "n": 20,
+        "rate": 0.75,
+        "lo": 0.50895,
+        "hi": 0.91343
+      },
+      "tierDayShare": {
+        "1": 0.30611,
+        "2": 0.35,
+        "3": 0.22167,
+        "none": 0.12222
+      },
+      "extensionDayShare": 0.57167,
+      "errorsEligibleDayShare": 0.77444,
+      "researchEligibleDayShare": 0.755,
+      "lowDfDayShare": 0.30056,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 0.73444,
+        "none": 0.26556
+      },
+      "rowDayShare": {
+        "2": 0.25056,
+        "3": 0.00056,
+        "12": 0.00833,
+        "13": 0.34611,
+        "14": 0.39444
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 2.755556
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "few-long-hd",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "tierDayShare": {
+        "1": 0.23389,
+        "2": 0.24056,
+        "3": 0.40167,
+        "none": 0.12389
+      },
+      "extensionDayShare": 0.64222,
+      "errorsEligibleDayShare": 0.69556,
+      "researchEligibleDayShare": 0.68611,
+      "lowDfDayShare": 0.36444,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 1
+      },
+      "rowDayShare": {
+        "2": 0.325,
+        "3": 0.00056,
+        "12": 0.01278,
+        "13": 0.02,
+        "14": 0.64167
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 18,
+            "n": 20,
+            "rate": 0.9,
+            "lo": 0.68302,
+            "hi": 0.98765
+          },
+          "perDay": 2.217778
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "many-short",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 20,
+        "n": 20,
+        "rate": 1,
+        "lo": 0.83157,
+        "hi": 1
+      },
+      "tierDayShare": {
+        "1": 0.86778,
+        "2": 0.00889,
+        "none": 0.12333
+      },
+      "extensionDayShare": 0.00889,
+      "errorsEligibleDayShare": 0.87667,
+      "researchEligibleDayShare": 0.87667,
+      "lowDfDayShare": 0.00056,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 0.17333,
+        "none": 0.82667
+      },
+      "rowDayShare": {
+        "2": 0.12333,
+        "12": 0.00722,
+        "13": 0.83667,
+        "14": 0.03278
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 25.553889
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "single-project",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 1,
+        "n": 20,
+        "rate": 0.05,
+        "lo": 0.00127,
+        "hi": 0.24873
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 20,
+        "n": 20,
+        "rate": 1,
+        "lo": 0.83157,
+        "hi": 1
+      },
+      "tierDayShare": {
+        "1": 0.81778,
+        "2": 0.05833,
+        "none": 0.12389
+      },
+      "extensionDayShare": 0.05833,
+      "errorsEligibleDayShare": 0.87611,
+      "researchEligibleDayShare": 0.87611,
+      "lowDfDayShare": 0,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 0.20167,
+        "insufficient:single_indicator": 0.00333,
+        "none": 0.795
+      },
+      "rowDayShare": {
+        "2": 0.12389,
+        "12": 0.00778,
+        "13": 0.79889,
+        "14": 0.06944
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 24.975
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "multi-project",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 20,
+        "n": 20,
+        "rate": 1,
+        "lo": 0.83157,
+        "hi": 1
+      },
+      "tierDayShare": {
+        "1": 0.87556,
+        "2": 0.00167,
+        "none": 0.12278
+      },
+      "extensionDayShare": 0.00167,
+      "errorsEligibleDayShare": 0.87722,
+      "researchEligibleDayShare": 0.87722,
+      "lowDfDayShare": 0,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 0.20722,
+        "none": 0.79278
+      },
+      "rowDayShare": {
+        "2": 0.12278,
+        "12": 0.00556,
+        "13": 0.83222,
+        "14": 0.03944
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 25.308889
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "sparse-failures",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 1,
+        "n": 20,
+        "rate": 0.05,
+        "lo": 0.00127,
+        "hi": 0.24873
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 5,
+        "n": 20,
+        "rate": 0.25,
+        "lo": 0.08657,
+        "hi": 0.49105
+      },
+      "tierDayShare": {
+        "1": 0.23333,
+        "2": 0.23333,
+        "3": 0.41111,
+        "none": 0.12222
+      },
+      "extensionDayShare": 0.64444,
+      "errorsEligibleDayShare": 0.84556,
+      "researchEligibleDayShare": 0.87778,
+      "lowDfDayShare": 0,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 0.93667,
+        "insufficient:single_indicator": 0.01444,
+        "none": 0.04889
+      },
+      "rowDayShare": {
+        "2": 0.15444,
+        "12": 0.01,
+        "13": 0.08889,
+        "14": 0.74667
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 25.381111
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    },
+    {
+      "profile": "codex",
+      "agent": "codex",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "sequences": 20,
+      "falseChanged": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "falseAgent": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "agentExercised": true,
+      "falseYou": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "everNonSteady": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "singleIndicator": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "mixed": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "workload": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedAny": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "rawChangedDayRate": 0,
+      "everNone": {
+        "k": 0,
+        "n": 20,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.16843
+      },
+      "tierDayShare": {
+        "1": 0.23333,
+        "2": 0.23389,
+        "3": 0.41,
+        "none": 0.12278
+      },
+      "extensionDayShare": 0.64389,
+      "errorsEligibleDayShare": 0.68611,
+      "researchEligibleDayShare": 0.715,
+      "lowDfDayShare": 0.25611,
+      "fragileDays": 0,
+      "displayedDayShare": {
+        "insufficient:needs_data": 1
+      },
+      "rowDayShare": {
+        "2": 0.31722,
+        "12": 0.00444,
+        "13": 0.01944,
+        "14": 0.65889
+      },
+      "diag": {
+        "derivedEvents": {
+          "sequences": {
+            "k": 20,
+            "n": 20,
+            "rate": 1,
+            "lo": 0.83157,
+            "hi": 1
+          },
+          "perDay": 12.488889
+        },
+        "rawRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5AnyDerived": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "rawRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        },
+        "shownRow5DerivedOnly": {
+          "sequences": {
+            "k": 0,
+            "n": 20,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.16843
+          },
+          "perDay": 0
+        }
+      },
+      "passFalseChanged": false,
+      "passFalseAgent": false
+    }
+  ],
+  "power": [
+    {
+      "profile": "few-long",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 1,
+        "n": 6,
+        "rate": 0.16667,
+        "lo": 0.00421,
+        "hi": 0.64123
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 13
+    },
+    {
+      "profile": "few-long-hd",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 2,
+        "n": 6,
+        "rate": 0.33333,
+        "lo": 0.04327,
+        "hi": 0.77722
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 27
+    },
+    {
+      "profile": "many-short",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 6,
+        "n": 6,
+        "rate": 1,
+        "lo": 0.54074,
+        "hi": 1
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 15
+    },
+    {
+      "profile": "single-project",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 6,
+        "n": 6,
+        "rate": 1,
+        "lo": 0.54074,
+        "hi": 1
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 17
+    },
+    {
+      "profile": "multi-project",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 6,
+        "n": 6,
+        "rate": 1,
+        "lo": 0.54074,
+        "hi": 1
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 12
+    },
+    {
+      "profile": "sparse-failures",
+      "agent": "claude-code",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": null
+    },
+    {
+      "profile": "codex",
+      "agent": "codex",
+      "candidate": "session-t95-cr2",
+      "errorsVote": "toolErrorsNonCmd",
+      "effect": "x2",
+      "sequences": 6,
+      "detected": {
+        "k": 3,
+        "n": 6,
+        "rate": 0.5,
+        "lo": 0.11812,
+        "hi": 0.88188
+      },
+      "early": {
+        "k": 0,
+        "n": 6,
+        "rate": 0,
+        "lo": 0,
+        "hi": 0.45926
+      },
+      "medianDelayDays": 33
+    }
+  ],
+  "selection": {
+    "chosen": null,
+    "criterion": "false 'changed' CP upper bound <= 6% on every Claude profile under toolErrorsNonCmd (the construct the decider is judged under)",
+    "why": "No candidate can pass: the gate needs >= 1000 null sequences per profile and this run has 20. session-t95-cr2 (highest pilot power) was probed provisionally; no flag is set.",
+    "ranking": [
+      {
+        "candidate": "session-t95-cr2",
+        "pilotPowerClaude": 0.5833,
+        "fullPass": false
+      }
+    ],
+    "probed": "session-t95-cr2"
+  },
+  "calibrated": {
+    "claude-code": {
+      "calibrated": false,
+      "byConstruct": {
+        "toolErrorsNonCmd": false
+      },
+      "profiles": [
+        "few-long",
+        "few-long-hd",
+        "many-short",
+        "single-project",
+        "multi-project",
+        "sparse-failures"
+      ],
+      "falseAgentGate": "insufficient_sequences"
+    },
+    "codex": {
+      "calibrated": false,
+      "byConstruct": {
+        "toolErrorsNonCmd": false
+      },
+      "profiles": [
+        "codex"
+      ],
+      "falseAgentGate": "insufficient_sequences"
+    }
+  },
+  "gMde": {
+    "rule": "G-MDE: an effect planted at the reported MDE is detected 60-95% of the time (detected = range excludes 1x in the planted direction)",
+    "rows": [
+      {
+        "profile": "few-long",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "medianMde": 1.9042,
+        "medianRealisedShare": 0.9747,
+        "inBand": true
+      },
+      {
+        "profile": "few-long",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 1,
+          "n": 4,
+          "rate": 0.25,
+          "lo": 0.006309463210072863,
+          "hi": 0.8058795503170586
+        },
+        "medianMde": 0.6841,
+        "medianRealisedShare": 0.631,
+        "inBand": true
+      },
+      {
+        "profile": "few-long",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 2.3605,
+        "medianRealisedShare": 1.0598,
+        "inBand": false
+      },
+      {
+        "profile": "few-long-hd",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 3.0728,
+        "medianRealisedShare": 0.9031,
+        "inBand": false
+      },
+      {
+        "profile": "few-long-hd",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 2,
+          "n": 4,
+          "rate": 0.5,
+          "lo": 0.06758598648821135,
+          "hi": 0.9324140135117887
+        },
+        "medianMde": 0.5181,
+        "medianRealisedShare": 0.6148,
+        "inBand": false
+      },
+      {
+        "profile": "few-long-hd",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 2.4266,
+        "medianRealisedShare": 0.9221,
+        "inBand": false
+      },
+      {
+        "profile": "many-short",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 1.7789,
+        "medianRealisedShare": 0.9529,
+        "inBand": false
+      },
+      {
+        "profile": "many-short",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianMde": 0.7407,
+        "medianRealisedShare": 0.7896,
+        "inBand": true
+      },
+      {
+        "profile": "many-short",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 1.8856,
+        "medianRealisedShare": 0.9118,
+        "inBand": false
+      },
+      {
+        "profile": "single-project",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 1.8008,
+        "medianRealisedShare": 0.9294,
+        "inBand": false
+      },
+      {
+        "profile": "single-project",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianMde": 0.7186,
+        "medianRealisedShare": 0.8254,
+        "inBand": true
+      },
+      {
+        "profile": "single-project",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "medianMde": 1.9835,
+        "medianRealisedShare": 0.9281,
+        "inBand": true
+      },
+      {
+        "profile": "multi-project",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 1.5418,
+        "medianRealisedShare": 0.9087,
+        "inBand": false
+      },
+      {
+        "profile": "multi-project",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianMde": 0.7888,
+        "medianRealisedShare": 0.6982,
+        "inBand": false
+      },
+      {
+        "profile": "multi-project",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 1.6775,
+        "medianRealisedShare": 1.0245,
+        "inBand": false
+      },
+      {
+        "profile": "sparse-failures",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 2.311,
+        "medianRealisedShare": 1.1788,
+        "inBand": false
+      },
+      {
+        "profile": "sparse-failures",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 2,
+          "n": 4,
+          "rate": 0.5,
+          "lo": 0.06758598648821135,
+          "hi": 0.9324140135117887
+        },
+        "material": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianMde": 0.827,
+        "medianRealisedShare": 0.6509,
+        "inBand": false
+      },
+      {
+        "profile": "sparse-failures",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 2.0994,
+        "medianRealisedShare": 0.9415,
+        "inBand": false
+      },
+      {
+        "profile": "codex",
+        "metric": "toolErrorsNonCmd",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "medianMde": 2.6394,
+        "medianRealisedShare": 1.2338,
+        "inBand": false
+      },
+      {
+        "profile": "codex",
+        "metric": "readsPerEdit",
+        "probes": 4,
+        "detected": {
+          "k": 4,
+          "n": 4,
+          "rate": 1,
+          "lo": 0.3976353643834045,
+          "hi": 1
+        },
+        "material": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianMde": 0.583,
+        "medianRealisedShare": 0.7786,
+        "inBand": false
+      },
+      {
+        "profile": "codex",
+        "metric": "blindEdits",
+        "probes": 4,
+        "detected": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "material": {
+          "k": 3,
+          "n": 4,
+          "rate": 0.75,
+          "lo": 0.1941204496829414,
+          "hi": 0.9936905367899271
+        },
+        "medianMde": 1.9463,
+        "medianRealisedShare": 0.9968,
+        "inBand": true
+      }
+    ],
+    "overall": {
+      "k": 76,
+      "n": 84,
+      "rate": 0.9047619047619048,
+      "lo": 0.8209403467176344,
+      "hi": 0.9579795734575782
+    },
+    "overallDirectRateMetrics": {
+      "k": 53,
+      "n": 56,
+      "rate": 0.9464285714285714,
+      "lo": 0.8513255490529446,
+      "hi": 0.9888130291660673
+    },
+    "pass": true,
+    "note": "readsPerEdit is planted through the read weight, which the planner damps (a read precedes most edits); medianRealisedShare shows how much of the factor reached the metric, so its row understates detection at the true MDE."
+  },
+  "eta": {
+    "rule": "G-MDE (b): projected ETAs land within +/-30% on FL data. Gate read: the median |relative error| on few-long is <= 0.30 (a never-ready anchor counts as error 10); the share within +/-30% is reported beside it.",
+    "byProfile": {
+      "few-long": {
+        "anchors": 20,
+        "censored": 0,
+        "withinPlusMinus30": {
+          "k": 6,
+          "n": 20,
+          "rate": 0.3,
+          "lo": 0.1189315904052819,
+          "hi": 0.5427891822760103
+        },
+        "medianAbsRelError": 0.5796,
+        "medianSignedRelError": 0
+      },
+      "few-long-hd": {
+        "anchors": 13,
+        "censored": 0,
+        "withinPlusMinus30": {
+          "k": 1,
+          "n": 13,
+          "rate": 0.07692307692307693,
+          "lo": 0.0019456284976513416,
+          "hi": 0.3602974352675119
+        },
+        "medianAbsRelError": 10,
+        "medianSignedRelError": 0.2784
+      },
+      "many-short": {
+        "anchors": 9,
+        "censored": 0,
+        "withinPlusMinus30": {
+          "k": 8,
+          "n": 9,
+          "rate": 0.8888888888888888,
+          "lo": 0.5175034850822158,
+          "hi": 0.9971908632537634
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0
+      },
+      "single-project": {
+        "anchors": 8,
+        "censored": 0,
+        "withinPlusMinus30": {
+          "k": 6,
+          "n": 8,
+          "rate": 0.75,
+          "lo": 0.3491442055869811,
+          "hi": 0.9681459737498699
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0
+      },
+      "multi-project": {
+        "anchors": 8,
+        "censored": 0,
+        "withinPlusMinus30": {
+          "k": 8,
+          "n": 8,
+          "rate": 1,
+          "lo": 0.6305833524470472,
+          "hi": 1
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0
+      },
+      "sparse-failures": {
+        "anchors": 12,
+        "censored": 2,
+        "withinPlusMinus30": {
+          "k": 3,
+          "n": 10,
+          "rate": 0.3,
+          "lo": 0.06673951117818433,
+          "hi": 0.6524528500599445
+        },
+        "medianAbsRelError": 0.5918,
+        "medianSignedRelError": 0.1563
+      },
+      "codex": {
+        "anchors": 6,
+        "censored": 2,
+        "withinPlusMinus30": {
+          "k": 0,
+          "n": 4,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.6023646356165955
+        },
+        "medianAbsRelError": 10,
+        "medianSignedRelError": null
+      }
+    },
+    "pass": false
+  },
+  "seCheck": {
+    "rule": "METHOD.md §6: analytic SE vs the B = 2,000 bootstrap on >= 200 evaluations; median |ln(SE ratio)| <= 5% per configuration",
+    "rows": [
+      {
+        "config": "session-day/count",
+        "comparisons": 630,
+        "medianAbsLogSeRatio": 0.0127,
+        "medianLogSeRatio": -0.0102,
+        "p90AbsLogSeRatio": 0.0432,
+        "medianAbsByProfile": {
+          "codex": 0.0197,
+          "few-long": 0.0137,
+          "few-long-hd": 0.0215,
+          "many-short": 0.0105,
+          "multi-project": 0.0078,
+          "single-project": 0.0107,
+          "sparse-failures": 0.0129
+        },
+        "pass": true
+      },
+      {
+        "config": "session-day/cr2",
+        "comparisons": 630,
+        "medianAbsLogSeRatio": 0.012,
+        "medianLogSeRatio": -0.0101,
+        "p90AbsLogSeRatio": 0.0459,
+        "medianAbsByProfile": {
+          "codex": 0.0186,
+          "few-long": 0.011,
+          "few-long-hd": 0.0203,
+          "many-short": 0.0097,
+          "multi-project": 0.0078,
+          "single-project": 0.0091,
+          "sparse-failures": 0.013
+        },
+        "pass": true
+      },
+      {
+        "config": "session/count",
+        "comparisons": 630,
+        "medianAbsLogSeRatio": 0.0175,
+        "medianLogSeRatio": -0.0166,
+        "p90AbsLogSeRatio": 0.1139,
+        "medianAbsByProfile": {
+          "codex": 0.055,
+          "few-long": 0.0292,
+          "few-long-hd": 0.0686,
+          "many-short": 0.0105,
+          "multi-project": 0.0081,
+          "single-project": 0.0104,
+          "sparse-failures": 0.0158
+        },
+        "pass": true
+      },
+      {
+        "config": "session/cr2",
+        "comparisons": 630,
+        "medianAbsLogSeRatio": 0.0174,
+        "medianLogSeRatio": -0.0161,
+        "p90AbsLogSeRatio": 0.1144,
+        "medianAbsByProfile": {
+          "codex": 0.0482,
+          "few-long": 0.036,
+          "few-long-hd": 0.067,
+          "many-short": 0.0116,
+          "multi-project": 0.007,
+          "single-project": 0.01,
+          "sparse-failures": 0.0136
+        },
+        "pass": true
+      },
+      {
+        "config": "two-level/cr2",
+        "comparisons": 630,
+        "medianAbsLogSeRatio": 0.0214,
+        "medianLogSeRatio": -0.0195,
+        "p90AbsLogSeRatio": 0.1266,
+        "medianAbsByProfile": {
+          "codex": 0.0684,
+          "few-long": 0.0424,
+          "few-long-hd": 0.0642,
+          "many-short": 0.0114,
+          "multi-project": 0.0086,
+          "single-project": 0.0112,
+          "sparse-failures": 0.0137
+        },
+        "pass": true
+      }
+    ],
+    "pass": true
+  },
+  "sensitivity": {
+    "rule": "research/08 #5-#6: pseudo-count 0.25 / 0.5 / 1.0 and the Holm-adjusted MDE critical value (alpha/3), same seeds, under toolErrorsNonCmd",
+    "nullSequencesPerProfile": 0,
+    "effectSequencesPerProfile": 0,
+    "rows": [
+      {
+        "candidate": "session-t95-cr2",
+        "pseudo": 0.5,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+pseudo0.25",
+        "pseudo": 0.25,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+pseudo1",
+        "pseudo": 1,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+holmMde",
+        "pseudo": 0.5,
+        "mdeAlpha": 0.01666666666666668,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "sequences": {
+      "nullPerProfile": 0,
+      "effectPerProfile": 0
+    }
+  },
+  "gOnset": {
+    "rule": "G-onset: I covers the true onset at least 80% of the time",
+    "detectedSequences": 24,
+    "withOnsetInterval": 24,
+    "coverage": {
+      "k": 24,
+      "n": 24,
+      "rate": 1,
+      "lo": 0.8575264022779265,
+      "hi": 1
+    },
+    "medianAbsCentreErrorDays": 0.75,
+    "status": "pass"
+  },
+  "gAttr": {
+    "rule": "G-attr (METHOD.md §14). Confusion matrix = the first persisted changed-class glance key on or after the onset, per scenario (truth = what the synth planted).",
+    "status": "scaffolding: the interim decider has no attribution states, so every claim is changed_unattributed / unclear:workload; the conditions are evaluated but cannot fail until WP-21's decider runs here",
+    "errorsVote": "toolErrorsNonCmd",
+    "scenarios": [
+      {
+        "id": "you-effect",
+        "row": "a you-event effect → agent ≤ 2%",
+        "truth": "you",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 2,
+          "you": 1
+        },
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "routine-update-effect",
+        "row": "a server-side change (routine update), fully observed → you ≤ 5%",
+        "truth": "agent_routine",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 2,
+          "unclear:nothing_recorded_on_your_side": 1
+        },
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.05,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "desktop-picker-effect",
+        "row": "a Desktop picker, flag or env change with no command and no settings diff → agent ≤ 2%",
+        "truth": "unknown",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 1,
+          "unclear:workload": 2
+        },
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "friction-only",
+        "row": "a friction-only shift → agent ≤ 2%, you ≤ 5%",
+        "truth": "friction",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 3
+        },
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          },
+          {
+            "state": "you",
+            "max": 0.05,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "both-same-day",
+        "row": "both sides on the same day → you ≤ 10%, agent ≤ 10%",
+        "truth": "both",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 1,
+          "you": 2
+        },
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.1,
+            "rate": {
+              "k": 2,
+              "n": 3,
+              "rate": 0.6666666666666666,
+              "lo": 0.09429932405009822,
+              "hi": 0.9915962413401758
+            },
+            "pass": false
+          },
+          {
+            "state": "agent",
+            "max": 0.1,
+            "rate": {
+              "k": 0,
+              "n": 3,
+              "rate": 0,
+              "lo": 0,
+              "hi": 0.7075982261790159
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "you-event-far-from-onset",
+        "row": "a you-event ≥ 7 days from the onset → you ≤ 10%",
+        "truth": "agent_routine_with_far_you",
+        "sequences": 3,
+        "firstClaim": {
+          "you": 1,
+          "unclear:nothing_recorded_on_your_side": 2
+        },
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.1,
+            "rate": {
+              "k": 1,
+              "n": 3,
+              "rate": 0.3333333333333333,
+              "lo": 0.008403758659824234,
+              "hi": 0.9057006759499018
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "routine-plus-noeffect-you",
+        "row": "a routine bump + a no-effect you-event → the you rate is published",
+        "truth": "agent_routine_with_noeffect_you",
+        "sequences": 3,
+        "firstClaim": {
+          "no_claim": 2,
+          "you": 1
+        },
+        "conditions": [
+          {
+            "state": "you",
+            "max": null,
+            "rate": {
+              "k": 1,
+              "n": 3,
+              "rate": 0.3333333333333333,
+              "lo": 0.008403758659824234,
+              "hi": 0.9057006759499018
+            },
+            "pass": null
+          }
+        ]
+      }
+    ],
+    "notExpressible": [
+      "an agent-strong effect (served ≠ requested model) → you ≤ 5% — the synth has no served-model divergence",
+      "workload only → you/agent ≤ 5% — synth rates do not depend on project or mix",
+      "a single-project workload shift with a routine bump in I → agent ≤ 2% — as above",
+      "a pre-install settings edit, then a restart into a bump → never agent — the synth has no install/snapshot timeline",
+      "a small stratum never flips to you — as above",
+      "mixed never gives none — covered by the interim decider's unit tests, not by a planted scenario"
+    ]
+  },
+  "runtime": {
+    "seconds": 1756,
+    "workers": 1,
+    "sequences": 203,
+    "probes": 3310,
+    "phases": [
+      {
+        "phase": "pilot",
+        "seconds": 1444,
+        "jobs": 49
+      },
+      {
+        "phase": "chosen: probes, sensitivity, G-attr",
+        "seconds": 311.9,
+        "jobs": 77
+      }
+    ]
+  },
+  "notes": [
+    "Synthetic data only (src/synth); no real log, config or path is read or written.",
+    "false 'changed': share of null sequences whose PERSISTED glance claimed a change (rows 4-11) on any of the 90 daily evaluations; CP = two-sided 95% Clopper-Pearson interval, gate on its upper end.",
+    "Decider supplied through the DECIDERS registry.",
+    "Power: planted regression (tool errors and blind edits x m, read weight / m) on a version bump at plan day 75; detected = the persisted glance claims a change on or after the onset.",
+    "REDUCED single-core run (orchestrator, 2026-10-04: laptop overheating; 1 worker at background QoS through heavy.sh, ~40 min budget). The full >= 1,000-null-sequences-per-profile run is DEFERRED to a later nightly run; until it runs no calibrated flag can be set (the gate needs >= 1,000). Candidate: session-t95-cr2 only, the choice of the interrupted 6-worker run with the interim decider on the same seeds: pilot (150 null + 60 per effect size per profile, all 6 candidates) mean Claude power session-t95-cr2 0.343, two-level-t95-cr2 0.340, wcb-session-t95 0.310, d23-literal 0.283, wcb-session-t99 0.236, session-day-t99-cr2 0.232; session-t95-cr2 then passed the false-changed gate (CP upper <= 6%) on all six Claude profiles under both constructs with 1,000 null sequences per profile before the run was stopped (its artifact was not written; progress log kept locally, not committed: *.log is gitignored). Sensitivity runs (pseudo-count, Holm MDE) deferred with the nightly run.",
+    "Post-run presentation fix (no number changed): removed 7 null and 7 power rows with 0 sequences (the toolErrors construct, which the WP-21 decider is not judged under), and relabelled the false-agent gate from \"fail\" to \"insufficient_sequences\" (20 < 1,000 null sequences per profile). The run's assembly code had both issues; fixed in calibration/run.ts after this run.",
+    "effectRows (row shares and D56 diagnostics of the planted-regression groups) were added to the assembly after this run and are absent here; the D56 null numbers are in gNullSeq[].diag."
+  ],
+  "date": "2026-10-04",
+  "commit": "dcaf4dc6ae959a2925f4a4b44f02ccbed03f382e",
+  "startedAt": "2026-10-05T03:17:14.205Z",
+  "finishedAt": "2026-10-05T03:46:30.189Z"
+}

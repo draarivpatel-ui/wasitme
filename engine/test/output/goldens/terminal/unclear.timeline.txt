@@ -1,0 +1,37 @@
+wasitme                                                           Claude Code   checked Oct 4, 12:00
+════════════════════════════════════════════════════════════════════════════════════════════════════
+What changed    yours numbered above the line, Claude Code's lettered below
+your side                                                   [1]
+                ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┬┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+Claude Code                                                 [A]
+                Sep 13                      Sep 20                      Sep 27                Oct 3
+errors            8   8   8   8   8   8   8   8   8   8   8  24  24  24  24  24  24  24  24  24  24
+tool calls      200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200
+                └───────── before ─────────┘└────────────────── recent, 14 days ───────────────────┘
+
+                [1] Sep 24   Effort high → medium                your side · lines up with the shift
+                [A] Sep 24   Served model differs from the on…  agent side · lines up with the shift
+
+Finding         ■─▲ Can't tell which
+                Your numbers moved, but changes on both sides landed the same week.
+                Your effort change (Sep 24) and Claude Code's model switch (Sep 24) both line up
+                with the shift: tool errors ×2.4, edits without reading first ×1.7.
+                Based on 168 exchanges over 168 session-days (168 sessions) on this Mac.
+                Sessions on other machines aren't visible.
+
+Signals                  recent         before   change  range            ×1 ×2 ×4     status
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Tool errors         272 / 2,800    224 / 5,600   ×2.43  ×1.93–×3.05       ░│░ ├○┤      context
+Tool errors         272 / 2,800    224 / 5,600   ×2.43  ×1.93–×3.05       ░│░ ├●┤      moved, more
+(excl. commands)
+Reads per edit    2,240 / 1,120  4,480 / 2,240   ×1.00  ×0.93–×1.08        ○           not detected
+Edits without       192 / 1,120    224 / 2,240   ×1.71  ×1.35–×2.18       ░│├●┤        moved, more
+reading first
+Interruptions            0 / 56        0 / 112   only 0 in the recent window           context
+Pushback prompts         0 / 56        0 / 112   prompts are not in English            context
+Files edited 3+          0 / 56        0 / 112   only 0 in the recent window           context
+times
+                                   ○ estimate, not detected  ● moved  ├─┤ range  ░ too small to show
+
+Next            Undo your effort change to separate them.
+Share           wasitme report --md | pbcopy   numbers only: no prompts, code or paths

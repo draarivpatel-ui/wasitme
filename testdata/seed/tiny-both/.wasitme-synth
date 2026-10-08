@@ -1,0 +1,9 @@
+{
+  "generator": "wasitme-synth",
+  "entries": [
+    "claude",
+    "codex",
+    "synth-truth-exchanges.jsonl",
+    "synth-truth.json"
+  ]
+}

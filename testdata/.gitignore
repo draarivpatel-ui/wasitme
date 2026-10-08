@@ -1,0 +1,4 @@
+# Large generated corpora live here and are never committed (regenerate with the synth CLI, see README.md).
+/generated/
+# The full hostile tier (25 MB lines, symlink loops) is generated on demand.
+/hostile-full/

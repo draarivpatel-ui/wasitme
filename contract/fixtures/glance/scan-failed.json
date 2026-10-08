@@ -1,0 +1,315 @@
+{
+  "schema": "wasitme.glance/1",
+  "engine": "0.1.0",
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "staleAfterSec": 7200,
+  "scanOk": false,
+  "scanError": "permission_denied",
+  "demo": false,
+  "lead": "verdict",
+  "agents": [
+    {
+      "agent": "claude-code",
+      "state": "insufficient",
+      "reason": "needs_data",
+      "pending": false,
+      "calibrated": true,
+      "label": "Too early to tell",
+      "headline": "wasitme can already rule out changes bigger than about ×2.5 in tool errors.",
+      "because": "Only tool errors have enough data so far; reads per edit and edits without reading first need a few more sessions.",
+      "tryThis": "Keep working normally; wasitme checks every 15 minutes.",
+      "confidence": "Based on 214 exchanges over 19 session-days (6 sessions) on this Mac. Sessions on other machines aren't visible.",
+      "band": "",
+      "statusLine": "wasitme: too early to tell",
+      "n": {
+        "exchanges": 214,
+        "sessions": 6,
+        "sessionDays": 19,
+        "days": 13
+      },
+      "progress": {
+        "tier": 1,
+        "etaDate": null,
+        "notAtCurrentPace": false,
+        "unlock": [
+          {
+            "metric": "readsPerEdit",
+            "family": "research",
+            "have": {
+              "events": 31,
+              "sessions": 4,
+              "sessionDays": 9
+            },
+            "need": {
+              "events": 40,
+              "sessions": 5,
+              "sessionDays": 10
+            }
+          },
+          {
+            "metric": "blindEdits",
+            "family": "research",
+            "have": {
+              "events": 7,
+              "sessions": 4,
+              "sessionDays": 9
+            },
+            "need": {
+              "events": 10,
+              "sessions": 5,
+              "sessionDays": 10
+            }
+          }
+        ]
+      },
+      "topMetrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "unit": "per 100 tool calls",
+          "family": "errors",
+          "role": "vote",
+          "recent": {
+            "k": 88,
+            "n": 3290
+          },
+          "baseline": {
+            "k": 201,
+            "n": 5610
+          },
+          "ratio": 0.75,
+          "range": [
+            0.42,
+            1.33
+          ],
+          "mde": 2.5,
+          "status": "none"
+        },
+        {
+          "id": "readsPerEdit",
+          "label": "Reads per edit",
+          "unit": "reads per edit",
+          "family": "research",
+          "role": "vote",
+          "recent": {
+            "k": 402,
+            "n": 96
+          },
+          "baseline": {
+            "k": 1130,
+            "n": 233
+          },
+          "ratio": null,
+          "range": null,
+          "mde": null,
+          "status": "ineligible"
+        },
+        {
+          "id": "interrupts",
+          "label": "Interruptions",
+          "unit": "per 100 exchanges",
+          "family": "friction",
+          "role": "support",
+          "recent": {
+            "k": 2,
+            "n": 214
+          },
+          "baseline": {
+            "k": 13,
+            "n": 520
+          },
+          "ratio": null,
+          "range": null,
+          "mde": null,
+          "status": "ineligible"
+        }
+      ],
+      "strip": {
+        "metric": "toolErrors",
+        "days": [
+          {
+            "d": "2026-09-07",
+            "k": 5,
+            "n": 160
+          },
+          {
+            "d": "2026-09-08",
+            "k": 11,
+            "n": 290
+          },
+          {
+            "d": "2026-09-09",
+            "k": 7,
+            "n": 214
+          },
+          {
+            "d": "2026-09-10",
+            "k": 6,
+            "n": 188
+          },
+          {
+            "d": "2026-09-11",
+            "k": 9,
+            "n": 247
+          },
+          {
+            "d": "2026-09-12",
+            "k": 4,
+            "n": 121
+          },
+          {
+            "d": "2026-09-13",
+            "k": 0,
+            "n": 38
+          },
+          {
+            "d": "2026-09-14",
+            "k": 7,
+            "n": 205
+          },
+          {
+            "d": "2026-09-15",
+            "k": 10,
+            "n": 262
+          },
+          {
+            "d": "2026-09-16",
+            "k": 8,
+            "n": 230
+          },
+          {
+            "d": "2026-09-17",
+            "k": 6,
+            "n": 176
+          },
+          {
+            "d": "2026-09-18",
+            "k": 9,
+            "n": 219
+          },
+          {
+            "d": "2026-09-19",
+            "k": 5,
+            "n": 150
+          },
+          {
+            "d": "2026-09-20",
+            "k": 8,
+            "n": 231
+          },
+          {
+            "d": "2026-09-21",
+            "k": 5,
+            "n": 160
+          },
+          {
+            "d": "2026-09-22",
+            "k": 11,
+            "n": 290
+          },
+          {
+            "d": "2026-09-23",
+            "k": 7,
+            "n": 214
+          },
+          {
+            "d": "2026-09-24",
+            "k": 6,
+            "n": 188
+          },
+          {
+            "d": "2026-09-25",
+            "k": 9,
+            "n": 247
+          },
+          {
+            "d": "2026-09-26",
+            "k": 4,
+            "n": 121
+          },
+          {
+            "d": "2026-09-27",
+            "k": 0,
+            "n": 38
+          },
+          {
+            "d": "2026-09-28",
+            "k": 7,
+            "n": 205
+          },
+          {
+            "d": "2026-09-29",
+            "k": 10,
+            "n": 262
+          },
+          {
+            "d": "2026-09-30",
+            "k": 8,
+            "n": 230
+          },
+          {
+            "d": "2026-10-01",
+            "k": 6,
+            "n": 176
+          },
+          {
+            "d": "2026-10-02",
+            "k": 9,
+            "n": 219
+          }
+        ],
+        "window": {
+          "ratio": 0.75,
+          "lo": 0.42,
+          "hi": 1.33,
+          "mde": 2.5
+        }
+      },
+      "events": [
+        {
+          "day": "2026-10-01",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.277 → 2.1.281",
+          "new": false
+        },
+        {
+          "day": "2026-09-27",
+          "kind": "mcp",
+          "side": "you",
+          "strength": "strong",
+          "label": "MCP server added",
+          "new": false
+        },
+        {
+          "day": "2026-09-24",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.274 → 2.1.277",
+          "new": false
+        },
+        {
+          "day": "2026-09-21",
+          "kind": "effort",
+          "side": "you",
+          "strength": "strong",
+          "label": "Effort high → medium",
+          "new": false
+        },
+        {
+          "day": "2026-09-18",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.270 → 2.1.274",
+          "new": false
+        }
+      ]
+    }
+  ],
+  "privacy": {
+    "containsText": false
+  }
+}

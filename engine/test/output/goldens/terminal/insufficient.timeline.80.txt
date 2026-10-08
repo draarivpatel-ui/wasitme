@@ -1,0 +1,36 @@
+wasitme                                       Claude Code   checked Oct 4, 12:00
+════════════════════════════════════════════════════════════════════════════════
+What changed    yours numbered above the line, Claude Code's lettered below
+your side
+                ┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄
+Claude Code
+                Sep 18                      Sep 25                        Oct 3
+errors            8   8   8   8   8   8  24  24  24  24  24  24  24  24  24  24
+tool calls      200 200 200 200 200 200 200 200 200 200 200 200 200 200 200 200
+
+Finding         ·┄· Too early to tell
+                wasitme needs 12 more days of history before it can compare.
+                The shortest comparison puts your last 14 days against the 28
+                before them.
+                No date yet: it depends on how your sessions go.
+                Based on 120 exchanges over 120 session-days (120 sessions) on
+                this Mac.
+                Sessions on other machines aren't visible.
+
+Signals                  recent         before   change  range  status
+────────────────────────────────────────────────────────────────────────────────
+Tool errors         272 / 2,800    128 / 3,200                  context
+Tool errors         272 / 2,800    128 / 3,200                  not yet
+(excl. commands)
+Reads per edit    2,240 / 1,120  2,560 / 1,280                  not yet
+Edits without       192 / 1,120    128 / 1,280                  not yet
+reading first
+Interruptions            0 / 56         0 / 64                  context
+Pushback prompts         0 / 56         0 / 64                  context
+Files edited 3+          0 / 56         0 / 64                  context
+times
+Change and range show once there is enough history to compare.
+
+Next            Keep working normally; wasitme checks every 15 minutes.
+Share           wasitme report --md | pbcopy
+                numbers only: no prompts, code or paths

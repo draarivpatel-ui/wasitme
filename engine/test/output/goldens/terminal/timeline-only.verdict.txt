@@ -1,0 +1,12 @@
+wasitme                                                           Claude Code   checked Oct 4, 12:00
+════════════════════════════════════════════════════════════════════════════════════════════════════
+Finding         ·┄· Timeline only
+                Findings for Claude Code are off until wasitme's tests pass.
+                Here's what changed on each side in the meantime.
+                Based on 168 exchanges over 168 session-days (168 sessions) on this Mac.
+                Sessions on other machines aren't visible.
+
+What changed    the last 30 days
+                No changes recorded in the last 30 days.
+
+Share           wasitme report --md | pbcopy   numbers only: no prompts, code or paths

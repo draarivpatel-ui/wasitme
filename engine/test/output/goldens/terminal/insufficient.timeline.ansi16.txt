@@ -1,0 +1,33 @@
+wasit[4mme[0m                                                           [2mClaude Code   checked Oct 4, 12:00[0m
+[2m════════════════════════════════════════════════════════════════════════════════════════════════════[0m
+[1mWhat changed[0m    [2myours numbered above the line, Claude Code's lettered below[0m
+[2myour side[0m
+                [2m┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄[0m
+[2mClaude Code[0m
+                [2mSep 13[0m                      [2mSep 20[0m                      [2mSep 27[0m                [2mOct 3[0m
+[2merrors[0m            8   8   8   8   8   8   8   8   8   8   8  24  24  24  24  24  24  24  24  24  24
+[2mtool calls[0m      [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m [2m200[0m
+
+[1mFinding[0m         ·┄· [1mToo early to tell[0m
+                wasitme needs 12 more days of history before it can compare.
+                [2mThe shortest comparison puts your last 14 days against the 28 before them.[0m
+                [2mNo date yet: it depends on how your sessions go.[0m
+                [2mBased on 120 exchanges over 120 session-days (120 sessions) on this Mac.[0m
+                [2mSessions on other machines aren't visible.[0m
+
+[1mSignals[0m                  [2mrecent[0m         [2mbefore[0m   [2mchange  range[0m                         [2mstatus[0m
+[2m────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+Tool errors         272 / 2,800    128 / 3,200                                         [2mcontext[0m
+Tool errors         272 / 2,800    128 / 3,200                                         [2mnot yet[0m
+(excl. commands)
+Reads per edit    2,240 / 1,120  2,560 / 1,280                                         [2mnot yet[0m
+Edits without       192 / 1,120    128 / 1,280                                         [2mnot yet[0m
+reading first
+Interruptions            0 / 56         0 / 64                                         [2mcontext[0m
+Pushback prompts         0 / 56         0 / 64                                         [2mcontext[0m
+Files edited 3+          0 / 56         0 / 64                                         [2mcontext[0m
+times
+[2mChange and range show once there is enough history to compare.[0m
+
+[1mNext[0m            Keep working normally; wasitme checks every 15 minutes.
+[1mShare[0m           wasitme report --md | pbcopy   [2mnumbers only: no prompts, code or paths[0m

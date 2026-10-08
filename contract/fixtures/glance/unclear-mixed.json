@@ -1,0 +1,275 @@
+{
+  "schema": "wasitme.glance/1",
+  "engine": "0.1.0",
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "staleAfterSec": 7200,
+  "scanOk": true,
+  "scanError": null,
+  "demo": false,
+  "lead": "verdict",
+  "agents": [
+    {
+      "agent": "claude-code",
+      "state": "unclear",
+      "reason": "mixed",
+      "pending": false,
+      "calibrated": true,
+      "label": "Can't tell which",
+      "headline": "Your numbers moved, but in different directions.",
+      "because": "Tool errors ×2.6 against reads per edit ×1.2: the moves point opposite ways.",
+      "tryThis": "",
+      "confidence": "Based on 402 exchanges over 31 session-days (9 sessions) on this Mac. Sessions on other machines aren't visible.",
+      "band": "",
+      "statusLine": "wasitme: can't tell which",
+      "n": {
+        "exchanges": 402,
+        "sessions": 9,
+        "sessionDays": 31,
+        "days": 14
+      },
+      "progress": null,
+      "topMetrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "unit": "per 100 tool calls",
+          "family": "errors",
+          "role": "vote",
+          "recent": {
+            "k": 286,
+            "n": 3120
+          },
+          "baseline": {
+            "k": 201,
+            "n": 5610
+          },
+          "ratio": 2.56,
+          "range": [
+            1.48,
+            4.43
+          ],
+          "mde": 2,
+          "status": "worse"
+        },
+        {
+          "id": "readsPerEdit",
+          "label": "Reads per edit",
+          "unit": "reads per edit",
+          "family": "research",
+          "role": "vote",
+          "recent": {
+            "k": 2950,
+            "n": 410
+          },
+          "baseline": {
+            "k": 4830,
+            "n": 820
+          },
+          "ratio": 1.22,
+          "range": [
+            1.05,
+            1.42
+          ],
+          "mde": 1.15,
+          "status": "better"
+        }
+      ],
+      "strip": {
+        "metric": "toolErrors",
+        "days": [
+          {
+            "d": "2026-09-06",
+            "k": 8,
+            "n": 231
+          },
+          {
+            "d": "2026-09-07",
+            "k": 5,
+            "n": 160
+          },
+          {
+            "d": "2026-09-08",
+            "k": 11,
+            "n": 290
+          },
+          {
+            "d": "2026-09-09",
+            "k": 7,
+            "n": 214
+          },
+          {
+            "d": "2026-09-10",
+            "k": 6,
+            "n": 188
+          },
+          {
+            "d": "2026-09-11",
+            "k": 9,
+            "n": 247
+          },
+          {
+            "d": "2026-09-12",
+            "k": 4,
+            "n": 121
+          },
+          {
+            "d": "2026-09-13",
+            "k": 0,
+            "n": 38
+          },
+          {
+            "d": "2026-09-14",
+            "k": 7,
+            "n": 205
+          },
+          {
+            "d": "2026-09-15",
+            "k": 10,
+            "n": 262
+          },
+          {
+            "d": "2026-09-16",
+            "k": 8,
+            "n": 230
+          },
+          {
+            "d": "2026-09-17",
+            "k": 6,
+            "n": 176
+          },
+          {
+            "d": "2026-09-18",
+            "k": 9,
+            "n": 219
+          },
+          {
+            "d": "2026-09-19",
+            "k": 5,
+            "n": 150
+          },
+          {
+            "d": "2026-09-20",
+            "k": 7,
+            "n": 201
+          },
+          {
+            "d": "2026-09-21",
+            "k": 19,
+            "n": 224
+          },
+          {
+            "d": "2026-09-22",
+            "k": 24,
+            "n": 251
+          },
+          {
+            "d": "2026-09-23",
+            "k": 22,
+            "n": 230
+          },
+          {
+            "d": "2026-09-24",
+            "k": 18,
+            "n": 196
+          },
+          {
+            "d": "2026-09-25",
+            "k": 15,
+            "n": 171
+          },
+          {
+            "d": "2026-09-26",
+            "k": 26,
+            "n": 262
+          },
+          {
+            "d": "2026-09-27",
+            "k": 21,
+            "n": 228
+          },
+          {
+            "d": "2026-09-28",
+            "k": 6,
+            "n": 64
+          },
+          {
+            "d": "2026-09-29",
+            "k": 23,
+            "n": 244
+          },
+          {
+            "d": "2026-09-30",
+            "k": 25,
+            "n": 259
+          },
+          {
+            "d": "2026-10-01",
+            "k": 27,
+            "n": 276
+          },
+          {
+            "d": "2026-10-02",
+            "k": 30,
+            "n": 296
+          },
+          {
+            "d": "2026-10-03",
+            "k": 33,
+            "n": 248
+          }
+        ],
+        "window": {
+          "ratio": 2.56,
+          "lo": 1.48,
+          "hi": 4.43,
+          "mde": 2
+        }
+      },
+      "events": [
+        {
+          "day": "2026-10-01",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.277 → 2.1.281",
+          "new": false
+        },
+        {
+          "day": "2026-09-27",
+          "kind": "mcp",
+          "side": "you",
+          "strength": "strong",
+          "label": "MCP server added",
+          "new": false
+        },
+        {
+          "day": "2026-09-24",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.274 → 2.1.277",
+          "new": false
+        },
+        {
+          "day": "2026-09-21",
+          "kind": "effort",
+          "side": "you",
+          "strength": "strong",
+          "label": "Effort high → medium",
+          "new": false
+        },
+        {
+          "day": "2026-09-18",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.270 → 2.1.274",
+          "new": false
+        }
+      ]
+    }
+  ],
+  "privacy": {
+    "containsText": false
+  }
+}

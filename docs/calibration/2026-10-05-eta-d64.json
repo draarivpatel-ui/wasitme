@@ -1,0 +1,1765 @@
+{
+  "formatVersion": 1,
+  "kind": "wasitme-calibration",
+  "synthetic": true,
+  "mode": "custom",
+  "status": "complete",
+  "runSeed": "wp23-2026-10-04",
+  "decider": "interim-wp23 (rows 1-4, 12-14; rows 5-11 collapsed to changed_unattributed)",
+  "layout": {
+    "startDay": "2026-03-02",
+    "preDays": 30,
+    "evalDays": 90,
+    "planDays": 120,
+    "evaluation": "daily, today = plan day preDays+1 … preDays+evalDays (today's data excluded), UTC",
+    "tierFirstEvalDay": {
+      "1": 12,
+      "2": 33,
+      "3": 54
+    },
+    "plantedOnsetPlanDay": 75,
+    "plantedOnsetFirstEvalDay": 46,
+    "plantedRegression": {
+      "x2": {
+        "toolError": 2,
+        "blindEdit": 2,
+        "read": 0.5
+      }
+    },
+    "nullBackground": "no-effect version bumps every ~3 days (synth); a no-effect you·strong effort change (p 0.5) and a no-effect unknown·weak model change (p 0.3) at random evaluation days",
+    "estimatorInSimulation": "analytic sandwich for the bootstrap-based candidates (METHOD.md §6); the wild cluster bootstrap runs as itself",
+    "mdeOptimism": 0.1,
+    "sizes": {
+      "nullPilot": 0,
+      "nullFull": 0,
+      "minNullForPass": 1000,
+      "effectPilot": 0,
+      "effectFull": 0,
+      "effectSizes": [
+        2
+      ],
+      "sensitivityNull": 0,
+      "sensitivityEffect": 0,
+      "attrPerScenario": 0,
+      "mdeSequences": 0,
+      "etaSequences": 20,
+      "seSequences": 0
+    }
+  },
+  "persistence": {
+    "rule": "METHOD.md §12 Persistence",
+    "initial": "insufficient:needs_data",
+    "key": "state + reason",
+    "newDenominatorShare": 0.3,
+    "newSessionDays": 2,
+    "denominator": "the voting tool-error construct's denominator (tool calls that ran), selected tier's recent window (tier 1's when none)",
+    "newData": "days [max(t1, second window's first day), t2-1]",
+    "disagreeing": "a different key resets the pending change; an agreeing evaluation without enough new data keeps the first one pending"
+  },
+  "profiles": [
+    {
+      "id": "few-long",
+      "agent": "claude-code",
+      "description": "few very long sessions (FL)"
+    },
+    {
+      "id": "few-long-hd",
+      "agent": "claude-code",
+      "description": "few-long, session effect SD 0.5 (dispersion stress)"
+    },
+    {
+      "id": "many-short",
+      "agent": "claude-code",
+      "description": "many one-day sessions (MS)"
+    },
+    {
+      "id": "single-project",
+      "agent": "claude-code",
+      "description": "many-short, one project"
+    },
+    {
+      "id": "multi-project",
+      "agent": "claude-code",
+      "description": "many-short, 4 projects evenly"
+    },
+    {
+      "id": "sparse-failures",
+      "agent": "claude-code",
+      "description": "tool errors 1.2%, blind edits 5%"
+    },
+    {
+      "id": "codex",
+      "agent": "codex",
+      "description": "Codex: few human sessions + exec threads (CX)"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "session-t95-cr2",
+      "method": {
+        "id": "session-t95-cr2",
+        "clusters": "session",
+        "twoLevel": false,
+        "level": 0.95,
+        "smallSample": "cr2",
+        "keepLargerSe": true,
+        "estimator": "analytic"
+      },
+      "production": {
+        "id": "session-t95-cr2",
+        "clusters": "session",
+        "twoLevel": false,
+        "level": 0.95,
+        "smallSample": "cr2",
+        "keepLargerSe": true
+      },
+      "pilotPowerClaude": 0,
+      "screenedOut": false,
+      "extended": true,
+      "passesClaude": {
+        "toolErrorsNonCmd": false,
+        "toolErrors": false
+      },
+      "passesCodex": {
+        "toolErrorsNonCmd": false,
+        "toolErrors": false
+      }
+    }
+  ],
+  "gNullSeq": [],
+  "power": [],
+  "effectRows": [],
+  "selection": {
+    "chosen": null,
+    "criterion": "false 'changed' CP upper bound <= 6% on every Claude profile under both voting tool-error constructs",
+    "why": "No candidate can pass: the gate needs >= 1000 null sequences per profile and this run has 0. session-t95-cr2 (highest pilot power) was probed provisionally; no flag is set.",
+    "ranking": [
+      {
+        "candidate": "session-t95-cr2",
+        "pilotPowerClaude": 0,
+        "fullPass": false
+      }
+    ],
+    "probed": "session-t95-cr2"
+  },
+  "calibrated": {
+    "claude-code": {
+      "calibrated": false,
+      "byConstruct": {
+        "toolErrorsNonCmd": false,
+        "toolErrors": false
+      },
+      "profiles": [
+        "few-long",
+        "few-long-hd",
+        "many-short",
+        "single-project",
+        "multi-project",
+        "sparse-failures"
+      ],
+      "falseAgentGate": "not_exercised"
+    },
+    "codex": {
+      "calibrated": false,
+      "byConstruct": {
+        "toolErrorsNonCmd": false,
+        "toolErrors": false
+      },
+      "profiles": [
+        "codex"
+      ],
+      "falseAgentGate": "not_exercised"
+    }
+  },
+  "gMde": {
+    "rule": "G-MDE: an effect planted at the reported MDE is detected 60-95% of the time (detected = range excludes 1x in the planted direction)",
+    "rows": [],
+    "overall": {
+      "k": 0,
+      "n": 0,
+      "rate": null,
+      "lo": 0,
+      "hi": 1
+    },
+    "overallDirectRateMetrics": {
+      "k": 0,
+      "n": 0,
+      "rate": null,
+      "lo": 0,
+      "hi": 1
+    },
+    "pass": false,
+    "note": "readsPerEdit is planted through the read weight, which the planner damps (a read precedes most edits); medianRealisedShare shows how much of the factor reached the metric, so its row understates detection at the true MDE."
+  },
+  "eta": {
+    "rule": "G-ETA (D64(c)), over SHOWN dates only: the evaluation runs daily under the D64 rule (ready = gate + sensitivity held on 2 consecutive daily evaluations; a date is shown only when the projection is stable - same tier, target dates within +/-20% of the remaining days on 3 consecutive evaluations - and its largest-session share is < 0.35; Codex only with a measured anchor). Every 10th evaluation day from the first shown date (not ready) is an anchor; the outcome is the first later held-ready evaluation. Per profile with a scored anchor: median |relative error| <= 0.30 (a never-ready anchor counts as error 10) AND >= 80% within +/-30%. suppression.share: not-ready days whose projection had a date but showed none. notAtCurrentPace: days the claim was projected / shown (it is shown only after 3 consecutive evaluations said so), and the shown claims followed by a ready evaluation within 30 days (>= 30 evaluation days left).",
+    "byProfile": {
+      "few-long": {
+        "sequences": 20,
+        "shownAnchors": 44,
+        "censored": 0,
+        "neverReady": 0,
+        "withinPlusMinus30": {
+          "k": 22,
+          "n": 44,
+          "rate": 0.5,
+          "lo": 0.3456115734975356,
+          "hi": 0.6543884265024644
+        },
+        "medianAbsRelError": 0.2885,
+        "medianSignedRelError": 0,
+        "pass": false,
+        "suppression": {
+          "projectedDays": 674,
+          "shownDays": 142,
+          "share": {
+            "k": 532,
+            "n": 674,
+            "rate": 0.7893175074183977,
+            "lo": 0.7565540405043976,
+            "hi": 0.8195233496230685
+          },
+          "byReason": {
+            "unstable": 513,
+            "dominant_session": 19,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 399,
+          "shownDays": 280,
+          "days": 210,
+          "readyWithin30Days": {
+            "k": 167,
+            "n": 210,
+            "rate": 0.7952380952380952,
+            "lo": 0.7342682816238266,
+            "hi": 0.8476710756708599
+          }
+        }
+      },
+      "few-long-hd": {
+        "sequences": 20,
+        "shownAnchors": 13,
+        "censored": 1,
+        "neverReady": 7,
+        "withinPlusMinus30": {
+          "k": 1,
+          "n": 12,
+          "rate": 0.08333333333333333,
+          "lo": 0.0021075932322673907,
+          "hi": 0.38479616515132875
+        },
+        "medianAbsRelError": 10,
+        "medianSignedRelError": 0.4444,
+        "pass": false,
+        "suppression": {
+          "projectedDays": 211,
+          "shownDays": 34,
+          "share": {
+            "k": 177,
+            "n": 211,
+            "rate": 0.8388625592417062,
+            "lo": 0.7821731382487087,
+            "hi": 0.885752504143511
+          },
+          "byReason": {
+            "unstable": 161,
+            "dominant_session": 16,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 1549,
+          "shownDays": 1402,
+          "days": 912,
+          "readyWithin30Days": {
+            "k": 117,
+            "n": 912,
+            "rate": 0.12828947368421054,
+            "lo": 0.1072657699710362,
+            "hi": 0.1517465219353653
+          }
+        }
+      },
+      "many-short": {
+        "sequences": 20,
+        "shownAnchors": 22,
+        "censored": 0,
+        "neverReady": 0,
+        "withinPlusMinus30": {
+          "k": 21,
+          "n": 22,
+          "rate": 0.9545454545454546,
+          "lo": 0.7715556023326826,
+          "hi": 0.9988498524730858
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0,
+        "pass": true,
+        "suppression": {
+          "projectedDays": 253,
+          "shownDays": 196,
+          "share": {
+            "k": 57,
+            "n": 253,
+            "rate": 0.22529644268774704,
+            "lo": 0.17533228341699214,
+            "hi": 0.28182053034879573
+          },
+          "byReason": {
+            "unstable": 57,
+            "dominant_session": 0,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 0,
+          "shownDays": 0,
+          "days": 0,
+          "readyWithin30Days": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "lo": 0,
+            "hi": 1
+          }
+        }
+      },
+      "single-project": {
+        "sequences": 20,
+        "shownAnchors": 21,
+        "censored": 0,
+        "neverReady": 0,
+        "withinPlusMinus30": {
+          "k": 17,
+          "n": 21,
+          "rate": 0.8095238095238095,
+          "lo": 0.5809339588163311,
+          "hi": 0.9455364318214379
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0,
+        "pass": true,
+        "suppression": {
+          "projectedDays": 260,
+          "shownDays": 188,
+          "share": {
+            "k": 72,
+            "n": 260,
+            "rate": 0.27692307692307694,
+            "lo": 0.2234313345238661,
+            "hi": 0.3355804221296239
+          },
+          "byReason": {
+            "unstable": 72,
+            "dominant_session": 0,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 0,
+          "shownDays": 0,
+          "days": 0,
+          "readyWithin30Days": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "lo": 0,
+            "hi": 1
+          }
+        }
+      },
+      "multi-project": {
+        "sequences": 20,
+        "shownAnchors": 21,
+        "censored": 0,
+        "neverReady": 0,
+        "withinPlusMinus30": {
+          "k": 21,
+          "n": 21,
+          "rate": 1,
+          "lo": 0.8389023847807948,
+          "hi": 1
+        },
+        "medianAbsRelError": 0,
+        "medianSignedRelError": 0,
+        "pass": true,
+        "suppression": {
+          "projectedDays": 241,
+          "shownDays": 201,
+          "share": {
+            "k": 40,
+            "n": 241,
+            "rate": 0.16597510373443983,
+            "lo": 0.12130069806744359,
+            "hi": 0.21907834920193636
+          },
+          "byReason": {
+            "unstable": 40,
+            "dominant_session": 0,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 0,
+          "shownDays": 0,
+          "days": 0,
+          "readyWithin30Days": {
+            "k": 0,
+            "n": 0,
+            "rate": null,
+            "lo": 0,
+            "hi": 1
+          }
+        }
+      },
+      "sparse-failures": {
+        "sequences": 20,
+        "shownAnchors": 26,
+        "censored": 1,
+        "neverReady": 11,
+        "withinPlusMinus30": {
+          "k": 13,
+          "n": 25,
+          "rate": 0.52,
+          "lo": 0.3130570444568548,
+          "hi": 0.7220319903303789
+        },
+        "medianAbsRelError": 0.2069,
+        "medianSignedRelError": 0,
+        "pass": false,
+        "suppression": {
+          "projectedDays": 325,
+          "shownDays": 157,
+          "share": {
+            "k": 168,
+            "n": 325,
+            "rate": 0.5169230769230769,
+            "lo": 0.46111591311773736,
+            "hi": 0.5724190746182103
+          },
+          "byReason": {
+            "unstable": 168,
+            "dominant_session": 0,
+            "no_measured_anchor": 0
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 1378,
+          "shownDays": 1257,
+          "days": 851,
+          "readyWithin30Days": {
+            "k": 98,
+            "n": 851,
+            "rate": 0.11515863689776733,
+            "lo": 0.09448635608032419,
+            "hi": 0.13853765036901677
+          }
+        }
+      },
+      "codex": {
+        "sequences": 20,
+        "shownAnchors": 6,
+        "censored": 0,
+        "neverReady": 6,
+        "withinPlusMinus30": {
+          "k": 0,
+          "n": 6,
+          "rate": 0,
+          "lo": 0,
+          "hi": 0.45925812644009056
+        },
+        "medianAbsRelError": 10,
+        "medianSignedRelError": null,
+        "pass": false,
+        "suppression": {
+          "projectedDays": 122,
+          "shownDays": 22,
+          "share": {
+            "k": 100,
+            "n": 122,
+            "rate": 0.819672131147541,
+            "lo": 0.7398090166657312,
+            "hi": 0.883402368336192
+          },
+          "byReason": {
+            "unstable": 76,
+            "dominant_session": 0,
+            "no_measured_anchor": 24
+          }
+        },
+        "notAtCurrentPace": {
+          "projectedDays": 1678,
+          "shownDays": 1579,
+          "days": 999,
+          "readyWithin30Days": {
+            "k": 0,
+            "n": 999,
+            "rate": 0,
+            "lo": 0,
+            "hi": 0.00368576286609823
+          }
+        }
+      }
+    },
+    "profilesScored": [
+      "few-long",
+      "few-long-hd",
+      "many-short",
+      "single-project",
+      "multi-project",
+      "sparse-failures",
+      "codex"
+    ],
+    "pass": false
+  },
+  "seCheck": {
+    "rule": "METHOD.md §6: analytic SE vs the B = 2,000 bootstrap on >= 200 evaluations; median |ln(SE ratio)| <= 5% per configuration",
+    "rows": [],
+    "pass": false
+  },
+  "sensitivity": {
+    "rule": "research/08 #5-#6: pseudo-count 0.25 / 0.5 / 1.0 and the Holm-adjusted MDE critical value (alpha/3), same seeds, under toolErrorsNonCmd",
+    "nullSequencesPerProfile": 0,
+    "effectSequencesPerProfile": 0,
+    "rows": [
+      {
+        "candidate": "session-t95-cr2",
+        "pseudo": 0.5,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+pseudo0.25",
+        "pseudo": 0.25,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+pseudo1",
+        "pseudo": 1,
+        "mdeAlpha": 0.05,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      },
+      {
+        "candidate": "session-t95-cr2+holmMde",
+        "pseudo": 0.5,
+        "mdeAlpha": 0.01666666666666668,
+        "profiles": [
+          {
+            "profile": "few-long",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "few-long-hd",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "many-short",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "single-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "multi-project",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "sparse-failures",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          },
+          {
+            "profile": "codex",
+            "sequences": 0,
+            "falseChanged": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "everNone": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "noneDayShare": 0,
+            "singleIndicator": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "power": {
+              "x2": {
+                "k": 0,
+                "n": 0,
+                "rate": null,
+                "lo": 0,
+                "hi": 1
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "sequences": {
+      "nullPerProfile": 0,
+      "effectPerProfile": 0
+    }
+  },
+  "gOnset": {
+    "rule": "G-onset: I covers the true onset at least 80% of the time",
+    "detectedSequences": 0,
+    "withOnsetInterval": 0,
+    "coverage": null,
+    "medianAbsCentreErrorDays": null,
+    "status": "not_evaluable: the decider supplies no onset interval (onset is WP-21's output, METHOD.md §10)"
+  },
+  "gAttr": {
+    "rule": "G-attr (METHOD.md §14). Confusion matrix = the first persisted changed-class glance key on or after the onset, per scenario (truth = what the synth planted).",
+    "status": "scaffolding: the interim decider has no attribution states, so every claim is changed_unattributed / unclear:workload; the conditions are evaluated but cannot fail until WP-21's decider runs here",
+    "errorsVote": "toolErrorsNonCmd",
+    "scenarios": [
+      {
+        "id": "you-effect",
+        "row": "a you-event effect → agent ≤ 2%",
+        "truth": "you",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "routine-update-effect",
+        "row": "a server-side change (routine update), fully observed → you ≤ 5%",
+        "truth": "agent_routine",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.05,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "desktop-picker-effect",
+        "row": "a Desktop picker, flag or env change with no command and no settings diff → agent ≤ 2%",
+        "truth": "unknown",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "friction-only",
+        "row": "a friction-only shift → agent ≤ 2%, you ≤ 5%",
+        "truth": "friction",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "agent",
+            "max": 0.02,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          },
+          {
+            "state": "you",
+            "max": 0.05,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "both-same-day",
+        "row": "both sides on the same day → you ≤ 10%, agent ≤ 10%",
+        "truth": "both",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.1,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          },
+          {
+            "state": "agent",
+            "max": 0.1,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "you-event-far-from-onset",
+        "row": "a you-event ≥ 7 days from the onset → you ≤ 10%",
+        "truth": "agent_routine_with_far_you",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "you",
+            "max": 0.1,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": false
+          }
+        ]
+      },
+      {
+        "id": "routine-plus-noeffect-you",
+        "row": "a routine bump + a no-effect you-event → the you rate is published",
+        "truth": "agent_routine_with_noeffect_you",
+        "sequences": 0,
+        "firstClaim": {},
+        "conditions": [
+          {
+            "state": "you",
+            "max": null,
+            "rate": {
+              "k": 0,
+              "n": 0,
+              "rate": null,
+              "lo": 0,
+              "hi": 1
+            },
+            "pass": null
+          }
+        ]
+      }
+    ],
+    "notExpressible": [
+      "an agent-strong effect (served ≠ requested model) → you ≤ 5% — the synth has no served-model divergence",
+      "workload only → you/agent ≤ 5% — synth rates do not depend on project or mix",
+      "a single-project workload shift with a routine bump in I → agent ≤ 2% — as above",
+      "a pre-install settings edit, then a restart into a bump → never agent — the synth has no install/snapshot timeline",
+      "a small stratum never flips to you — as above",
+      "mixed never gives none — covered by the interim decider's unit tests, not by a planted scenario"
+    ]
+  },
+  "runtime": {
+    "seconds": 477.7,
+    "workers": 1,
+    "sequences": 0,
+    "probes": 153,
+    "phases": [
+      {
+        "phase": "pilot",
+        "seconds": 0,
+        "jobs": 0
+      },
+      {
+        "phase": "chosen: probes, sensitivity, G-attr",
+        "seconds": 477.7,
+        "jobs": 35
+      }
+    ]
+  },
+  "notes": [
+    "Synthetic data only (src/synth); no real log, config or path is read or written.",
+    "false 'changed': share of null sequences whose PERSISTED glance claimed a change (rows 4-11) on any of the 90 daily evaluations; CP = two-sided 95% Clopper-Pearson interval, gate on its upper end.",
+    "The interim decider has no attribution: false 'agent' / 'you' are 0 by construction and are reported as not exercised, never as a pass. WP-21 must re-run the harness with its decider (DECIDERS registry) before the flags cover attribution.",
+    "Power: planted regression (tool errors and blind edits x m, read weight / m) on a version bump at plan day 75; detected = the persisted glance claims a change on or after the onset.",
+    "D64 c: G-ETA on the check seeds, 20 null sequences per profile, seeds wp23-2026-10-04|eta|PROFILE|0..19, under the D64 product rule at commit 936a80c. Ready = gate + sensitivity held on 2 consecutive daily evaluations, the ETA being the second ready day. A date is shown only when the last 3 daily evaluations projected the same tier with target dates within +/-20% of the remaining days AND every voting family has a sensitive metric with projected largest-session share below 0.35; Codex also needs that metric calibrated to a measured anchor. Not-at-current-pace is shown only after 3 consecutive evaluations. Scored over SHOWN dates only; suppression = not-ready days with a projected date that showed none. Probes only: no null or planted sequences, so selection and calibrated are not informative in this file."
+  ],
+  "date": "2026-10-05",
+  "commit": "936a80cdcb0f4cfa7afe84259cdadef4206c799b",
+  "startedAt": "2026-10-05T10:09:35.464Z",
+  "finishedAt": "2026-10-05T10:17:33.195Z",
+  "resume": "cd engine && npm run build && ../scripts/dev/heavy.sh env WASITME_CAL23=\"full\" WASITME_CAL_ATTR=\"0\" WASITME_CAL_CANDIDATES=\"session-t95-cr2\" WASITME_CAL_DECIDER=\"interim\" WASITME_CAL_EFFECT=\"0\" WASITME_CAL_EFFECT_PILOT=\"0\" WASITME_CAL_EFFECT_SIZES=\"2\" WASITME_CAL_ETA=\"20\" WASITME_CAL_LOG=\"../docs/calibration/2026-10-05-eta-d64.log\" WASITME_CAL_MDE=\"0\" WASITME_CAL_NOTE=\"D64 c: G-ETA on the check seeds, 20 null sequences per profile, seeds wp23-2026-10-04|eta|PROFILE|0..19, under the D64 product rule at commit 936a80c. Ready = gate + sensitivity held on 2 consecutive daily evaluations, the ETA being the second ready day. A date is shown only when the last 3 daily evaluations projected the same tier with target dates within +/-20% of the remaining days AND every voting family has a sensitive metric with projected largest-session share below 0.35; Codex also needs that metric calibrated to a measured anchor. Not-at-current-pace is shown only after 3 consecutive evaluations. Scored over SHOWN dates only; suppression = not-ready days with a projected date that showed none. Probes only: no null or planted sequences, so selection and calibrated are not informative in this file.\" WASITME_CAL_NULL=\"0\" WASITME_CAL_NULL_PILOT=\"0\" WASITME_CAL_OUT=\"../docs/calibration/2026-10-05-eta-d64.json\" WASITME_CAL_SE=\"0\" WASITME_CAL_SENS_EFFECT=\"0\" WASITME_CAL_SENS_NULL=\"0\" node scripts/calibration-run.mjs"
+}

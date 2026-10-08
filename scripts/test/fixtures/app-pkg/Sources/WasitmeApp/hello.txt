@@ -1,0 +1,1 @@
+resource file used to prove SwiftPM resource bundles are copied into the app

@@ -1,0 +1,117 @@
+FINDING PAGE: before and after (UX-V2.md section 8.1)
+Data: `wasitme demo` (case insufficient, "Too early to tell"), Claude Code, light. Content pane 1060 pt wide.
+
+Legend
+  [1]   your change: canary rounded square, numbered             /A\   agent update, hollow (routine)
+  /A\*  agent badge, filled (lines up with the shift / strong)   ( ? ) origin unknown, dashed circle
+  ▸ / ▾ disclosure, closed / open                               ▮     one event (one tick)
+  (Before, the agent badge was a 20 x 22 house-shaped tag drawn with a full version beside it.)
+
+
+BEFORE (today, chrome "content": the app's 1060 pt pane; 421 visible words, 10 text styles)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Recent  Sep 20 – Oct 3  14 days   compared with  Aug 23 – Sep 19  28 days   [Check again][Open as Markdown]  │
+│                                                                                         [Copy evidence report]│
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ [·┄· Too early to tell]  Claude Code, last 14 days against the 4 weeks before  │ Next to unlock               │
+│ Too early to tell.                                                              │ Reads per edit   31 of 40    │
+│ wasitme can already rule out changes bigger than about ×2.5 in tool errors.     │ ▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▯▯▯▯▯   │
+│ Only tool errors have enough data so far; reads per edit and edits without      │ Edits in the recent window.  │
+│ reading first need more sessions.  (italic)                                     │ No date yet: it depends on   │
+│ Your side    [1] Sep 21 Effort high → medium    [2] Sep 27 MCP server added     │ how your sessions go. Then   │
+│ ·:· - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -   │ wasitme has the second kind  │
+│ Claude Code  /F\ Sep 24 2.1.274 → 2.1.277    /G\ Oct 1 2.1.277 → 2.1.281        │ of signal a finding needs.   │
+│              updates alone aren't evidence                                      │ Keep working normally; ...   │
+│ Tool errors per day  one tick per error; narrow: under 100 calls that day   ×0.75, range ×0.40 to ×1.41; ... │
+│   Your side                                  [1] effort      [2] MCP                                         │
+│        10 ┤ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ...                                                              │
+│   ───────────────────────────────────────────────────────────────────────── ·······                          │
+│   Claude Code  /C\ 2.1.266  /D\ 2.1.270  /E\ 2.1.274    /F\ 2.1.277     /G\ 2.1.281                          │
+│       errors   2  8  9  9  9 10  –  2  9  9 10  9  7 10  7  2  8  6  7  8  8  2  –  8  9  9  7  7            │
+│   tool calls  64 227 238 237 258 274 0 64 242 253 277 243 208 286 266 77 286 235 247 288 320 77 0 ...         │
+│               Sep 6          Sep 13          Sep 20          Sep 27          Oct 3 today                      │
+│               └──── before: last 14 of 28 days shown ────┘└──────── recent, 14 days ────────┘                 │
+│ What wasitme compared        recent      before   change, range     ×0.5 ×1 ×2 ×4      status                 │
+│ Tool errors  errors       88 / 3,290  201 / 5,610  ×0.75 ×0.40–×1.41  ├──○──┤░░░        No detectable change   │
+│ Reads per edit  research   131 / 31  1,130 / 233   31 of 40 edits needed                Not enough yet         │
+│ Edits without reading first ...      7 / 31    20 / 233   7 of 10 edits ... needed      Not enough yet         │
+│ Interruptions  context      2 / 214     13 / 520   2 in the recent window; too few ...  Context only           │
+│ Pushback prompts  context   8 / 214     31 / 520   8 in the recent window; too few ...  Context only           │
+│ Counts are events / opportunities in each window. Bar: the range; dot: the estimate (open: ...) hatched: ...  │
+│ Based on 734 exchanges over 66 session-days (16 sessions) on this Mac. Sessions on other machines aren't ...  │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ demo data (wasitme demo) — not from your logs                                          checked Oct 4, 14:14   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+AFTER (chrome "content"; budget 130 visible words; toolbar and sidebar are native, see window.txt)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Demo data from `wasitme demo`, not from your logs.                                  (small, on surface.well)  │
+│                                                                                                              │
+│ [·┄· Too early to tell]  Last 14 days against the 4 weeks before                    (chip + small, secondary) │
+│                                                                                                              │
+│ Too early to tell.                                                                  (display 52)             │
+│ wasitme can already rule out changes bigger than about ×2.5 in tool errors.         (deck 17, engine)        │
+│                                                                                                              │
+│ Tool errors per day              ×0.75, range ×0.40 to ×1.41; changes under ×2.5 wouldn't show               │
+│   Your side                                    [1] effort        [2] MCP                       (italic)      │
+│        10 ┤ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮ ▮▮▮▮▮▮▮ ▮▮▮▮▮▮▮                                                    │
+│   ─────────────────────────────────────────────────────────────────────────────── ·······                    │
+│   Claude Code     /C\      /D\      /E\              /F\              /G\ 2.1.281      (only the newest label)│
+│                   Sep 6         Sep 13         Sep 20         Sep 27         Oct 3  today                     │
+│                   └──── before: last 14 of 28 days shown ───┘└─────── recent, 14 days ───────┘                │
+│   ▮ one error    [1] your change    /A\ Claude Code update                              (legend, small)      │
+│                                                                                                              │
+│ Next to unlock   Reads per edit  31 of 40 edits   ▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▮▯▯▯▯▯▯▯▯▯                    │
+│                  No date yet: it depends on how your sessions go.                                            │
+│                  Keep working normally; wasitme checks every 15 minutes.                                     │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ Details                                                                                                    │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ What wasitme compared                                                                                      │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ Daily counts                                                                                               │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ How wasitme decided                                                                                        │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+AFTER, "Details" opened (same page, below the disclosure head)
+│ ▾ Details                                                                                                    │
+│   Only tool errors have enough data so far; reads per edit and edits without reading first need more        │
+│   sessions.                                                     (engine `because`, small, upright, 62 ch)   │
+│   Each window needs at least 40 edits. Then wasitme has the second kind of signal a finding needs.           │
+│   Changes in the recent window                                                                               │
+│     Sep 21  [1]  Effort high → medium                                                                        │
+│     Sep 24  /F\  Claude Code 2.1.274 → 2.1.277                                                               │
+│     Sep 27  [2]  MCP server added                                                                            │
+│     Oct 1   /G\  Claude Code 2.1.277 → 2.1.281                                                               │
+│     Claude Code updates alone aren't evidence.                                                               │
+│   Based on 734 exchanges over 66 session-days (16 sessions) on this Mac. Sessions on other machines aren't   │
+│   visible.                                                      (engine `confidence`, verbatim)             │
+
+AFTER, agent finding (contract fixture snapshot/agent-by_elimination.json): Details starts OPEN, the disclaimer closes
+the visible block
+│ [▲ Agent side]  Last 14 days against the 4 weeks before                                                      │
+│ The agent changed.                                                                                           │
+│ Nothing recorded changed on your side; tool errors rose at the 2.1.281 update.                               │
+│ Tool errors per day              ×2.56, range ×1.48 to ×4.43; changes under ×2 wouldn't show                 │
+│   Your side                                                               [1] config                         │
+│        30 ┤                                        ▮▮▮▮ ▮▮▮ ▮▮▮ ▮▮▮▮ ▮▮▮▮ ▮▮▮▮▮                               │
+│   ──────────────────────────────────────────────────────────────┃───────────────── ·······                    │
+│   Claude Code      /A\     /B\            /C\                  /D\* 2.1.281                                  │
+│   ▮ one error    [1] your change    /A\ Claude Code update    /D\* lines up with the shift                   │
+│ Next  If you file an issue, share the report — it says what it can and can't show.                          │
+│ These indicators don't measure answer quality. Evidence, not proof.             (small, secondary, verbatim) │
+│ ▾ Details                                                                                                    │
+│   The shift shows in 2 projects from Oct 1, and every day around the update was fully observed: ...          │
+│   What was checked                                                                                           │
+│     Your setup    Settings changed (Oct 2): ruled out, the numbers moved where it didn't apply.              │
+│     Workload      Prompt length, long-context share, entrypoint mix and project mix didn't move ...           │
+│     The shift     Starts between Sep 29 and Oct 3, at the 2.1.281 update (Oct 1); checked at ...             │
+│     Sample        1,148 exchanges, 85 session-days, 21 sessions (both windows).                              │
+│     Not visible   Sessions on other machines aren't visible.                                                 │
+│   Changes in the recent window ... (rows as above, tags: "ruled out", "lines up with the shift")             │
+│   Based on ... (confidence line)                                                                             │
+│ ▸ What wasitme compared                                                                                      │
+│ ▸ Daily counts                                                                                               │
+│ ▸ How wasitme decided                                                                                        │

@@ -1,0 +1,30 @@
+{
+  "name": "wasitme",
+  "version": "0.1.0",
+  "description": "A /wasitme pane and a quiet band that read one local file (~/.wasitme/glance.json), a /wasitme:report skill, and two hooks that start the local wasitme scan. No network code. Independent; not affiliated with or endorsed by Anthropic.",
+  "author": {
+    "name": "Aariv Patel"
+  },
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "local-only",
+    "diagnostics"
+  ],
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "glancePath": {
+      "type": "string",
+      "title": "Glance file",
+      "description": "Absolute path of wasitme's glance.json. Leave empty to find ~/.wasitme/glance.json automatically (works for a normal marketplace install).",
+      "default": ""
+    },
+    "showBand": {
+      "type": "boolean",
+      "title": "Quiet band above the prompt",
+      "description": "Show a one-line band above the prompt only when the latest scan says your side or the agent side changed. Never shown for \"too early to tell\", \"no detectable change\" or \"can't tell which\".",
+      "default": true
+    }
+  }
+}

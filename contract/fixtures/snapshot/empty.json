@@ -1,0 +1,57 @@
+{
+  "schema": "wasitme.snapshot/1",
+  "engine": "0.1.0",
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "staleAfterSec": 7200,
+  "scanOk": true,
+  "scanError": null,
+  "demo": false,
+  "lead": "timeline",
+  "agents": [],
+  "health": {
+    "sources": [
+      {
+        "agent": "claude-code",
+        "found": true,
+        "files": 22,
+        "badLines": 1,
+        "truncatedTail": 1,
+        "duplicates": 2214,
+        "unknownTypes": {
+          "relocated": 2
+        },
+        "firstDay": "2026-07-24",
+        "lastDay": "2026-10-04",
+        "error": null
+      },
+      {
+        "agent": "codex",
+        "found": false,
+        "files": 0,
+        "badLines": 0,
+        "truncatedTail": 0,
+        "duplicates": 0,
+        "unknownTypes": {},
+        "firstDay": null,
+        "lastDay": null,
+        "error": "not_found"
+      }
+    ],
+    "parserVersions": {
+      "toolErrors": 1,
+      "research": 1,
+      "friction": 1,
+      "events": 1
+    },
+    "sandbox": true,
+    "paused": []
+  },
+  "calibration": {
+    "artifactDate": "2026-10-04",
+    "methodId": "session-day-t99-cr2",
+    "agents": []
+  },
+  "privacy": {
+    "containsText": false
+  }
+}

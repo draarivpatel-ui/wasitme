@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+<title>wasitme</title>
+<defs><clipPath id="tile"><rect x="100" y="100" width="824" height="824" rx="185.4"/></clipPath></defs>
+<rect x="100" y="100" width="824" height="824" rx="185.4" fill="#202126"/>
+<g clip-path="url(#tile)"><rect x="100" y="236" width="824" height="3" fill="#2E2F36"/><rect x="100" y="324" width="824" height="3" fill="#2E2F36"/><rect x="100" y="412" width="824" height="3" fill="#2E2F36"/><rect x="100" y="500" width="824" height="3" fill="#2E2F36"/><rect x="100" y="588" width="824" height="3" fill="#2E2F36"/><rect x="100" y="676" width="824" height="3" fill="#2E2F36"/><rect x="100" y="764" width="824" height="3" fill="#2E2F36"/><rect x="100" y="852" width="824" height="3" fill="#2E2F36"/><rect x="212" y="100" width="3" height="824" fill="#2E2F36"/></g>
+<g transform="rotate(5 665 610)">
+  <path d="M665 382 L832 478 L832 832 L498 832 L498 478 Z" transform="translate(12 14)" fill="#000" fill-opacity="0.14"/>
+  <path d="M665 382 L832 478 L832 832 L498 832 L498 478 Z" fill="#8CC4F2" stroke="#1C1D21" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="665" cy="482" r="24" fill="#202126" stroke="#1C1D21" stroke-width="10"/>
+  <path d="M692.0 748.0 683.2 714.4H645.0L636.4 748.0H606.0L643.8 608.4H686.2L724.0 748.0ZM665.0 637.4H663.4L649.8 690.2H678.6Z" fill="#1C1D21"/>
+</g>
+<g transform="rotate(-6 335 395)">
+  <rect x="170" y="230" width="330" height="330" rx="16" transform="translate(12 14)" fill="#000" fill-opacity="0.14"/>
+  <rect x="170" y="230" width="330" height="330" rx="16" fill="#F2C230" stroke="#1C1D21" stroke-width="12"/>
+  <path d="M287.62 476.0V448.17H330.86V340.53H328.79L296.13 383.31L274.05 366.06L312.46 315.46H365.36V448.17H399.4V476.0Z" fill="#1C1D21"/>
+</g>
+<rect x="100.5" y="100.5" width="823" height="823" rx="185" fill="none" stroke="#000" stroke-opacity="0.12" stroke-width="1"/>
+</svg>

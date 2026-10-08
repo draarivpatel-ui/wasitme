@@ -1,0 +1,40 @@
+THE WINDOW: native shell (UX-V2.md section 3)
+1280 x 800 pt default, minimum 900 x 600 (tokens size.controlCenter / controlCenterMinimum).
+
+
+BEFORE: the web view fills the whole window, title strip included (report items 1 and 3)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│●●●  ○ ○ ○                  ← real traffic lights over the canvas's own grey dots, offset                    │
+│     wasitme         │ Recent Sep 20 – Oct 3 ...                  [Check again][Open as Markdown][Copy ...]  │
+│  [Claude Code|Codex]│ ...                                                                                    │
+│  Timeline  9 changes│ every click here lands in the web page: nothing to drag the window by                 │
+│  Finding        ·┄· │                                                                                        │
+│  ...                │                                                                                        │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+AFTER: NSSplitViewController + unified NSToolbar; the web view starts below the toolbar (its safe area)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ ●●●  ◧   Finding                                   [ Claude Code | Codex ]   (↻ Check Again)  [⧉ Copy Report ▾]│
+│          Claude Code                         ← title + subtitle; this whole strip drags the window           │
+├─────────────────────┬────────────────────────────────────────────────────────────────────────────────────────┤
+│  ▤ Timeline       2 │                                                                                        │
+│  ·┄· Finding        │   the canvas, chrome "content" (no sidebar, no dots, no top bar, no stamp)            │
+│  ⇄ Compare          │                                                                                        │
+│  ☰ Setup            │                                                                                        │
+│  ▭ Report           │                                                                                        │
+│  ▥ Sources          │                                                                                        │
+│  ⚙ Settings         │                                                                                        │
+│                     │                                                                                        │
+│                     │                                                                                        │
+│  local only         │                                                                                        │
+│  updated 4 min ago  │  ← tooltip: the exact check time                                                       │
+└─────────────────────┴────────────────────────────────────────────────────────────────────────────────────────┘
+  sidebar 220 pt (200–280)        content pane 1060 pt at the default size
+
+  Toolbar items, trailing:  agent picker (hidden with one agent)  ·  Check Again ⌘R (spinner while scanning)
+                            ·  Copy Report ⇧⌘C, its menu adds Open as Markdown ⌥⌘O
+  Sidebar: SF Symbols for each page; Finding shows the current state's own glyph; Timeline's badge is the count of
+  new changes (never while out of date).
+  Menus (section 4): App (About, Settings… ⌘,, Check for Updates…), File, Edit (Copy ⌘C), View (⌘1–⌘7, zoom,
+  sidebar, full screen, Check Again), Window, Help.

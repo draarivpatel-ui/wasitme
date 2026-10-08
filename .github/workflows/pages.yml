@@ -1,0 +1,78 @@
+# Publishes the showcase site (site/) to GitHub Pages at https://draarivpatel-ui.github.io/wasitme/.
+#
+# The site is static and has no build step: the files in site/ are what is served. Every URL in it is relative, so it
+# works under the /wasitme/ subpath. Before the first run, set the repository's Pages source to "GitHub Actions"
+# (Settings > Pages > Build and deployment).
+#
+# Actions are pinned to full commit SHAs (the version is in the trailing comment), like ci.yml. Only the deploy job
+# gets the Pages permissions.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check the site (a CSP on the page, relative URLs, nothing loaded from another server)
+        shell: bash
+        run: |
+          set -euo pipefail
+          fail=0
+          grep -q '<meta http-equiv="Content-Security-Policy"' site/index.html || { echo "::error::site/index.html has no CSP meta tag"; fail=1; }
+          # nothing the page loads may be remote or root-relative (the site lives under a subpath)
+          if grep -nE '(src|srcset|poster)="(https?:)?//' site/index.html; then echo "::error::remote media or script"; fail=1; fi
+          if grep -nE '<link[^>]+rel="(stylesheet|preload|icon|apple-touch-icon|modulepreload)"[^>]+href="(https?:)?//' site/index.html; then echo "::error::remote stylesheet, font or icon"; fail=1; fi
+          if grep -nE '(src|href|srcset|poster)="/' site/index.html; then echo "::error::root-relative URL (breaks under /wasitme/)"; fail=1; fi
+          if grep -nE "url\((['\"]?)(https?:)?//|@import" site/assets/*.css; then echo "::error::remote url() or @import in CSS"; fail=1; fi
+          if grep -nE 'fetch\(|XMLHttpRequest|eval\(|new Function|innerHTML|insertAdjacentHTML|document\.write' site/assets/*.js; then echo "::error::network or string-built code in the site's scripts"; fail=1; fi
+          # every local file the page references exists
+          for f in $(grep -oE '(src|href|poster)="[^"#:]+"' site/index.html | sed -E 's/^[a-z]+="//; s/"$//' | sort -u); do
+            [ -e "site/$f" ] || [ "${f#media/}" != "$f" ] || { echo "::error::missing site/$f"; fail=1; }
+          done
+          for f in $(grep -oE 'srcset="[^"]+"' site/index.html | sed -E 's/^srcset="//; s/"$//' | tr ',' '\n' | awk '{print $1}' | sort -u); do
+            [ -e "site/$f" ] || { echo "::error::missing site/$f"; fail=1; }
+          done
+          # the film is optional until it is published; say so instead of failing
+          [ -e site/media/wasitme-ad.mp4 ] || echo "::notice::site/media/wasitme-ad.mp4 is not there yet; the page shows its poster, and pressing play says the film couldn't be loaded"
+          exit "$fail"
+
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+  deploy:
+    name: deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

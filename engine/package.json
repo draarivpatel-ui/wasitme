@@ -1,0 +1,49 @@
+{
+  "name": "wasitme",
+  "version": "0.1.0",
+  "description": "Was it me, or the model? Reads your own Claude Code and Codex logs and tells you whether your setup changed or the agent did. Local-only.",
+  "keywords": [
+    "claude-code",
+    "codex",
+    "ai",
+    "coding-agent",
+    "regression",
+    "cli"
+  ],
+  "license": "MIT",
+  "author": "Aariv Patel",
+  "homepage": "https://github.com/draarivpatel-ui/wasitme#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/draarivpatel-ui/wasitme.git",
+    "directory": "engine"
+  },
+  "bugs": {
+    "url": "https://github.com/draarivpatel-ui/wasitme/issues"
+  },
+  "type": "module",
+  "bin": {
+    "wasitme": "dist/src/cli/main.js"
+  },
+  "files": [
+    "dist/src",
+    "!dist/src/synth",
+    "!dist/src/analysis/calibration",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test --test-concurrency=2 --test-reporter=spec \"dist/test/**/*.test.js\"",
+    "prepublishOnly": "npm test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.19.17",
+    "typescript": "^5.9.3"
+  }
+}

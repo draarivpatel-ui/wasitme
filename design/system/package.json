@@ -1,0 +1,11 @@
+{
+  "name": "wasitme-design-system",
+  "private": true,
+  "type": "module",
+  "description": "wasitme design tokens, generators, glyphs, fonts and screen mockups (zero dependencies).",
+  "license": "MIT",
+  "scripts": {
+    "build": "node gen/build.mjs",
+    "test": "node gen/test.mjs"
+  }
+}

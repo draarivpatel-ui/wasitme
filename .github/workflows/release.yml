@@ -1,0 +1,172 @@
+# Release SKELETON. Nothing here runs until a tag like v0.1.0 is pushed, and the maintainer decides when that happens
+# (docs/DECISIONS.md D15, D27). It builds the release tarball (scripts/release.sh: wasitme-<v>.tgz,
+# the same bytes as wasitme.tar.gz for install.sh's default URL, and the stamped install.sh) and the npm tarball,
+# writes SHA256SUMS, attests provenance, and creates a DRAFT GitHub release. A person still has to read the draft and
+# press Publish. To build the same assets locally first: sh scripts/release.sh (it never publishes anything).
+#
+# What it deliberately does not do:
+#   * publish to npm (D16: the maintainer creates the npm account later)
+#   * attach a macOS binary (D7: no Apple Developer account; the app is built locally from source, ad-hoc signed)
+#
+# Before the first real release, on GitHub: make the repository public (the attestation step needs that on a personal
+# account), then create an environment named "release" with required reviewers (on Free and Pro plans those exist only
+# for public repositories; a tag pushed before the environment exists makes GitHub create it with no protection). The
+# repository's own GitHub URLs (scripts/install.sh, SECURITY.md, engine/package.json, .github/ISSUE_TEMPLATE/config.yml)
+# get their account filled in when the public tree is built (scripts/dev/export-public.sh --owner); `sh scripts/release.sh`
+# lists any placeholder left, and --strict refuses to build while one is.
+name: Release (draft)
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    name: tag, version and changelog agree
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: Verify the tag
+        id: check
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          PRIVATE_REPO: ${{ github.event.repository.private }}
+        run: |
+          # The provenance attestation (build job) fails on a private repository owned by a personal account ("Feature
+          # not available for user-owned private repositories"), after the whole CI matrix has run. Stop here instead.
+          if [ "$PRIVATE_REPO" = "true" ]; then
+            echo "::error::the repository is private: make it public before tagging (artifact attestations need a public repository on this plan)"
+            exit 1
+          fi
+          version="${TAG#v}"
+          package_version=$(node -p "JSON.parse(require('fs').readFileSync('engine/package.json','utf8')).version")
+          if [ "$version" != "$package_version" ]; then
+            echo "::error::tag $TAG does not match engine/package.json version $package_version"
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$SHA" origin/main; then
+            echo "::error::tagged commit $SHA is not reachable from main; release only commits that landed on main"
+            exit 1
+          fi
+          node scripts/assemble-changelog.mjs --verify-release "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  ci:
+    name: CI on the tagged commit
+    needs: preflight
+    uses: ./.github/workflows/ci.yml
+    # Explicit (least privilege, rather than `secrets: inherit`): without it the called workflow's email rule has no
+    # secret, and ci.yml's --require-email-config fails the release instead of letting it pass unchecked.
+    secrets:
+      WASITME_FORBIDDEN_EMAILS: ${{ secrets.WASITME_FORBIDDEN_EMAILS }}
+
+  build:
+    name: build artifacts and checksums
+    needs: [preflight, ci]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    env:
+      VERSION: ${{ needs.preflight.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Build the npm tarball
+        run: |
+          npm ci
+          npm run build -w engine
+          # engine/package.json lists LICENSE and README.md in "files". engine/README.md is the package's own README
+          # (written for npm: no repository-relative links), but LICENSE lives at the repository root, and npm only
+          # packs files inside the package directory. Copy it in (this checkout is thrown away afterwards).
+          cp LICENSE engine/LICENSE
+          mkdir -p npm-pack release
+          npm pack -w engine --pack-destination npm-pack
+          for f in LICENSE README.md; do
+            tar -tzf npm-pack/*.tgz | grep -q "^package/$f\$" || { echo "::error::$f missing from the npm tarball"; exit 1; }
+          done
+          # npm names its tarball wasitme-<v>.tgz, which is the release tarball's name: keep them apart.
+          mv npm-pack/*.tgz "release/wasitme-${VERSION}-npm.tgz"
+
+      - name: Build the release tarball, install.sh and SHA256SUMS (scripts/release.sh --strict)
+        # The installer's default URL downloads releases/latest/download/wasitme.tar.gz; release.sh writes it (and
+        # wasitme-<v>.tgz, the same bytes) from this commit with the prebuilt engine and Control Center page, checks
+        # the exact file list and greps it for home paths and the forbidden addresses, writes the install.sh asset
+        # with this tarball's URL and SHA-256 stamped in, and installs + uninstalls it in a throwaway HOME. --strict
+        # also fails on a placeholder repository owner and an unfolded changelog.
+        env:
+          WASITME_FORBIDDEN_EMAILS: ${{ secrets.WASITME_FORBIDDEN_EMAILS }}
+          SHA: ${{ github.sha }}
+        run: sh scripts/release.sh --strict --ref "$SHA" --out release
+
+      - name: SHA256SUMS (every asset, the npm tarball included)
+        working-directory: release
+        run: |
+          sha256sum -- *.tgz *.tar.gz install.sh > SHA256SUMS
+          sha256sum --check SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Release notes (from CHANGELOG.md)
+        run: node scripts/assemble-changelog.mjs --print-release "$VERSION" > release-notes.md
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-checksums: release/SHA256SUMS
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-${{ needs.preflight.outputs.version }}
+          path: |
+            release/
+            release-notes.md
+          if-no-files-found: error
+
+  draft-release:
+    name: create the DRAFT release
+    needs: [preflight, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: release
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.preflight.outputs.version }}
+      TAG: ${{ github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-${{ needs.preflight.outputs.version }}
+          path: artifacts
+      - name: Create the draft (a person publishes it)
+        run: |
+          gh release create "$TAG" artifacts/release/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --verify-tag \
+            --title "wasitme ${VERSION}" \
+            --notes-file artifacts/release-notes.md
