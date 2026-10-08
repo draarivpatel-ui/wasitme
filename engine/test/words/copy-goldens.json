@@ -1,0 +1,1148 @@
+{
+  "row01-calibration_pending": {
+    "label": "Timeline only",
+    "headline": "Findings for Claude Code are off until wasitme's tests pass.",
+    "because": "Here's what changed on each side in the meantime.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: timeline only",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Timeline only, for now.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": null,
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": true,
+        "text": "Findings for Claude Code are off until wasitme's tests pass for Claude Code logs."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Timeline only, for now. Findings for Claude Code are off until wasitme's tests pass.",
+        "Here's what changed on each side in the meantime.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Timeline only, for now. Findings for Claude Code are off until wasitme's tests pass.",
+        "Here's what changed on each side in the meantime.",
+        "No changes recorded in the last 30 days.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row02-needs_data": {
+    "label": "Too early to tell",
+    "headline": "wasitme needs 12 more days of history before it can compare.",
+    "because": "The shortest comparison puts your last 14 days against the 28 before them.",
+    "tryThis": "Keep working normally; wasitme checks every 15 minutes.",
+    "confidence": "Based on 120 exchanges over 120 session-days (120 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: too early to tell",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Too early to tell.",
+    "pendingLine": null,
+    "progressLine": "Next to unlock: 30 of 42 days of history. No date yet: it depends on how your sessions go.",
+    "stripLine": "Not enough data yet for a ratio.",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": true,
+        "text": "No comparison yet: the shortest one needs 42 days of history, and there are 30 days."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Too early to tell. wasitme needs 12 more days of history before it can compare.",
+        "The shortest comparison puts your last 14 days against the 28 before them.",
+        "Next to unlock: 30 of 42 days of history. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "Based on 120 exchanges over 120 session-days (120 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Too early to tell. wasitme needs 12 more days of history before it can compare.",
+        "The shortest comparison puts your last 14 days against the 28 before them.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · N 3,200 | 2,800 · Not enough yet",
+        "Reads per edit 2.0 → 2.0 reads per edit · N 1,280 | 1,120 · Not enough yet",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · N 1,280 | 1,120 · Not enough yet",
+        "Next to unlock: 30 of 42 days of history. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "No changes recorded in the last 30 days.",
+        "Based on 120 exchanges over 120 session-days (120 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row03-mixed": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but in different directions.",
+    "because": "Tool errors ×2.4 against edits without reading first ×0.64: the moves point opposite ways.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": true,
+        "text": "Indicators moved in opposite directions: tool errors ×2.4 against edits without reading first ×0.64."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Can't tell which. Your numbers moved, but in different directions.",
+        "Tool errors ×2.4 against edits without reading first ×0.64: the moves point opposite ways.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but in different directions.",
+        "Tool errors ×2.4 against edits without reading first ×0.64: the moves point opposite ways.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 20.0 → 12.9 per 100 edits · ×0.64 (range ×0.51–×0.82) · N 2,240 | 1,120 · Moved, fewer",
+        "No changes recorded in the last 30 days.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row04-workload": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but your work changed too.",
+    "because": "Compared like with like (same projects and setup), the shift doesn't hold. Overall: tool errors ×2.0, edits without reading first ×2.0.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.00, range ×1.52 to ×2.63; changes under ×1.5 wouldn't show",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": true,
+        "text": "Your work changed too: compared like with like (same projects and setup), the shift doesn't hold."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Can't tell which. Your numbers moved, but your work changed too.",
+        "Compared like with like (same projects and setup), the shift doesn't hold. Overall: tool errors ×2.0, edits without reading first ×2.0.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but your work changed too.",
+        "Compared like with like (same projects and setup), the shift doesn't hold. Overall: tool errors ×2.0, edits without reading first ×2.0.",
+        "Tool errors (excl. commands) 4.0 → 8.0 per 100 tool calls · ×2.00 (range ×1.52–×2.63) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 20.0 per 100 edits · ×2.00 (range ×1.53–×2.61) · N 2,240 | 1,120 · Moved, more",
+        "No changes recorded in the last 30 days.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row05-unknown_provenance": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but the logs don't say who changed effort.",
+    "because": "Effort went from high to medium (Sep 24) with no command and no settings change recorded, so the change could be yours or Claude Code's.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 0 on the agent's side, 1 of unknown origin.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": true,
+        "text": "The logs don't say who made 1 change in the onset window (Sep 21–Sep 27)."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Effort high → medium (no command recorded): the logs don't say who made this change."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 0 on the agent's side, 1 of unknown origin.",
+        "Sep 24 · Effort high → medium (no command recorded) · origin unknown",
+        "Can't tell which. Your numbers moved, but the logs don't say who changed effort.",
+        "Effort went from high to medium (Sep 24) with no command and no settings change recorded, so the change could be yours or Claude Code's.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but the logs don't say who changed effort.",
+        "Effort went from high to medium (Sep 24) with no command and no settings change recorded, so the change could be yours or Claude Code's.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Effort high → medium (no command recorded): the logs don't say who made this change.",
+        "In the last 30 days: 0 changes on your side, 0 on the agent's side, 1 of unknown origin.",
+        "Sep 24 · Effort high → medium (no command recorded) · origin unknown",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row06-both_sides": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but changes on both sides landed the same week.",
+    "because": "Your effort change (Sep 24) and Claude Code's model switch (Sep 24) both line up with the shift: tool errors ×2.4, edits without reading first ×1.7.",
+    "tryThis": "Undo your effort change to separate them.",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 1 change on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": true,
+        "text": "A change on your side (your effort change) and one on the agent's side (Claude Code served another model) are both in the onset window."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Effort high → medium: on your side; it lines up with the shift.",
+      "Sep 24 · Served model differs from the one you picked: on the agent's side; it lines up with the shift."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 1 change on your side, 1 on the agent's side.",
+        "Sep 24 · Served model differs from the one you picked · agent side",
+        "Sep 24 · Effort high → medium · your side",
+        "Can't tell which. Your numbers moved, but changes on both sides landed the same week.",
+        "Your effort change (Sep 24) and Claude Code's model switch (Sep 24) both line up with the shift: tool errors ×2.4, edits without reading first ×1.7.",
+        "Undo your effort change to separate them.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but changes on both sides landed the same week.",
+        "Your effort change (Sep 24) and Claude Code's model switch (Sep 24) both line up with the shift: tool errors ×2.4, edits without reading first ×1.7.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Effort high → medium: on your side; it lines up with the shift.",
+        "Sep 24 · Served model differs from the one you picked: on the agent's side; it lines up with the shift.",
+        "Undo your effort change to separate them.",
+        "In the last 30 days: 1 change on your side, 1 on the agent's side.",
+        "Sep 24 · Served model differs from the one you picked · agent side",
+        "Sep 24 · Effort high → medium · your side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row07-you": {
+    "label": "Your side",
+    "headline": "Your numbers moved around the time of your model change from m1 to m2 (Sep 24).",
+    "because": "Tool errors (×2.4) and edits without reading first (×1.7) rose; nothing recorded changed on Claude Code's side in the same window.",
+    "tryThis": "To check, switch the model back to m1.",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "Your side: your numbers moved around your model change (Sep 24).",
+    "statusLine": "wasitme: your side",
+    "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Your side changed.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on the agent's side but routine updates is in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": true,
+        "text": "Your model change from m1 to m2 (Sep 24) falls in the onset window and wasn't ruled out; on the agent's side there are only routine updates."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Model m1 → m2: on your side; it lines up with the shift."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+        "Sep 24 · Model m1 → m2 · your side",
+        "Your side changed. Your numbers moved around the time of your model change from m1 to m2 (Sep 24).",
+        "Tool errors (×2.4) and edits without reading first (×1.7) rose; nothing recorded changed on Claude Code's side in the same window.",
+        "To check, switch the model back to m1.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ],
+      "verdict": [
+        "Your side changed. Your numbers moved around the time of your model change from m1 to m2 (Sep 24).",
+        "Tool errors (×2.4) and edits without reading first (×1.7) rose; nothing recorded changed on Claude Code's side in the same window.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Model m1 → m2: on your side; it lines up with the shift.",
+        "To check, switch the model back to m1.",
+        "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+        "Sep 24 · Model m1 → m2 · your side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ]
+    }
+  },
+  "row08-agent": {
+    "label": "Agent side",
+    "headline": "Nothing recorded changed on your side; Claude Code served another model.",
+    "because": "Around the time Claude Code began serving a different model than you picked (Sep 24), your tool errors (×2.4) and edits without reading first (×1.7) rose.",
+    "tryThis": "If you file an issue, share the report — it says what it can and can't show.",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "band": "Agent side: Claude Code served a different model than you picked (Sep 24).",
+    "statusLine": "wasitme: agent side",
+    "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "The agent changed.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on your side is open in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": false,
+        "text": "Nothing strong on your side is in the onset window."
+      },
+      {
+        "row": 8,
+        "matched": true,
+        "text": "A change on the agent's side (Claude Code served another model, Sep 24) falls in the onset window, and nothing on your side is open there; some days weren't fully observed."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Served model differs from the one you picked: on the agent's side; it lines up with the shift."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Served model differs from the one you picked · agent side",
+        "The agent changed. Nothing recorded changed on your side; Claude Code served another model.",
+        "Around the time Claude Code began serving a different model than you picked (Sep 24), your tool errors (×2.4) and edits without reading first (×1.7) rose.",
+        "If you file an issue, share the report — it says what it can and can't show.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ],
+      "verdict": [
+        "The agent changed. Nothing recorded changed on your side; Claude Code served another model.",
+        "Around the time Claude Code began serving a different model than you picked (Sep 24), your tool errors (×2.4) and edits without reading first (×1.7) rose.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Served model differs from the one you picked: on the agent's side; it lines up with the shift.",
+        "If you file an issue, share the report — it says what it can and can't show.",
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Served model differs from the one you picked · agent side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ]
+    }
+  },
+  "row09-by_elimination": {
+    "label": "Agent side",
+    "headline": "Nothing recorded changed on your side; tool errors rose at the 1.1 update.",
+    "because": "The shift shows in 2 projects from Sep 24, and every day around the update was fully observed: tool errors ×2.4, edits without reading first ×1.7.",
+    "tryThis": "If you file an issue, share the report — it says what it can and can't show.",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "Agent side: tool errors rose at the Claude Code 1.1 update (Sep 24).",
+    "statusLine": "wasitme: agent side",
+    "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "The agent changed.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on your side is open in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": false,
+        "text": "Nothing strong on your side is in the onset window."
+      },
+      {
+        "row": 8,
+        "matched": false,
+        "text": "Nothing on the agent's side but routine updates is in the onset window."
+      },
+      {
+        "row": 9,
+        "matched": true,
+        "text": "Only routine updates or minor settings in the onset window, every day fully observed, and the shift starts at the 1.1 update in 2 projects."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Claude Code 1.0 → 1.1: the shift starts at this update in 2 projects."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "The agent changed. Nothing recorded changed on your side; tool errors rose at the 1.1 update.",
+        "The shift shows in 2 projects from Sep 24, and every day around the update was fully observed: tool errors ×2.4, edits without reading first ×1.7.",
+        "If you file an issue, share the report — it says what it can and can't show.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ],
+      "verdict": [
+        "The agent changed. Nothing recorded changed on your side; tool errors rose at the 1.1 update.",
+        "The shift shows in 2 projects from Sep 24, and every day around the update was fully observed: tool errors ×2.4, edits without reading first ×1.7.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Claude Code 1.0 → 1.1: the shift starts at this update in 2 projects.",
+        "If you file an issue, share the report — it says what it can and can't show.",
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ]
+    }
+  },
+  "row10-nothing_recorded_on_your_side": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but updates alone aren't evidence.",
+    "because": "Nothing recorded changed on your side; the Claude Code 1.1 update (Sep 24) landed in the same window, but the shift doesn't show in enough of your projects.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on your side is open in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": false,
+        "text": "Nothing strong on your side is in the onset window."
+      },
+      {
+        "row": 8,
+        "matched": false,
+        "text": "Nothing on the agent's side but routine updates is in the onset window."
+      },
+      {
+        "row": 9,
+        "matched": false,
+        "text": "The shift around the update doesn't show in enough of your projects."
+      },
+      {
+        "row": 10,
+        "matched": true,
+        "text": "Only routine updates or minor settings in the onset window, on fully observed days."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Claude Code 1.0 → 1.1: routine update; updates alone aren't evidence."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "Can't tell which. Your numbers moved, but updates alone aren't evidence.",
+        "Nothing recorded changed on your side; the Claude Code 1.1 update (Sep 24) landed in the same window, but the shift doesn't show in enough of your projects.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but updates alone aren't evidence.",
+        "Nothing recorded changed on your side; the Claude Code 1.1 update (Sep 24) landed in the same window, but the shift doesn't show in enough of your projects.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Claude Code 1.0 → 1.1: routine update; updates alone aren't evidence.",
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row11-blind_spot": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but before wasitme was watching your setup.",
+    "because": "None of the 7 days in the onset window (Sep 21–Sep 27) were fully observed, so changes on your side then can't be ruled out.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on your side is open in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": false,
+        "text": "Nothing strong on your side is in the onset window."
+      },
+      {
+        "row": 8,
+        "matched": false,
+        "text": "Nothing on the agent's side but routine updates is in the onset window."
+      },
+      {
+        "row": 9,
+        "matched": false,
+        "text": "None of the 7 days in the onset window were fully observed."
+      },
+      {
+        "row": 11,
+        "matched": true,
+        "text": "Only routine updates or minor settings in the onset window, and none of its 7 days were fully observed."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Claude Code 1.0 → 1.1: routine update; updates alone aren't evidence."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "Can't tell which. Your numbers moved, but before wasitme was watching your setup.",
+        "None of the 7 days in the onset window (Sep 21–Sep 27) were fully observed, so changes on your side then can't be ruled out.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but before wasitme was watching your setup.",
+        "None of the 7 days in the onset window (Sep 21–Sep 27) were fully observed, so changes on your side then can't be ruled out.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Claude Code 1.0 → 1.1: routine update; updates alone aren't evidence.",
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Claude Code 1.0 → 1.1 · agent side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed."
+      ]
+    }
+  },
+  "row11-codex-partial_by_design": {
+    "label": "Can't tell which",
+    "headline": "Your numbers moved, but wasitme can't fully see your Codex setup.",
+    "because": "Codex has no session hooks, so wasitme can't see every change on your side, and changes there can't be ruled out.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "band": "",
+    "statusLine": "wasitme: can't tell which",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible. Some days weren't fully observed.",
+    "title": "Can't tell which.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Codex are calibrated: wasitme's tests pass for Codex logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The shift holds when your projects and setup are compared like with like."
+      },
+      {
+        "row": 5,
+        "matched": false,
+        "text": "Every change in the onset window has a known side."
+      },
+      {
+        "row": 6,
+        "matched": false,
+        "text": "Nothing on your side is open in the onset window."
+      },
+      {
+        "row": 7,
+        "matched": false,
+        "text": "Nothing strong on your side is in the onset window."
+      },
+      {
+        "row": 8,
+        "matched": false,
+        "text": "Nothing on the agent's side but routine updates is in the onset window."
+      },
+      {
+        "row": 9,
+        "matched": false,
+        "text": "Codex can't be fully observed: it has no session hooks."
+      },
+      {
+        "row": 11,
+        "matched": true,
+        "text": "Only routine updates or minor settings in the onset window, and Codex can't be fully observed: it has no session hooks."
+      }
+    ],
+    "candidateLines": [
+      "Sep 24 · Codex 0.160 → 0.161: routine update; updates alone aren't evidence."
+    ],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Codex 0.160 → 0.161 · agent side",
+        "Can't tell which. Your numbers moved, but wasitme can't fully see your Codex setup.",
+        "Codex has no session hooks, so wasitme can't see every change on your side, and changes there can't be ruled out.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed."
+      ],
+      "verdict": [
+        "Can't tell which. Your numbers moved, but wasitme can't fully see your Codex setup.",
+        "Codex has no session hooks, so wasitme can't see every change on your side, and changes there can't be ruled out.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "Sep 24 · Codex 0.160 → 0.161: routine update; updates alone aren't evidence.",
+        "In the last 30 days: 0 changes on your side, 1 on the agent's side.",
+        "Sep 24 · Codex 0.160 → 0.161 · agent side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible. Some days weren't fully observed."
+      ]
+    }
+  },
+  "row12-single_indicator": {
+    "label": "Too early to tell",
+    "headline": "One indicator moved (tool errors ×2.4); a second kind has to agree.",
+    "because": "The move in tool errors holds up with all the indicators checked together; reads per edit and edits without reading first show no detectable change.",
+    "tryThis": "Keep working normally; wasitme checks every 15 minutes.",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: too early to tell",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Too early to tell.",
+    "pendingLine": null,
+    "progressLine": "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "Not a change by wasitme's rule, which needs indicators of 2 kinds moving the same way."
+      },
+      {
+        "row": 12,
+        "matched": true,
+        "text": "Exactly one indicator moved (tool errors ×2.4), and it stands out even with all the indicators checked together."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Too early to tell. One indicator moved (tool errors ×2.4); a second kind has to agree.",
+        "The move in tool errors holds up with all the indicators checked together; reads per edit and edits without reading first show no detectable change.",
+        "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Too early to tell. One indicator moved (tool errors ×2.4); a second kind has to agree.",
+        "The move in tool errors holds up with all the indicators checked together; reads per edit and edits without reading first show no detectable change.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 10.0 per 100 edits · ×1.00 (range ×0.75–×1.34) · N 2,240 | 1,120 · No detectable change",
+        "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "No changes recorded in the last 30 days.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "row13-none": {
+    "label": "No detectable change",
+    "headline": "Changes bigger than about ×1.5 in 3 indicators would have shown.",
+    "because": "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: no detectable change",
+    "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "No detectable change.",
+    "pendingLine": null,
+    "progressLine": null,
+    "stripLine": "×1.00, range ×0.74 to ×1.35; changes under ×1.5 wouldn't show",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "Not a change by wasitme's rule, which needs indicators of 2 kinds moving the same way."
+      },
+      {
+        "row": 12,
+        "matched": false,
+        "text": "No indicator moved on its own."
+      },
+      {
+        "row": 13,
+        "matched": true,
+        "text": "Nothing moved, and each kind of indicator would have shown a change bigger than about ×1.5."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "No detectable change. Changes bigger than about ×1.5 in 3 indicators would have shown.",
+        "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ],
+      "verdict": [
+        "No detectable change. Changes bigger than about ×1.5 in 3 indicators would have shown.",
+        "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+        "Tool errors (excl. commands) 4.0 → 4.0 per 100 tool calls · ×1.00 (range ×0.74–×1.35) · N 5,600 | 2,800 · No detectable change",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 10.0 per 100 edits · ×1.00 (range ×0.75–×1.34) · N 2,240 | 1,120 · No detectable change",
+        "No changes recorded in the last 30 days.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ]
+    }
+  },
+  "row14-fragile": {
+    "label": "Too early to tell",
+    "headline": "Your numbers moved, but not clearly enough to count as a change yet.",
+    "because": "Tool errors (×3.0) and edits without reading first (×1.7) rose, but the shift disappears when any one of its three most influential days is left out.",
+    "tryThis": "Keep working normally; wasitme checks every 15 minutes.",
+    "confidence": "Based on 163 exchanges over 163 session-days (163 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: too early to tell",
+    "disclaimer": null,
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "Too early to tell.",
+    "pendingLine": null,
+    "progressLine": "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+    "stripLine": "×3.00, range ×2.40 to ×3.74; changes under ×1.4 wouldn't show",
+    "timelineLine": "No changes recorded in the last 30 days.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "The move rests on one of its three most influential days, so it doesn't count as a change."
+      },
+      {
+        "row": 12,
+        "matched": false,
+        "text": "Several indicators moved together, so this isn't a single-indicator case."
+      },
+      {
+        "row": 13,
+        "matched": false,
+        "text": "An indicator moved, so wasitme won't say there is no detectable change."
+      },
+      {
+        "row": 14,
+        "matched": true,
+        "text": "Not enough data or sensitivity yet to say more."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "No changes recorded in the last 30 days.",
+        "Too early to tell. Your numbers moved, but not clearly enough to count as a change yet.",
+        "Tool errors (×3.0) and edits without reading first (×1.7) rose, but the shift disappears when any one of its three most influential days is left out.",
+        "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "Based on 163 exchanges over 163 session-days (163 sessions) on this Mac. Sessions on other machines aren't visible."
+      ],
+      "verdict": [
+        "Too early to tell. Your numbers moved, but not clearly enough to count as a change yet.",
+        "Tool errors (×3.0) and edits without reading first (×1.7) rose, but the shift disappears when any one of its three most influential days is left out.",
+        "Tool errors (excl. commands) 4.0 → 12.0 per 100 tool calls · ×3.00 (range ×2.40–×3.74) · N 5,600 | 2,550 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,020 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.23–×2.37) · N 2,240 | 1,020 · Moved, more",
+        "Next to unlock: enough data on 1 of 2 days in a row. No date yet: it depends on how your sessions go.",
+        "Keep working normally; wasitme checks every 15 minutes.",
+        "No changes recorded in the last 30 days.",
+        "Based on 163 exchanges over 163 session-days (163 sessions) on this Mac. Sessions on other machines aren't visible."
+      ]
+    }
+  },
+  "pending-none-held": {
+    "label": "No detectable change",
+    "headline": "Changes bigger than about ×1.4 in 3 indicators would have shown.",
+    "because": "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+    "tryThis": "",
+    "confidence": "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+    "band": "",
+    "statusLine": "wasitme: no detectable change",
+    "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+    "observationNote": "Sessions on other machines aren't visible.",
+    "title": "No detectable change.",
+    "pendingLine": "Possible shift — confirming",
+    "progressLine": null,
+    "stripLine": "×2.43, range ×1.93 to ×3.05; changes under ×1.4 wouldn't show",
+    "timelineLine": "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+    "trace": [
+      {
+        "row": 1,
+        "matched": false,
+        "text": "Findings for Claude Code are calibrated: wasitme's tests pass for Claude Code logs."
+      },
+      {
+        "row": 2,
+        "matched": false,
+        "text": "Each kind of indicator has one with enough data."
+      },
+      {
+        "row": 3,
+        "matched": false,
+        "text": "No indicators moved in opposite directions."
+      },
+      {
+        "row": 4,
+        "matched": false,
+        "text": "Not a change by wasitme's rule, which needs indicators of 2 kinds moving the same way."
+      },
+      {
+        "row": 12,
+        "matched": false,
+        "text": "No indicator moved on its own."
+      },
+      {
+        "row": 13,
+        "matched": true,
+        "text": "Nothing moved, and each kind of indicator would have shown a change bigger than about ×1.4."
+      }
+    ],
+    "candidateLines": [],
+    "body": {
+      "timeline": [
+        "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+        "Sep 24 · Model m1 → m2 · your side",
+        "No detectable change. Changes bigger than about ×1.4 in 3 indicators would have shown.",
+        "Possible shift — confirming",
+        "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ],
+      "verdict": [
+        "No detectable change. Changes bigger than about ×1.4 in 3 indicators would have shown.",
+        "Possible shift — confirming",
+        "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+        "Tool errors (excl. commands) 4.0 → 9.7 per 100 tool calls · ×2.43 (range ×1.93–×3.05) · N 5,600 | 2,800 · Moved, more",
+        "Reads per edit 2.0 → 2.0 reads per edit · ×1.00 (range ×0.93–×1.08) · N 2,240 | 1,120 · No detectable change",
+        "Edits without reading first 10.0 → 17.1 per 100 edits · ×1.71 (range ×1.35–×2.18) · N 2,240 | 1,120 · Moved, more",
+        "In the last 30 days: 1 change on your side, 0 on the agent's side.",
+        "Sep 24 · Model m1 → m2 · your side",
+        "Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren't visible.",
+        "These indicators don't measure answer quality. Evidence, not proof."
+      ]
+    }
+  }
+}

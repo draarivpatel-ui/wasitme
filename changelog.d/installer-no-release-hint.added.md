@@ -1,0 +1,1 @@
+- The installer's "download failed" message now says how to install from a checkout (`--from DIR`) or a local tarball (`--tarball FILE`) when no release is published yet.

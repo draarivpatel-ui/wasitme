@@ -1,0 +1,14 @@
+{
+  "name": "wasitme-ui",
+  "private": true,
+  "description": "The Control Center canvas (WP-41): ui/dist/{app.html, app.js, app.css, fonts/}, served by the Mac app's wasitme-app:// scheme handler. Zero runtime dependencies; TypeScript is compiled with the repo's own tsc.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node --test test/model.test.mjs",
+    "shots": "node scripts/build.mjs && node test/render.mjs",
+    "a11y": "node scripts/build.mjs && node test/a11y.mjs"
+  },
+  "dependencies": {}
+}

@@ -1,0 +1,24 @@
+# lint-copy.allow - quoted examples that scripts/lint-copy.mjs must not flag (DESIGN.md §3, D31).
+#
+# Format, one entry per line:   rule | path glob | needle | reason
+#   rule       a rule id from `node scripts/lint-copy.mjs --list-rules`, or *
+#   path glob  repository-relative; ** crosses directories, * does not
+#   needle     text from the string, paragraph or line the finding came from (case and whitespace do not matter).
+#              Never a line number: those go stale on every edit.
+#   reason     required; say why the banned wording appears (e.g. "quoted as the example of what not to write")
+# Use this only for quotation (a METHOD.md paragraph that shows the banned phrase as an example, a hostile-label
+# fixture). Never use it to keep real copy that breaks a rule: reword the copy.
+# An entry that matches nothing fails the full scan ("stale-allow"), so delete entries when the text they covered goes.
+#
+# The planning documents (the internal plan and notes, DECISIONS.md, research/) are not
+# scanned at all because they define these rules by quoting them; see INTERNAL_DOC_GLOBS in lint-copy.mjs.
+#
+pct99 | docs/CONTRACT.md | a bare "no change" | the contract's copy-lint item lists the banned words as the rule's definition
+nothing-changed-on-your-side | docs/CONTRACT.md | "proves", "caused by" | the contract's copy-lint item lists the banned words as the rule's definition
+quality | plugin/skills/report/SKILL.md | counts are indicators, not a quality score | instruction to the model that names the banned framing in order to forbid it
+score | plugin/skills/report/SKILL.md | counts are indicators, not a quality score | instruction to the model that names the banned framing in order to forbid it
+quality | plugin-codex/skills/report/SKILL.md | counts are indicators, not a quality score | instruction to the model (Codex skill) that names the banned framing in order to forbid it
+score | plugin-codex/skills/report/SKILL.md | counts are indicators, not a quality score | instruction to the model (Codex skill) that names the banned framing in order to forbid it
+pct99 | design/demo-data.v2.json | shown as "range", never | the demo data's method note quotes the label the interface must never print (D31)
+nerf | engine/src/cli/design-tokens.ts | nerf | the design system's own glance-banned pattern, copied verbatim (engine/test/output/design-sync.test.ts holds the copy to the source)
+nerf | plugin/mod/design-tokens.ts | nerf | the design system's own glance-banned pattern, copied verbatim into the mod (plugin/tests/fixtures/sync.mjs --check holds the copy to the source)

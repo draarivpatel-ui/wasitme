@@ -1,0 +1,21 @@
+wasitme                                                                 Codex   checked Oct 4, 14:14
+════════════════════════════════════════════════════════════════════════════════════════════════════
+DEMO            analytic demo data run through the engine; not your logs
+What changed    the last 30 days
+                Sep 9    Codex 0.91 → 0.92                               agent side · routine update
+                Sep 16   Codex 0.92 → 0.94                               agent side · routine update
+                Sep 25   Model gpt-6 → gpt-6-luna                                          your side
+                Sep 29   Codex 0.94 → 0.95                               agent side · routine update
+                Oct 2    Effort medium → high                                              your side
+                Routine updates alone aren't evidence.
+
+Finding         ·┄· Too early to tell
+                wasitme needs more sessions before it can compare anything.
+                Each indicator needs at least 5 sessions and 10 session-days in each window.
+                Next to unlock: tool errors (8 of 10 session-days).
+                No date yet: it depends on how your sessions go.
+                Based on 137 exchanges over 20 session-days (20 sessions) on this Mac.
+                Sessions on other machines aren't visible.
+
+Next            Keep working normally; wasitme checks every 15 minutes.
+Share           wasitme report --md | pbcopy   numbers only: no prompts, code or paths

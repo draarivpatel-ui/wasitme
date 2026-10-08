@@ -1,0 +1,539 @@
+{
+ "cell": 24,
+ "pad": 4,
+ "cols": 19,
+ "items": [
+  {
+   "name": "insufficient",
+   "theme": "light",
+   "px": 16,
+   "x": 4,
+   "y": 4
+  },
+  {
+   "name": "none",
+   "theme": "light",
+   "px": 16,
+   "x": 28,
+   "y": 4
+  },
+  {
+   "name": "unclear",
+   "theme": "light",
+   "px": 16,
+   "x": 52,
+   "y": 4
+  },
+  {
+   "name": "you",
+   "theme": "light",
+   "px": 16,
+   "x": 76,
+   "y": 4
+  },
+  {
+   "name": "agent",
+   "theme": "light",
+   "px": 16,
+   "x": 100,
+   "y": 4
+  },
+  {
+   "name": "stale",
+   "theme": "light",
+   "px": 16,
+   "x": 124,
+   "y": 4
+  },
+  {
+   "name": "mark",
+   "theme": "light",
+   "px": 16,
+   "x": 148,
+   "y": 4
+  },
+  {
+   "name": "loading",
+   "theme": "light",
+   "px": 16,
+   "x": 172,
+   "y": 4
+  },
+  {
+   "name": "notSetUp",
+   "theme": "light",
+   "px": 16,
+   "x": 196,
+   "y": 4
+  },
+  {
+   "name": "empty",
+   "theme": "light",
+   "px": 16,
+   "x": 220,
+   "y": 4
+  },
+  {
+   "name": "unreadable",
+   "theme": "light",
+   "px": 16,
+   "x": 244,
+   "y": 4
+  },
+  {
+   "name": "updateNeeded",
+   "theme": "light",
+   "px": 16,
+   "x": 268,
+   "y": 4
+  },
+  {
+   "name": "refused",
+   "theme": "light",
+   "px": 16,
+   "x": 292,
+   "y": 4
+  },
+  {
+   "name": "appearance",
+   "theme": "light",
+   "px": 16,
+   "x": 316,
+   "y": 4
+  },
+  {
+   "name": "info",
+   "theme": "light",
+   "px": 16,
+   "x": 340,
+   "y": 4
+  },
+  {
+   "name": "pause",
+   "theme": "light",
+   "px": 16,
+   "x": 364,
+   "y": 4
+  },
+  {
+   "name": "battery",
+   "theme": "light",
+   "px": 16,
+   "x": 388,
+   "y": 4
+  },
+  {
+   "name": "divide",
+   "theme": "light",
+   "px": 16,
+   "x": 412,
+   "y": 4
+  },
+  {
+   "name": "interimError",
+   "theme": "light",
+   "px": 16,
+   "x": 436,
+   "y": 4
+  },
+  {
+   "name": "insufficient",
+   "theme": "light",
+   "px": 18,
+   "x": 4,
+   "y": 28
+  },
+  {
+   "name": "none",
+   "theme": "light",
+   "px": 18,
+   "x": 28,
+   "y": 28
+  },
+  {
+   "name": "unclear",
+   "theme": "light",
+   "px": 18,
+   "x": 52,
+   "y": 28
+  },
+  {
+   "name": "you",
+   "theme": "light",
+   "px": 18,
+   "x": 76,
+   "y": 28
+  },
+  {
+   "name": "agent",
+   "theme": "light",
+   "px": 18,
+   "x": 100,
+   "y": 28
+  },
+  {
+   "name": "stale",
+   "theme": "light",
+   "px": 18,
+   "x": 124,
+   "y": 28
+  },
+  {
+   "name": "mark",
+   "theme": "light",
+   "px": 18,
+   "x": 148,
+   "y": 28
+  },
+  {
+   "name": "loading",
+   "theme": "light",
+   "px": 18,
+   "x": 172,
+   "y": 28
+  },
+  {
+   "name": "notSetUp",
+   "theme": "light",
+   "px": 18,
+   "x": 196,
+   "y": 28
+  },
+  {
+   "name": "empty",
+   "theme": "light",
+   "px": 18,
+   "x": 220,
+   "y": 28
+  },
+  {
+   "name": "unreadable",
+   "theme": "light",
+   "px": 18,
+   "x": 244,
+   "y": 28
+  },
+  {
+   "name": "updateNeeded",
+   "theme": "light",
+   "px": 18,
+   "x": 268,
+   "y": 28
+  },
+  {
+   "name": "refused",
+   "theme": "light",
+   "px": 18,
+   "x": 292,
+   "y": 28
+  },
+  {
+   "name": "appearance",
+   "theme": "light",
+   "px": 18,
+   "x": 316,
+   "y": 28
+  },
+  {
+   "name": "info",
+   "theme": "light",
+   "px": 18,
+   "x": 340,
+   "y": 28
+  },
+  {
+   "name": "pause",
+   "theme": "light",
+   "px": 18,
+   "x": 364,
+   "y": 28
+  },
+  {
+   "name": "battery",
+   "theme": "light",
+   "px": 18,
+   "x": 388,
+   "y": 28
+  },
+  {
+   "name": "divide",
+   "theme": "light",
+   "px": 18,
+   "x": 412,
+   "y": 28
+  },
+  {
+   "name": "interimError",
+   "theme": "light",
+   "px": 18,
+   "x": 436,
+   "y": 28
+  },
+  {
+   "name": "insufficient",
+   "theme": "dark",
+   "px": 16,
+   "x": 4,
+   "y": 52
+  },
+  {
+   "name": "none",
+   "theme": "dark",
+   "px": 16,
+   "x": 28,
+   "y": 52
+  },
+  {
+   "name": "unclear",
+   "theme": "dark",
+   "px": 16,
+   "x": 52,
+   "y": 52
+  },
+  {
+   "name": "you",
+   "theme": "dark",
+   "px": 16,
+   "x": 76,
+   "y": 52
+  },
+  {
+   "name": "agent",
+   "theme": "dark",
+   "px": 16,
+   "x": 100,
+   "y": 52
+  },
+  {
+   "name": "stale",
+   "theme": "dark",
+   "px": 16,
+   "x": 124,
+   "y": 52
+  },
+  {
+   "name": "mark",
+   "theme": "dark",
+   "px": 16,
+   "x": 148,
+   "y": 52
+  },
+  {
+   "name": "loading",
+   "theme": "dark",
+   "px": 16,
+   "x": 172,
+   "y": 52
+  },
+  {
+   "name": "notSetUp",
+   "theme": "dark",
+   "px": 16,
+   "x": 196,
+   "y": 52
+  },
+  {
+   "name": "empty",
+   "theme": "dark",
+   "px": 16,
+   "x": 220,
+   "y": 52
+  },
+  {
+   "name": "unreadable",
+   "theme": "dark",
+   "px": 16,
+   "x": 244,
+   "y": 52
+  },
+  {
+   "name": "updateNeeded",
+   "theme": "dark",
+   "px": 16,
+   "x": 268,
+   "y": 52
+  },
+  {
+   "name": "refused",
+   "theme": "dark",
+   "px": 16,
+   "x": 292,
+   "y": 52
+  },
+  {
+   "name": "appearance",
+   "theme": "dark",
+   "px": 16,
+   "x": 316,
+   "y": 52
+  },
+  {
+   "name": "info",
+   "theme": "dark",
+   "px": 16,
+   "x": 340,
+   "y": 52
+  },
+  {
+   "name": "pause",
+   "theme": "dark",
+   "px": 16,
+   "x": 364,
+   "y": 52
+  },
+  {
+   "name": "battery",
+   "theme": "dark",
+   "px": 16,
+   "x": 388,
+   "y": 52
+  },
+  {
+   "name": "divide",
+   "theme": "dark",
+   "px": 16,
+   "x": 412,
+   "y": 52
+  },
+  {
+   "name": "interimError",
+   "theme": "dark",
+   "px": 16,
+   "x": 436,
+   "y": 52
+  },
+  {
+   "name": "insufficient",
+   "theme": "dark",
+   "px": 18,
+   "x": 4,
+   "y": 76
+  },
+  {
+   "name": "none",
+   "theme": "dark",
+   "px": 18,
+   "x": 28,
+   "y": 76
+  },
+  {
+   "name": "unclear",
+   "theme": "dark",
+   "px": 18,
+   "x": 52,
+   "y": 76
+  },
+  {
+   "name": "you",
+   "theme": "dark",
+   "px": 18,
+   "x": 76,
+   "y": 76
+  },
+  {
+   "name": "agent",
+   "theme": "dark",
+   "px": 18,
+   "x": 100,
+   "y": 76
+  },
+  {
+   "name": "stale",
+   "theme": "dark",
+   "px": 18,
+   "x": 124,
+   "y": 76
+  },
+  {
+   "name": "mark",
+   "theme": "dark",
+   "px": 18,
+   "x": 148,
+   "y": 76
+  },
+  {
+   "name": "loading",
+   "theme": "dark",
+   "px": 18,
+   "x": 172,
+   "y": 76
+  },
+  {
+   "name": "notSetUp",
+   "theme": "dark",
+   "px": 18,
+   "x": 196,
+   "y": 76
+  },
+  {
+   "name": "empty",
+   "theme": "dark",
+   "px": 18,
+   "x": 220,
+   "y": 76
+  },
+  {
+   "name": "unreadable",
+   "theme": "dark",
+   "px": 18,
+   "x": 244,
+   "y": 76
+  },
+  {
+   "name": "updateNeeded",
+   "theme": "dark",
+   "px": 18,
+   "x": 268,
+   "y": 76
+  },
+  {
+   "name": "refused",
+   "theme": "dark",
+   "px": 18,
+   "x": 292,
+   "y": 76
+  },
+  {
+   "name": "appearance",
+   "theme": "dark",
+   "px": 18,
+   "x": 316,
+   "y": 76
+  },
+  {
+   "name": "info",
+   "theme": "dark",
+   "px": 18,
+   "x": 340,
+   "y": 76
+  },
+  {
+   "name": "pause",
+   "theme": "dark",
+   "px": 18,
+   "x": 364,
+   "y": 76
+  },
+  {
+   "name": "battery",
+   "theme": "dark",
+   "px": 18,
+   "x": 388,
+   "y": 76
+  },
+  {
+   "name": "divide",
+   "theme": "dark",
+   "px": 18,
+   "x": 412,
+   "y": 76
+  },
+  {
+   "name": "interimError",
+   "theme": "dark",
+   "px": 18,
+   "x": 436,
+   "y": 76
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-…'; font-src data:">
+<title>wasitme report</title>
+<style>…</style>
+</head>
+<body>
+<main>
+<p class="brand">wasit<u>me</u></p>
+<h3>wasitme report: the agent changed (Claude Code)</h3>
+<p><code>──▲</code> <strong>Agent side.</strong> Nothing recorded changed on your side; tool errors rose at the 1.1 update.</p>
+<p>The shift shows in 2 projects from Sep 24, and every day around the update was fully observed: tool errors ×2.4, edits without reading first ×1.7.</p>
+<p>Based on 168 exchanges over 168 session-days (168 sessions) on this Mac. Sessions on other machines aren&#39;t visible.</p>
+<p><em>One person’s logs on one Mac. These indicators don&#39;t measure answer quality. Evidence, not proof.</em></p>
+<h4>What was checked</h4>
+<div class="tw"><table><thead><tr><th class="l">checked</th><th class="l">what wasitme found</th></tr></thead><tbody><tr><td class="l">Your setup</td><td class="l">Nothing recorded changed on your side in the windows compared.</td></tr><tr><td class="l">Workload</td><td class="l">No sign that your work changed between the windows (project mix, prompt length, long-context share and more).</td></tr><tr><td class="l">The shift</td><td class="l">Starts between Sep 21 and Sep 27. Lines up with: Claude Code 1.0 → 1.1.</td></tr><tr><td class="l">Sample</td><td class="l">168 exchanges, 168 session-days, 168 sessions (both windows).</td></tr><tr><td class="l">Not visible</td><td class="l">Sessions on other machines aren&#39;t visible. All 7 days in the onset window were fully observed.</td></tr></tbody></table></div>
+<h4>What moved (recent Sep 20 – Oct 3 against Aug 23 – Sep 19)</h4>
+<div class="tw"><table><thead><tr><th class="l">signal</th><th class="r nw">recent</th><th class="r nw">before</th><th class="r nw">change</th><th class="l nw">range</th><th class="l">status</th></tr></thead><tbody><tr><td class="l">Tool errors (context)</td><td class="r nw">272 / 2,800</td><td class="r nw">224 / 5,600</td><td class="r nw">×2.43</td><td class="l nw">×1.93–×3.05</td><td class="l">context</td></tr><tr><td class="l">Tool errors (excl. commands)</td><td class="r nw">272 / 2,800</td><td class="r nw">224 / 5,600</td><td class="r nw">×2.43</td><td class="l nw">×1.93–×3.05</td><td class="l">moved, more</td></tr><tr><td class="l">Reads per edit</td><td class="r nw">2,240 / 1,120</td><td class="r nw">4,480 / 2,240</td><td class="r nw">×1.00</td><td class="l nw">×0.93–×1.08</td><td class="l">not detected</td></tr><tr><td class="l">Edits without reading first</td><td class="r nw">192 / 1,120</td><td class="r nw">224 / 2,240</td><td class="r nw">×1.71</td><td class="l nw">×1.35–×2.18</td><td class="l">moved, more</td></tr><tr><td class="l">Interruptions (context)</td><td class="r nw">0 / 56</td><td class="r nw">0 / 112</td><td class="r nw"></td><td class="l nw"></td><td class="l">context: only 0 in the recent window</td></tr><tr><td class="l">Pushback prompts (context)</td><td class="r nw">0 / 56</td><td class="r nw">0 / 112</td><td class="r nw"></td><td class="l nw"></td><td class="l">context: prompts are not in English</td></tr><tr><td class="l">Files edited 3+ times (context)</td><td class="r nw">0 / 56</td><td class="r nw">0 / 112</td><td class="r nw"></td><td class="l nw"></td><td class="l">context: only 0 in the recent window</td></tr></tbody></table></div>
+<p>Counts are events / opportunities per window. Range: where the ratio could be at this volume (see docs/METHOD.md). “Not detected” means any change was too small to show at this volume. At this volume, changes under ×1.1 in reads per edit might not show.</p>
+<h4>Tool errors (excl. commands) per day, last 14 days</h4>
+<pre><code>           Sep 20                      Sep 27
+errors        8   8   8   8  24  24  24  24  24  24  24  24  24  24
+tool calls  200 200 200 200 200 200 200 200 200 200 200 200 200 200
+                             ▲A</code></pre>
+<h4>Timeline (■ your side, ▲ Claude Code, ? origin unknown)</h4>
+<ul><li>Sep 24  ▲A  Claude Code 1.0 → 1.1 (lines up with the shift)</li></ul>
+<h4>How wasitme decided</h4>
+<ul><li>Findings for Claude Code are calibrated: wasitme&#39;s tests pass for Claude Code logs.</li><li>Each kind of indicator has one with enough data.</li><li>No indicators moved in opposite directions.</li><li>The shift holds when your projects and setup are compared like with like.</li><li>Every change in the onset window has a known side.</li><li>Nothing on your side is open in the onset window.</li><li>Nothing strong on your side is in the onset window.</li><li>Nothing on the agent&#39;s side but routine updates is in the onset window.</li><li>Only routine updates or minor settings in the onset window, every day fully observed, and the shift starts at the 1.1 update in 2 projects. (this decided it)</li></ul>
+<p><strong>Next:</strong> If you file an issue, share the report — it says what it can and can&#39;t show.</p>
+<p class="foot">Generated locally by wasitme 0.1.0 on Oct 4 · numbers only: no prompts, code or paths · method: docs/METHOD.md</p>
+</main>
+</body>
+</html>

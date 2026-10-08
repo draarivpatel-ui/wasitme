@@ -1,0 +1,15 @@
+{
+  "name": "wasitme-monorepo",
+  "private": true,
+  "description": "wasitme monorepo: engine (npm package + CLI), macOS app, Claude Code plugin/mod, contracts.",
+  "license": "MIT",
+  "author": "Aariv Patel",
+  "workspaces": [
+    "engine"
+  ],
+  "scripts": {
+    "build": "npm run build -w engine",
+    "typecheck": "npm run typecheck -w engine",
+    "test": "npm test -w engine"
+  }
+}

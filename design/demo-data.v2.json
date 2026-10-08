@@ -1,0 +1,324 @@
+{
+  "_label": "ANALYTIC DEMO DATA v2 — synthetic, hand-computed. NOT engine output. Must be replaced by `wasitme demo` engine output before ANY README image, screenshot, or launch asset (release gate, DECISIONS D21). Never render v1 (demo-data.json) for anything shipped: its '15% detectable' line was an overclaim.",
+  "version": 2,
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "method": {
+    "unit": "exchange (one real prompt + everything until the next)",
+    "cluster": "session-day",
+    "interval": "small-sample t interval (shown as \"range\", never \"99%\", D31) on log(recent/baseline), session-day cluster bootstrap, variance inflated K/(K-1)",
+    "mde": "exp((t_0.995 + t_0.80) * SE) — 'changes smaller than this would not show'",
+    "gates": "per metric per window: >=10 events, >=10 session-days, >=5 sessions, largest session <50% of denominator",
+    "verdictRule": ">=2 material metrics from >=2 families, same direction, none opposite; material = CI excludes 1x AND >=25% relative AND >=1 point absolute",
+    "families": {"errors": ["toolErrors"], "research": ["readsPerEdit", "blindEdits"], "friction": ["interrupts", "pushback"]}
+  },
+  "windows": {
+    "recent": "Sep 20 – Oct 3 (14 days)",
+    "baseline": "Aug 23 – Sep 19 (28 days)",
+    "note": "today excluded (incomplete day)"
+  },
+  "cases": {
+    "insufficient": {
+      "_why": "Most common real outcome for a single user (spike: only tool errors had power; interrupts never). This is the PRIMARY hero state.",
+      "agent": "claude-code",
+      "state": "insufficient",
+      "headline": "wasitme can already rule out changes bigger than about ×2.5 in tool errors.",
+      "because": "Too early to tell. Only tool errors have enough data so far; a change smaller than about ×2.5 in tool errors wouldn't show.",
+      "detail": "Interruptions are too rare to compare (2 in the last 14 days; 10 needed on each side).",
+      "progress": {
+        "unlocking": "pushback",
+        "have": {"sessions": 4, "sessionDays": 9},
+        "need": {"sessions": 5, "sessionDays": 10},
+        "etaDays": 6
+      },
+      "n": {"exchanges": 214, "sessionDays": 19, "sessions": 6, "days": 13},
+      "metrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "family": "errors",
+          "unit": "of tool calls",
+          "eligible": true,
+          "recent": {"k": 88, "n": 3290},
+          "baseline": {"k": 201, "n": 5610},
+          "ratio": 0.75,
+          "mde": 2.5,
+          "status": "none",
+          "range": [0.42, 1.33]
+        },
+        {
+          "id": "interrupts",
+          "label": "Interruptions",
+          "family": "friction",
+          "unit": "per exchange",
+          "eligible": false,
+          "ineligibleReason": "2 events in recent window (needs 10)",
+          "recent": {"k": 2, "n": 214},
+          "baseline": {"k": 13, "n": 520}
+        },
+        {
+          "id": "pushback",
+          "label": "Pushback prompts",
+          "family": "friction",
+          "unit": "per exchange",
+          "eligible": false,
+          "ineligibleReason": "9 of 10 session-days in recent window",
+          "recent": {"k": 11, "n": 214},
+          "baseline": {"k": 31, "n": 520}
+        },
+        {
+          "id": "readsPerEdit",
+          "label": "Reads per edit",
+          "family": "research",
+          "unit": "ratio",
+          "eligible": false,
+          "ineligibleReason": "only 31 exchanges with edits (needs 40)",
+          "recent": {"reads": 402, "edits": 96},
+          "baseline": {"reads": 1130, "edits": 233}
+        }
+      ],
+      "reason": "needs_data",
+      "label": "Too early to tell"
+    },
+    "unclear": {
+      "_why": "Your effort change (Sep 21) and Claude Code serving a different model (Sep 23) land in the same week: decision table row 6 (METHOD.md §11), unclear (both_sides). (Two changes on your own side alone would be `you`, row 7.)",
+      "agent": "claude-code",
+      "state": "unclear",
+      "direction": "worse",
+      "headline": "Your numbers moved, but changes on both sides landed the same week.",
+      "because": "Your numbers moved, but your effort change (Sep 21) and Claude Code's model switch (Sep 23) happened the same week.",
+      "tryThis": "Undo your effort change to separate them; at your pace that takes about 5 weeks.",
+      "n": {"exchanges": 402, "sessionDays": 31, "sessions": 9, "days": 14},
+      "metrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "family": "errors",
+          "eligible": true,
+          "recent": {"k": 286, "n": 3120},
+          "baseline": {"k": 201, "n": 5610},
+          "ratio": 2.56,
+          "mde": 2.0,
+          "status": "worse",
+          "range": [1.48, 4.43]
+        },
+        {
+          "id": "blindEdits",
+          "label": "Edits without reading first",
+          "family": "research",
+          "eligible": true,
+          "recent": {"k": 74, "n": 410},
+          "baseline": {"k": 79, "n": 820},
+          "ratio": 1.87,
+          "mde": 1.7,
+          "status": "worse",
+          "range": [1.21, 2.9]
+        },
+        {
+          "id": "pushback",
+          "label": "Pushback prompts",
+          "family": "friction",
+          "eligible": true,
+          "recent": {"k": 29, "n": 402},
+          "baseline": {"k": 31, "n": 520},
+          "ratio": 1.21,
+          "mde": 2.6,
+          "status": "none",
+          "range": [0.61, 2.4]
+        }
+      ],
+      "reason": "both_sides",
+      "label": "Can't tell which"
+    },
+    "you": {
+      "_why": "Isolated user change (effort high→medium on Sep 21), no other event within ±7 days except routine version bumps that don't localize the shift.",
+      "agent": "claude-code",
+      "state": "you",
+      "direction": "worse",
+      "headline": "Your numbers moved around the time of your effort change (Sep 21).",
+      "because": "Your numbers moved around the time of your effort change from high to medium (Sep 21): tool errors ×2.7, blind edits ×1.8. The Claude Code updates around it are routine and aren't evidence alone.",
+      "tryThis": "To check, set effort back to high; at your pace a re-check needs about 9 sessions (Oct 25).",
+      "evidenceNote": "These indicators don't measure answer quality. Evidence, not proof. Based on 402 exchanges over 31 session-days (9 sessions) on this Mac.",
+      "n": {"exchanges": 402, "sessionDays": 31, "sessions": 9, "days": 14},
+      "metrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "family": "errors",
+          "eligible": true,
+          "recent": {"k": 296, "n": 3150},
+          "baseline": {"k": 193, "n": 5528},
+          "ratio": 2.69,
+          "mde": 2.0,
+          "status": "worse",
+          "range": [1.55, 4.7]
+        },
+        {
+          "id": "blindEdits",
+          "label": "Edits without reading first",
+          "family": "research",
+          "eligible": true,
+          "recent": {"k": 71, "n": 400},
+          "baseline": {"k": 79, "n": 820},
+          "ratio": 1.84,
+          "mde": 1.7,
+          "status": "worse",
+          "range": [1.19, 2.86]
+        },
+        {
+          "id": "readsPerEdit",
+          "label": "Reads per edit",
+          "family": "research",
+          "eligible": true,
+          "recent": {"reads": 1240, "edits": 400},
+          "baseline": {"reads": 4830, "edits": 820},
+          "ratio": 0.53,
+          "mde": 1.5,
+          "status": "worse",
+          "range": [0.38, 0.74]
+        },
+        {
+          "id": "interrupts",
+          "label": "Interruptions",
+          "family": "friction",
+          "eligible": false,
+          "ineligibleReason": "4 events in recent window (needs 10)",
+          "recent": {"k": 4, "n": 402},
+          "baseline": {"k": 13, "n": 655}
+        }
+      ],
+      "reason": null,
+      "label": "Your side"
+    },
+    "none": {
+      "agent": "claude-code",
+      "state": "none",
+      "headline": "No detectable change: changes bigger than about ×1.9 would have shown.",
+      "because": "Changes bigger than about ×2 in tool errors or ×1.7 in blind edits would have shown at your volume.",
+      "n": {"exchanges": 388, "sessionDays": 30, "sessions": 9, "days": 14},
+      "reason": null,
+      "label": "No detectable change"
+    },
+    "agent": {
+      "_why": "Rare. Decision table row 9 (METHOD.md §11, by elimination): nothing recorded on your side, every day in the onset window fully observed, the shift shows at the 2.1.281 version boundary by itself and replicates in 2 projects; workload stable. If any of those fails it is unclear (nothing_recorded_on_your_side) instead.",
+      "agent": "claude-code",
+      "state": "agent",
+      "direction": "worse",
+      "headline": "Nothing recorded changed on your side; tool errors rose at the 2.1.281 update.",
+      "because": "Nothing recorded changed on your side; tool errors and blind edits rose at the Claude Code 2.1.281 update (Oct 1), in 2 projects.",
+      "evidenceNote": "These indicators don't measure answer quality. Evidence, not proof — one user's logs. wasitme's measured false 'agent' rate on synthetic no-change data: ≤2%.",
+      "n": {"exchanges": 395, "sessionDays": 30, "sessions": 9, "days": 14},
+      "reason": "by_elimination",
+      "label": "Agent side",
+      "observation": {"fullyObservedDays": 14, "projects": 2, "versionBoundaryTest": "passed"}
+    },
+    "codex_calibration_pending": {
+      "agent": "codex",
+      "state": "insufficient",
+      "reason": "calibration_pending",
+      "calibrated": false,
+      "label": "Timeline only",
+      "headline": "Verdicts for Codex are off until wasitme's tests pass for Codex logs.",
+      "because": "Here's what changed on each side in the meantime.",
+      "_was": "codex_insufficient: the baseline had 8 of the 10 session-days it needs; under decision table row 1 (METHOD.md §11) an uncalibrated agent shows the timeline only, whatever its data."
+    },
+    "single_indicator": {
+      "_why": "Decision table row 12 (METHOD.md §11): exactly one voting metric is material and survives Holm; the research family did not move.",
+      "agent": "claude-code",
+      "state": "insufficient",
+      "reason": "single_indicator",
+      "label": "Too early to tell",
+      "headline": "One indicator moved (tool errors ×2.3); a second kind has to agree.",
+      "because": "One indicator moved (tool errors ×2.3), but wasitme needs a second kind of indicator to agree before calling it a change.",
+      "metrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "family": "errors",
+          "eligible": true,
+          "recent": {"k": 254, "n": 3180},
+          "baseline": {"k": 193, "n": 5528},
+          "ratio": 2.29,
+          "range": [1.32, 3.96],
+          "mde": 2.0,
+          "status": "worse"
+        }
+      ]
+    },
+    "stale": {
+      "_why": "Display state computed by every surface: now − generatedAt > staleAfterSec (default 2 h), a generatedAt more than 5 min in the future, or none. Shows the last known state dimmed beside the stale mark.",
+      "agent": "claude-code",
+      "display": "stale",
+      "lastKnownState": "you",
+      "generatedAt": "2026-10-04T09:00:00Z",
+      "staleAfterSec": 7200,
+      "now": "2026-10-04T18:30:00Z"
+    }
+  },
+  "timeline": [
+    {"day": "2026-09-12", "kind": "version", "side": "agent", "label": "Claude Code 2.1.262 → 2.1.266"},
+    {"day": "2026-09-15", "kind": "version", "side": "agent", "label": "Claude Code 2.1.266 → 2.1.270"},
+    {"day": "2026-09-18", "kind": "version", "side": "agent", "label": "Claude Code 2.1.270 → 2.1.274"},
+    {"day": "2026-09-21", "kind": "effort", "side": "you", "label": "Effort high → medium", "userInitiated": true},
+    {
+      "day": "2026-09-22",
+      "kind": "model",
+      "side": "you",
+      "label": "Model opus-5 → opus-5-5",
+      "userInitiated": true,
+      "_onlyInCase": "unclear"
+    },
+    {"day": "2026-09-24", "kind": "version", "side": "agent", "label": "Claude Code 2.1.274 → 2.1.277"},
+    {"day": "2026-09-27", "kind": "mcp", "side": "you", "label": "MCP server added (MCP-1)"},
+    {"day": "2026-10-01", "kind": "version", "side": "agent", "label": "Claude Code 2.1.277 → 2.1.281"}
+  ],
+  "dailyToolErrors": {
+    "_note": "Integer events per day (k errors / n tool calls). No per-day rate bands — days are too small. Window-level ratio + range are the only uncertainty shown.",
+    "baseline": [
+      {"d": "09-06", "k": 8, "n": 231},
+      {"d": "09-07", "k": 5, "n": 160},
+      {"d": "09-08", "k": 11, "n": 290},
+      {"d": "09-09", "k": 7, "n": 214},
+      {"d": "09-10", "k": 6, "n": 188},
+      {"d": "09-11", "k": 9, "n": 247},
+      {"d": "09-12", "k": 4, "n": 121},
+      {"d": "09-13", "k": 0, "n": 38},
+      {"d": "09-14", "k": 7, "n": 205},
+      {"d": "09-15", "k": 10, "n": 262},
+      {"d": "09-16", "k": 8, "n": 230},
+      {"d": "09-17", "k": 6, "n": 176},
+      {"d": "09-18", "k": 9, "n": 219},
+      {"d": "09-19", "k": 5, "n": 150}
+    ],
+    "recent_you_case": [
+      {"d": "09-20", "k": 7, "n": 201},
+      {"d": "09-21", "k": 19, "n": 224},
+      {"d": "09-22", "k": 24, "n": 251},
+      {"d": "09-23", "k": 22, "n": 230},
+      {"d": "09-24", "k": 18, "n": 196},
+      {"d": "09-25", "k": 15, "n": 171},
+      {"d": "09-26", "k": 26, "n": 262},
+      {"d": "09-27", "k": 21, "n": 228},
+      {"d": "09-28", "k": 6, "n": 64},
+      {"d": "09-29", "k": 23, "n": 244},
+      {"d": "09-30", "k": 25, "n": 259},
+      {"d": "10-01", "k": 27, "n": 276},
+      {"d": "10-02", "k": 30, "n": 296},
+      {"d": "10-03", "k": 33, "n": 248}
+    ]
+  },
+  "setup": {
+    "agentVersion": "Claude Code 2.1.289",
+    "model": "opus-5-5",
+    "effort": "medium",
+    "mcpServers": 6,
+    "skills": 14,
+    "instructionsSize": "3.1k tokens"
+  },
+  "coverageNote": "Only sessions on this Mac are visible. Config tracking started Sep 5; earlier edits are invisible except what your logs recorded.",
+  "_copyNote": "Copy follows the engine-owned templates (DESIGN.md §3) and the frozen contract (contract/glance.v1.schema.json, D22): each case carries state + reason + label + headline. Words updated at the contract freeze (WP-02); numbers unchanged. Shared engine-shaped goldens built from these numbers live in contract/fixtures/.",
+  "layouts": {
+    "_why": "D28: the glance carries lead = timeline | verdict. Timeline-led (the day-1 hero for most single users, who mostly see \"Too early to tell\") opens on the change timeline with the verdict chip beside it; verdict-led opens on the verdict. Render both for every case.",
+    "timeline": "Change timeline first (both sides, newest first), verdict chip + headline second.",
+    "verdict": "Verdict label + headline first, metrics and timeline below."
+  }
+}

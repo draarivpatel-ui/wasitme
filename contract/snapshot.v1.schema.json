@@ -1,0 +1,434 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wasitme.snapshot/1",
+  "title": "wasitme snapshot (Control Center, reports)",
+  "description": "FROZEN at the contract freeze (docs/CONTRACT.md, DECISIONS D22). Written atomically by the engine to ~/.wasitme/snapshot.json, compact, at most 512 KB. It is the glance plus detail: every glance top-level field and every glance agent field appears here with the same name and the same sub-schema (a test holds the two files to that), and the extra fields below. The full change list is `timeline` (the glance's `events` is its newest five). Additive changes only after the freeze. Consumers decode tolerantly with the same rules as the glance (docs/CONTRACT.md#display-rules); a schema id other than wasitme.snapshot/1 shows 'Update needed: run `wasitme update`'.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "engine", "generatedAt", "staleAfterSec", "scanOk", "scanError", "demo", "lead", "agents", "health", "calibration", "privacy"],
+  "properties": {
+    "schema": { "const": "wasitme.snapshot/1" },
+    "engine": { "type": "string", "minLength": 1, "maxLength": 32, "description": "engine version" },
+    "generatedAt": { "type": "string", "format": "date-time", "description": "RFC 3339 with an explicit offset" },
+    "staleAfterSec": { "type": "integer", "minimum": 60, "maximum": 604800, "description": "display 'stale' once now - generatedAt exceeds this (consumer default 7200 when absent)" },
+    "scanOk": { "type": "boolean" },
+    "scanError": { "$ref": "#/$defs/scanError" },
+    "demo": { "type": "boolean", "description": "true only for `wasitme demo` output; surfaces show a DEMO ribbon" },
+    "lead": { "enum": ["timeline", "verdict"], "description": "layout: lead with the change timeline or with the verdict (D28)" },
+    "agents": {
+      "type": "array",
+      "maxItems": 8,
+      "description": "Engine-ordered. A single-glyph surface (menu bar, status line) speaks for agents[0]. Agents are never pooled.",
+      "items": { "$ref": "#/$defs/agent" }
+    },
+    "health": { "$ref": "#/$defs/health" },
+    "calibration": { "$ref": "#/$defs/calibration" },
+    "privacy": { "$ref": "#/$defs/privacy" }
+  },
+  "$defs": {
+    "scanError": {
+      "description": "Why the last scan failed, as a kind (never text). null when scanOk is true. Consumers treat an unknown kind as 'internal'.",
+      "enum": [null, "permission_denied", "write_failed", "timeout", "internal"]
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["containsText"],
+      "properties": { "containsText": { "const": false } }
+    },
+    "day": { "type": "string", "format": "date", "description": "local calendar day YYYY-MM-DD" },
+    "state": {
+      "description": "D22 verdict state. Display order: insufficient, none, unclear, you, agent. 'stale' is a display state computed by consumers, never written here.",
+      "enum": ["you", "agent", "none", "insufficient", "unclear"]
+    },
+    "reason": {
+      "description": "The decision-table row's reason (METHOD.md §11), or null when the state needs none (you; agent with an agent-strong candidate; none). insufficient: calibration_pending | needs_data | single_indicator. unclear: mixed | workload | unknown_provenance | both_sides | nothing_recorded_on_your_side | blind_spot. agent: by_elimination | null.",
+      "enum": [null, "calibration_pending", "needs_data", "single_indicator", "mixed", "workload", "unknown_provenance", "both_sides", "nothing_recorded_on_your_side", "blind_spot", "by_elimination"]
+    },
+    "side": { "description": "Who initiated a change (METHOD.md §9). 'unknown' is never 'agent'; 'meta' is wasitme's own writes or a parser change.", "enum": ["you", "agent", "unknown", "meta"] },
+    "strength": { "enum": ["strong", "weak", "routine"] },
+    "family": { "description": "metric family; null for context metrics without one (e.g. churn)", "enum": [null, "errors", "research", "friction"] },
+    "role": { "enum": ["vote", "support", "context"] },
+    "metricStatus": { "enum": ["worse", "better", "none", "ineligible"] },
+    "count": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+    "kn": {
+      "type": "object",
+      "description": "integer totals for one window: k events over n opportunities (readsPerEdit: k reads over n edits)",
+      "additionalProperties": false,
+      "required": ["k", "n"],
+      "properties": { "k": { "$ref": "#/$defs/count" }, "n": { "$ref": "#/$defs/count" } }
+    },
+    "ratio": { "type": ["number", "null"], "minimum": 0 },
+    "range": {
+      "description": "the interval around the ratio, printed as 'range' (never '99%', D31); null when not computed",
+      "oneOf": [
+        { "type": "null" },
+        { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number", "minimum": 0 } }
+      ]
+    },
+    "metricId": { "type": "string", "minLength": 1, "maxLength": 32 },
+    "topMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit", "family", "role", "recent", "baseline", "ratio", "range", "mde", "status"],
+      "properties": {
+        "id": { "$ref": "#/$defs/metricId" },
+        "label": { "type": "string", "maxLength": 40 },
+        "unit": { "type": "string", "maxLength": 24 },
+        "family": { "$ref": "#/$defs/family" },
+        "role": { "$ref": "#/$defs/role" },
+        "recent": { "$ref": "#/$defs/kn" },
+        "baseline": { "$ref": "#/$defs/kn" },
+        "ratio": { "$ref": "#/$defs/ratio" },
+        "range": { "$ref": "#/$defs/range" },
+        "mde": { "type": ["number", "null"], "minimum": 1, "description": "minimum detectable ratio: changes smaller than this would not show" },
+        "status": { "$ref": "#/$defs/metricStatus" }
+      }
+    },
+    "stripDay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["d", "k", "n"],
+      "properties": { "d": { "$ref": "#/$defs/day" }, "k": { "$ref": "#/$defs/count" }, "n": { "$ref": "#/$defs/count" } }
+    },
+    "strip": {
+      "description": "chart data for one metric: daily integer k/n (no per-day bands) plus one window-level ratio, range and MDE. null when there is nothing to chart.",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["metric", "days", "window"],
+          "properties": {
+            "metric": { "$ref": "#/$defs/metricId" },
+            "days": { "type": "array", "maxItems": 42, "items": { "$ref": "#/$defs/stripDay" } },
+            "window": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["ratio", "lo", "hi", "mde"],
+              "properties": {
+                "ratio": { "$ref": "#/$defs/ratio" },
+                "lo": { "type": ["number", "null"], "minimum": 0 },
+                "hi": { "type": ["number", "null"], "minimum": 0 },
+                "mde": { "type": ["number", "null"], "minimum": 1 }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["day", "kind", "side", "strength", "label", "new"],
+      "properties": {
+        "day": { "$ref": "#/$defs/day" },
+        "kind": { "type": "string", "minLength": 1, "maxLength": 24, "description": "engine ChangeKind; consumers show a generic mark for a kind they don't know" },
+        "side": { "$ref": "#/$defs/side" },
+        "strength": { "$ref": "#/$defs/strength" },
+        "label": { "type": "string", "maxLength": 60 },
+        "new": { "type": "boolean", "description": "appeared since the previous scan (the menu bar's 'new' mark)" }
+      }
+    },
+    "gateCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "sessions", "sessionDays"],
+      "properties": { "events": { "$ref": "#/$defs/count" }, "sessions": { "$ref": "#/$defs/count" }, "sessionDays": { "$ref": "#/$defs/count" } }
+    },
+    "unlock": {
+      "type": "object",
+      "description": "one gate shortfall, shown in sessions and session-days (METHOD.md §13); never for interrupts",
+      "additionalProperties": false,
+      "required": ["metric", "family", "have", "need"],
+      "properties": {
+        "metric": { "$ref": "#/$defs/metricId" },
+        "family": { "$ref": "#/$defs/family" },
+        "have": { "$ref": "#/$defs/gateCounts" },
+        "need": { "$ref": "#/$defs/gateCounts" }
+      }
+    },
+    "progress": {
+      "description": "tier-based progress (METHOD.md §4, §13); null when there is nothing to unlock",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tier", "etaDate", "notAtCurrentPace", "unlock"],
+          "properties": {
+            "tier": { "type": "integer", "minimum": 1, "maximum": 3, "description": "the tier the ETA refers to" },
+            "etaDate": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/day" }] },
+            "notAtCurrentPace": { "type": "boolean", "description": "true: no tier gets there at the current pace; etaDate is null and no day count is shown" },
+            "unlock": { "type": "array", "maxItems": 6, "items": { "$ref": "#/$defs/unlock" } }
+          }
+        }
+      ]
+    },
+    "n": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exchanges", "sessions", "sessionDays", "days"],
+      "properties": {
+        "exchanges": { "$ref": "#/$defs/count" },
+        "sessions": { "$ref": "#/$defs/count" },
+        "sessionDays": { "$ref": "#/$defs/count" },
+        "days": { "$ref": "#/$defs/count" }
+      }
+    },
+    "agentId": { "type": "string", "minLength": 1, "maxLength": 32, "description": "open string: claude-code, codex, or a future agent" },
+
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to", "days", "exchanges", "sessions", "sessionDays"],
+      "properties": {
+        "from": { "$ref": "#/$defs/day" },
+        "to": { "$ref": "#/$defs/day" },
+        "days": { "$ref": "#/$defs/count" },
+        "exchanges": { "$ref": "#/$defs/count" },
+        "sessions": { "$ref": "#/$defs/count" },
+        "sessionDays": { "$ref": "#/$defs/count" }
+      }
+    },
+    "ineligibleReason": {
+      "description": "why a metric did not pass its gates (null when eligible)",
+      "enum": [null, "too_few_events", "too_few_session_days", "too_few_sessions", "one_session_dominates", "too_few_edits", "paused_format_drift", "not_english", "no_data"]
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "unit", "family", "role", "recent", "baseline", "ratio", "range", "mde", "status", "eligible", "ineligibleReason", "sensitive", "shifted", "standardized", "series"],
+      "properties": {
+        "id": { "$ref": "#/$defs/metricId" },
+        "label": { "type": "string", "maxLength": 40 },
+        "unit": { "type": "string", "maxLength": 24 },
+        "family": { "$ref": "#/$defs/family" },
+        "role": { "$ref": "#/$defs/role" },
+        "recent": { "$ref": "#/$defs/kn" },
+        "baseline": { "$ref": "#/$defs/kn" },
+        "ratio": { "$ref": "#/$defs/ratio" },
+        "range": { "$ref": "#/$defs/range" },
+        "mde": { "type": ["number", "null"], "minimum": 1 },
+        "status": { "$ref": "#/$defs/metricStatus" },
+        "eligible": { "type": "boolean" },
+        "ineligibleReason": { "$ref": "#/$defs/ineligibleReason" },
+        "sensitive": { "type": "boolean", "description": "eligible with MDE <= 2x" },
+        "shifted": { "type": "boolean", "description": "material per D23" },
+        "standardized": {
+          "description": "directly standardised ratio (baseline reweighted to the recent project x model x entrypoint mix); null when not computed",
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["ratio", "range"],
+              "properties": { "ratio": { "$ref": "#/$defs/ratio" }, "range": { "$ref": "#/$defs/range" } }
+            }
+          ]
+        },
+        "series": { "type": "array", "maxItems": 200, "description": "daily integer k/n over both windows", "items": { "$ref": "#/$defs/stripDay" } }
+      }
+    },
+    "provenance": { "enum": ["command", "settings_snapshot", "project_snapshot", "org_settings", "log_field", "attachment"] },
+    "timelineEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "t", "day", "kind", "side", "strength", "provenance", "label", "from", "to", "new"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 40, "description": "salted HMAC id" },
+        "t": { "type": "string", "format": "date-time" },
+        "day": { "$ref": "#/$defs/day" },
+        "kind": { "type": "string", "minLength": 1, "maxLength": 24 },
+        "side": { "$ref": "#/$defs/side" },
+        "strength": { "$ref": "#/$defs/strength" },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "label": { "type": "string", "maxLength": 60 },
+        "from": { "type": "string", "maxLength": 60, "description": "allow-listed label or short hash (h:xxxxxxxx), never raw content" },
+        "to": { "type": "string", "maxLength": 60 },
+        "new": { "type": "boolean" }
+      }
+    },
+    "onset": {
+      "description": "onset interval I (METHOD.md §10), only after 'changed'; null otherwise",
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["from", "to"],
+          "properties": { "from": { "$ref": "#/$defs/day" }, "to": { "$ref": "#/$defs/day" } }
+        }
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["event", "status", "test"],
+      "properties": {
+        "event": { "type": "string", "minLength": 1, "maxLength": 40, "description": "a timeline event id" },
+        "status": { "enum": ["open", "ruled_out", "background"] },
+        "test": { "description": "what decided the status", "enum": [null, "strata", "version_boundary", "routine"] }
+      }
+    },
+    "confounder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "moved", "value"],
+      "properties": {
+        "id": { "enum": ["prompt_length", "long_context_share", "mode_mix", "entrypoint_mix", "subagent_mix", "interactive_mix", "project_mix", "no_overlap"] },
+        "moved": { "type": ["boolean", "null"], "description": "null: not computable" },
+        "value": { "type": ["number", "null"] }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fullyObservedDays", "partiallyObservedDays", "note"],
+      "properties": {
+        "fullyObservedDays": { "$ref": "#/$defs/count" },
+        "partiallyObservedDays": { "$ref": "#/$defs/count" },
+        "note": { "type": "string", "maxLength": 160, "description": "e.g. 'Sessions on other machines aren't visible.'" }
+      }
+    },
+    "setupValue": { "type": ["string", "number", "boolean"], "maxLength": 60 },
+    "traceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row", "matched", "text"],
+      "properties": {
+        "row": { "type": "integer", "minimum": 1, "maximum": 14, "description": "decision-table row (METHOD.md §11)" },
+        "matched": { "type": "boolean" },
+        "text": { "type": "string", "maxLength": 200 }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent", "state", "reason", "pending", "calibrated", "label", "headline", "because", "tryThis", "confidence", "band", "statusLine", "n", "progress", "topMetrics", "strip", "events",
+        "tier", "windows", "metrics", "onset", "timeline", "candidates", "confounders", "observation", "setup", "trace", "disclaimer"
+      ],
+      "properties": {
+        "agent": { "$ref": "#/$defs/agentId" },
+        "state": { "$ref": "#/$defs/state" },
+        "reason": { "$ref": "#/$defs/reason" },
+        "pending": { "type": "boolean", "description": "a state change is waiting for a second agreeing evaluation; the state shown is the held one" },
+        "calibrated": { "type": "boolean", "description": "this agent passed its own null calibration (D23); false means state insufficient, reason calibration_pending" },
+        "label": { "type": "string", "maxLength": 24, "description": "state label, e.g. 'Too early to tell'" },
+        "headline": { "type": "string", "maxLength": 80 },
+        "because": { "type": "string", "maxLength": 200 },
+        "tryThis": { "type": "string", "maxLength": 160 },
+        "confidence": { "type": "string", "maxLength": 160 },
+        "band": { "type": "string", "maxLength": 100, "description": "the Claude Code band line; empty unless band-eligible" },
+        "statusLine": { "type": "string", "maxLength": 80, "description": "plain status-line segment (no ANSI)" },
+        "n": { "$ref": "#/$defs/n" },
+        "progress": { "$ref": "#/$defs/progress" },
+        "topMetrics": { "type": "array", "maxItems": 3, "items": { "$ref": "#/$defs/topMetric" } },
+        "strip": { "$ref": "#/$defs/strip" },
+        "events": { "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/event" } },
+
+        "tier": { "type": ["integer", "null"], "minimum": 1, "maximum": 3, "description": "the window tier used; null when no comparison ran" },
+        "windows": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["recent", "baseline"],
+              "properties": { "recent": { "$ref": "#/$defs/window" }, "baseline": { "$ref": "#/$defs/window" } }
+            }
+          ]
+        },
+        "metrics": { "type": "array", "maxItems": 24, "items": { "$ref": "#/$defs/metric" } },
+        "onset": { "$ref": "#/$defs/onset" },
+        "timeline": { "type": "array", "maxItems": 500, "description": "every change event, oldest first", "items": { "$ref": "#/$defs/timelineEvent" } },
+        "candidates": { "type": "array", "maxItems": 50, "items": { "$ref": "#/$defs/candidate" } },
+        "confounders": { "type": "array", "maxItems": 12, "items": { "$ref": "#/$defs/confounder" } },
+        "observation": { "$ref": "#/$defs/observation" },
+        "setup": {
+          "type": "object",
+          "description": "current setup: counts and allow-listed labels only",
+          "maxProperties": 40,
+          "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9]{0,31}$" },
+          "additionalProperties": { "$ref": "#/$defs/setupValue" }
+        },
+        "trace": { "type": "array", "maxItems": 14, "description": "Why this verdict: the decision-table rows checked, in order", "items": { "$ref": "#/$defs/traceStep" } },
+        "disclaimer": { "type": ["string", "null"], "maxLength": 160, "description": "the fixed closing sentence of every none/you/agent body; null otherwise" }
+      }
+    },
+
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "found", "files", "badLines", "truncatedTail", "duplicates", "unknownTypes", "firstDay", "lastDay", "error"],
+      "properties": {
+        "agent": { "$ref": "#/$defs/agentId" },
+        "found": { "type": "boolean" },
+        "files": { "$ref": "#/$defs/count" },
+        "badLines": { "$ref": "#/$defs/count" },
+        "truncatedTail": { "$ref": "#/$defs/count" },
+        "duplicates": { "$ref": "#/$defs/count" },
+        "unknownTypes": {
+          "type": "object",
+          "description": "format-drift counts. Keys are log-derived, so they are cleanLabel()-shaped and bounded here; the engine counts them in a null-prototype map",
+          "maxProperties": 64,
+          "propertyNames": { "pattern": "^[A-Za-z0-9._\\-\\[\\]:+@ ]{1,60}$" },
+          "additionalProperties": { "$ref": "#/$defs/count" }
+        },
+        "firstDay": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/day" }] },
+        "lastDay": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/day" }] },
+        "error": { "description": "why the source could not be read, as a kind", "enum": [null, "not_found", "permission_denied", "protected_folder", "unreadable"] }
+      }
+    },
+    "paused": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "metric", "why"],
+      "properties": {
+        "agent": { "$ref": "#/$defs/agentId" },
+        "metric": { "$ref": "#/$defs/metricId" },
+        "why": { "enum": ["unknown_records_in_family", "unknown_records_over_2pct", "parser_changed"] }
+      }
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sources", "parserVersions", "sandbox", "paused"],
+      "properties": {
+        "sources": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/source" } },
+        "parserVersions": {
+          "type": "object",
+          "description": "per metric family parser version",
+          "maxProperties": 24,
+          "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9]{0,31}$" },
+          "additionalProperties": { "type": "integer", "minimum": 1 }
+        },
+        "sandbox": { "type": "boolean", "description": "the scan ran under node --permission" },
+        "paused": { "type": "array", "maxItems": 48, "items": { "$ref": "#/$defs/paused" } }
+      }
+    },
+    "calibrationAgent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent", "calibrated", "sequences", "falseChanged", "falseAgent"],
+      "properties": {
+        "agent": { "$ref": "#/$defs/agentId" },
+        "calibrated": { "type": "boolean" },
+        "sequences": { "$ref": "#/$defs/count" },
+        "falseChanged": { "type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "measured false 'changed' rate on null sequences" },
+        "falseAgent": { "type": ["number", "null"], "minimum": 0, "maximum": 1, "description": "measured false 'agent' rate on null sequences" }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactDate", "methodId", "agents"],
+      "properties": {
+        "artifactDate": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/day" }] },
+        "methodId": { "type": ["string", "null"], "maxLength": 40 },
+        "agents": { "type": "array", "maxItems": 8, "items": { "$ref": "#/$defs/calibrationAgent" } }
+      }
+    }
+  }
+}

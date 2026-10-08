@@ -1,0 +1,301 @@
+# Continuous integration. Also called by release.yml (workflow_call) so a release can only be built from a commit
+# that passes exactly these checks.
+#
+# Actions are pinned to full commit SHAs (the version is in the trailing comment); Dependabot keeps them current.
+# Node 22/24/26 is the supported range (docs/DECISIONS.md D24).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    # release.yml passes this explicitly; a reusable workflow does not see the caller's secrets otherwise, and the
+    # email rule would silently SKIP on the run that gates a tag.
+    secrets:
+      WASITME_FORBIDDEN_EMAILS:
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node: [22, 24, 26]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+
+      - name: Toolchain versions
+        run: |
+          node --version
+          npm --version
+
+      - name: Install (lockfile only)
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Engine tests
+        run: npm test
+
+      - name: Canvas build (ui/, the Control Center page)
+        run: node ui/scripts/build.mjs
+
+      - name: Canvas model tests (ui/)
+        run: node --test --test-concurrency=2 ui/test/model.test.mjs
+
+      - name: Canvas render smoke (one headless Chrome, the design pairs, CSP negative control)
+        # ui/test/cdp.mjs defaults to the macOS Chrome path, which the macos-latest image ships. Not tried on Linux
+        # runners yet (CI is not live, D15), so this runs once, on macOS. scripts/ci-local.sh runs the same step.
+        if: runner.os == 'macOS' && matrix.node == 22
+        env:
+          WASITME_RENDER_JOBS: '1'
+        run: node ui/test/render.mjs --design
+
+      - name: No network, no runtime dependencies (engine, plugin mod and hook scripts, macOS app)
+        shell: bash
+        run: |
+          dirs=()
+          for d in engine/src plugin/mod plugin/scripts macos/Sources ui/src; do
+            if [ -d "$d" ]; then dirs+=("$d"); fi
+          done
+          node scripts/check-no-network.mjs --host-module claude-code "${dirs[@]}"
+
+      - name: Changelog fragments are well-formed
+        run: node scripts/assemble-changelog.mjs --check
+
+      - name: Hygiene scripts pass their own tests
+        run: |
+          node scripts/check-no-network.mjs --self-test
+          node scripts/check-privacy.mjs --self-test
+          node scripts/assemble-changelog.mjs --self-test
+
+      - name: Repo scripts pass their tests (copy lint, repo greps, macro ban, ci-local)
+        shell: bash
+        run: node --test scripts/test/*.test.mjs
+
+      - name: Plugin hook scripts (silent no-op off macOS; guarded kickstart on macOS)
+        run: sh plugin/tests/hooks.sh
+
+      - name: Plugin run.sh (the report skill's entry point; throwaway HOME, stand-in engine)
+        run: sh plugin/tests/run-sh.sh
+
+      - name: Plugin fixtures and design tokens in sync
+        run: node plugin/tests/fixtures/sync.mjs --check
+
+      - name: Design system (generated files current, contrast, glyphs, screens; the Swift probe runs where swiftc is)
+        run: node design/system/gen/test.mjs
+
+      - name: Installer, uninstaller and release.sh suites (temp homes, recording shims, no Swift builds)
+        # Needs the built engine and canvas from the steps above (release.sh builds its own copy from the checkout).
+        # One Node version per OS is enough: these test shell scripts, and Node only runs the stand-in engine.
+        if: matrix.node == 22
+        env:
+          WASITME_TEST_SKIP_HEAVY: '1'
+        run: sh scripts/test/run.sh
+
+      - name: The same suites with dash as the shell (Ubuntu's /bin/sh)
+        if: runner.os == 'Linux' && matrix.node == 22
+        env:
+          WASITME_TEST_SKIP_HEAVY: '1'
+          WASITME_TEST_SH: dash
+        run: sh scripts/test/run.sh
+
+      - name: Canaries must not leak into tracked docs or contracts
+        shell: bash
+        run: |
+          # Skips (exit 0, loudly) until testdata/hostile/CANARIES.txt exists. The full hostile-corpus check runs
+          # in the engine tests, which call scripts/check-privacy.mjs on every real output.
+          targets=()
+          for p in docs contract design README.md CHANGELOG.md changelog.d; do
+            if [ -e "$p" ]; then targets+=("$p"); fi
+          done
+          node scripts/check-privacy.mjs "${targets[@]}"
+
+      - name: Shell syntax (sh -n or bash -n, chosen by shebang)
+        shell: bash
+        run: |
+          status=0
+          while IFS= read -r -d '' f; do
+            first=$(head -n 1 "$f" 2>/dev/null | tr -d '\r' || true)
+            case "$first" in
+              '#!'*bash*) interp=bash ;;
+              '#!'*zsh*) interp=zsh ;;
+              '#!/bin/sh'*|'#!'*' sh'*) interp=sh ;;
+              '#!'*) continue ;; # some other interpreter (python, node, ...)
+              *) case "$f" in *.sh) interp=sh ;; *) continue ;; esac ;;
+            esac
+            if ! command -v "$interp" >/dev/null 2>&1; then
+              echo "skip  $f ($interp is not installed on this runner)"
+              continue
+            fi
+            if "$interp" -n "$f"; then
+              echo "ok    $f ($interp -n)"
+            else
+              echo "::error file=$f::shell syntax error ($interp -n)"
+              status=1
+            fi
+          done < <(git ls-files -z)
+          exit "$status"
+
+      - name: shellcheck (sh and bash scripts, by shebang)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          # ubuntu-latest ships shellcheck. Same selection as scripts/ci-local.sh (zsh is not supported by shellcheck).
+          status=0
+          checked=0
+          while IFS= read -r -d '' f; do
+            first=$(head -n 1 "$f" 2>/dev/null | tr -d '\r' || true)
+            case "$first" in
+              '#!'*bash*) sh_name=bash ;;
+              '#!'*zsh*) continue ;;
+              '#!/bin/sh'*|'#!'*' sh'*) sh_name=sh ;;
+              '#!'*) continue ;;
+              *) case "$f" in *.sh) sh_name=sh ;; *) continue ;; esac ;;
+            esac
+            checked=$((checked + 1))
+            shellcheck --severity=warning --shell="$sh_name" "$f" || status=1
+          done < <(git ls-files -z)
+          echo "shellcheck: $checked script(s) checked"
+          exit "$status"
+
+  swift:
+    name: swift (macos/)
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - name: No SwiftUI macros (SDK-derived list, so Command Line Tools-only builds keep working)
+        # Skips by itself while macos/ has no Swift sources. Reads the runner's SDKs plus scripts/swift-macros.known,
+        # so a runner with an older SDK still bans what a newer SDK declares.
+        run: node scripts/swift-macros.mjs
+      - name: Find the Swift package
+        id: pkg
+        run: |
+          dir=""
+          for candidate in macos macos/*; do
+            if [ -f "$candidate/Package.swift" ]; then dir="$candidate"; break; fi
+          done
+          if [ -n "$dir" ]; then
+            echo "dir=$dir" >> "$GITHUB_OUTPUT"
+            swift --version
+          elif [ -d macos ] && [ -n "$(find macos \( -name .build -o -name .swiftpm -o -name reference \) -prune -o -name '*.swift' -print | head -n 1)" ]; then
+            # Same rule as scripts/ci-local.sh: Swift sources the build steps cannot find must not pass as "skipped".
+            echo "::error::macos/ has Swift sources but no Package.swift at macos/ or macos/*/"
+            exit 1
+          else
+            echo "No Swift package under macos/ yet; skipping."
+          fi
+      - name: swift build
+        if: steps.pkg.outputs.dir != ''
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: swift build
+      - name: swift test
+        if: steps.pkg.outputs.dir != ''
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: swift test
+      - name: swift build with only the Command Line Tools
+        if: steps.pkg.outputs.dir != ''
+        working-directory: ${{ steps.pkg.outputs.dir }}
+        run: |
+          clt=/Library/Developer/CommandLineTools
+          if [ -x "$clt/usr/bin/swift" ]; then
+            DEVELOPER_DIR="$clt" "$clt/usr/bin/swift" build --scratch-path .build/clt
+          else
+            echo "No Command Line Tools on this runner; skipping."
+          fi
+      - name: The app through the installer (real swift build + codesign of macos/ and of the fixture package)
+        # scripts/test/t_heavy_*.sh: install.sh --from this checkout must assemble the same bundle build-app.sh makes
+        # (WasitmeApp, Control Center page, fonts, icon, SDK stamp). It installs what the checkout has built.
+        if: steps.pkg.outputs.dir != ''
+        run: |
+          npm ci
+          npm run build -w engine
+          node ui/scripts/build.mjs
+          sh scripts/test/run.sh t_heavy_
+
+  repo-checks:
+    name: repo checks (plugin, mod allow-list, audit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          package-manager-cache: false
+
+      - name: Copy lint (DESIGN.md §3, D31)
+        run: node scripts/lint-copy.mjs
+
+      - name: Repo greps (home paths, forbidden email, remote assets, string-built JS)
+        env:
+          # Repository secret: addresses that must never appear in a tracked file (comma separated). GitHub hides it
+          # from pull requests opened from forks and from Dependabot runs; only there may the email rule SKIP (loudly).
+          # Everywhere else
+          # (push, same-repo PRs, the release gate via workflow_call) --require-email-config makes a missing secret
+          # a failure instead of a silent pass.
+          WASITME_FORBIDDEN_EMAILS: ${{ secrets.WASITME_FORBIDDEN_EMAILS }}
+        # --strict: the public repository has no allow-list for home paths (D27).
+        run: node scripts/check-repo.mjs --strict ${{ ((github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && github.actor != 'dependabot[bot]') && '--require-email-config' || '' }}
+
+      - name: Mod capability allow-list (static, frozen by D25)
+        # The Claude Code host derives a mod's `calls:` from literal `$.noun.method(...)` and `on("event")` text, so a
+        # literal search (comments masked) is what the host sees. Skips by itself without plugin/.
+        run: node scripts/check-mod-allowlist.mjs plugin
+
+      - name: claude plugin validate (skipped when the CLI is not installed)
+        shell: bash
+        run: |
+          if ! command -v claude >/dev/null 2>&1; then
+            echo "claude CLI is not installed on this runner; skipping."
+            exit 0
+          fi
+          if [ -f .claude-plugin/marketplace.json ]; then claude plugin validate --strict .; fi
+          if [ -f plugin/.claude-plugin/plugin.json ]; then claude plugin validate --strict plugin; fi
+
+      - name: npm audit (runtime dependencies; there should be none)
+        run: npm audit --omit=dev
+
+  ci-ok:
+    name: CI passed
+    if: always()
+    needs: [test, swift, repo-checks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job succeeded
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "job results: $RESULTS"
+          case " $RESULTS " in
+            *' failure '*|*' cancelled '*) exit 1 ;;
+          esac

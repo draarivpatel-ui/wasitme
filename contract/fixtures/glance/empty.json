@@ -1,0 +1,14 @@
+{
+  "schema": "wasitme.glance/1",
+  "engine": "0.1.0",
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "staleAfterSec": 7200,
+  "scanOk": true,
+  "scanError": null,
+  "demo": false,
+  "lead": "timeline",
+  "agents": [],
+  "privacy": {
+    "containsText": false
+  }
+}

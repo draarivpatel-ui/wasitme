@@ -1,0 +1,7 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability (private)
+    # The account in this URL is filled in when the public tree is built (scripts/dev/export-public.sh --owner);
+    # scripts/release.sh --strict refuses to build while it is still a placeholder.
+    url: https://github.com/draarivpatel-ui/wasitme/security/advisories/new
+    about: Please do not open a public issue for a vulnerability, and never attach real session logs. See SECURITY.md.

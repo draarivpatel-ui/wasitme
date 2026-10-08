@@ -1,0 +1,9 @@
+{
+  "generator": "wasitme-synth",
+  "entries": [
+    "CANARIES.txt",
+    "HOSTILE-MANIFEST.json",
+    "claude",
+    "codex"
+  ]
+}

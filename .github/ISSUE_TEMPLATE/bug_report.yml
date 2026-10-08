@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in wasitme is wrong, crashes, or gives a misleading result.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Privacy first.** wasitme reads your private session logs, so please do not paste prompts, file paths, project
+        names, tool output, secrets, or any log excerpt into this issue. Counts, version numbers and descriptions in your
+        own words are enough. A synthetic example that reproduces the problem is even better.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The commands you ran, in order.
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Which agent's logs were involved?
+      options:
+        - Claude Code
+        - Codex
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Versions
+      description: |
+        Paste the output of `wasitme doctor --redacted`. It lists the wasitme version, Node and your operating system, and prints no
+        paths or log text. Add the agent CLI version (for example `claude --version`).
+      placeholder: "wasitme doctor --redacted output, and the agent CLI version"
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I have not pasted prompts, file paths, project names, tool output, secrets or log excerpts into this issue.
+          required: true

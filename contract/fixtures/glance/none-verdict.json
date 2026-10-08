@@ -1,0 +1,297 @@
+{
+  "schema": "wasitme.glance/1",
+  "engine": "0.1.0",
+  "generatedAt": "2026-10-04T18:00:00Z",
+  "staleAfterSec": 7200,
+  "scanOk": true,
+  "scanError": null,
+  "demo": false,
+  "lead": "verdict",
+  "agents": [
+    {
+      "agent": "claude-code",
+      "state": "none",
+      "reason": null,
+      "pending": false,
+      "calibrated": true,
+      "label": "No detectable change",
+      "headline": "Changes bigger than about ×1.9 in 3 indicators would have shown.",
+      "because": "wasitme compared tool errors, reads per edit and edits without reading first over your last 14 days against the 28 before.",
+      "tryThis": "",
+      "confidence": "Based on 388 exchanges over 30 session-days (9 sessions) on this Mac. Sessions on other machines aren't visible.",
+      "band": "",
+      "statusLine": "wasitme: no detectable change",
+      "n": {
+        "exchanges": 388,
+        "sessions": 9,
+        "sessionDays": 30,
+        "days": 14
+      },
+      "progress": null,
+      "topMetrics": [
+        {
+          "id": "toolErrors",
+          "label": "Tool errors",
+          "unit": "per 100 tool calls",
+          "family": "errors",
+          "role": "vote",
+          "recent": {
+            "k": 205,
+            "n": 5520
+          },
+          "baseline": {
+            "k": 201,
+            "n": 5610
+          },
+          "ratio": 1.04,
+          "range": [
+            0.62,
+            1.73
+          ],
+          "mde": 1.9,
+          "status": "none"
+        },
+        {
+          "id": "blindEdits",
+          "label": "Edits without reading first",
+          "unit": "per 100 edits",
+          "family": "research",
+          "role": "vote",
+          "recent": {
+            "k": 41,
+            "n": 415
+          },
+          "baseline": {
+            "k": 79,
+            "n": 820
+          },
+          "ratio": 1.03,
+          "range": [
+            0.66,
+            1.59
+          ],
+          "mde": 1.7,
+          "status": "none"
+        },
+        {
+          "id": "readsPerEdit",
+          "label": "Reads per edit",
+          "unit": "reads per edit",
+          "family": "research",
+          "role": "vote",
+          "recent": {
+            "k": 2350,
+            "n": 415
+          },
+          "baseline": {
+            "k": 4830,
+            "n": 820
+          },
+          "ratio": 0.96,
+          "range": [
+            0.74,
+            1.25
+          ],
+          "mde": 1.5,
+          "status": "none"
+        }
+      ],
+      "strip": {
+        "metric": "toolErrors",
+        "days": [
+          {
+            "d": "2026-09-06",
+            "k": 8,
+            "n": 231
+          },
+          {
+            "d": "2026-09-07",
+            "k": 5,
+            "n": 160
+          },
+          {
+            "d": "2026-09-08",
+            "k": 11,
+            "n": 290
+          },
+          {
+            "d": "2026-09-09",
+            "k": 7,
+            "n": 214
+          },
+          {
+            "d": "2026-09-10",
+            "k": 6,
+            "n": 188
+          },
+          {
+            "d": "2026-09-11",
+            "k": 9,
+            "n": 247
+          },
+          {
+            "d": "2026-09-12",
+            "k": 4,
+            "n": 121
+          },
+          {
+            "d": "2026-09-13",
+            "k": 0,
+            "n": 38
+          },
+          {
+            "d": "2026-09-14",
+            "k": 7,
+            "n": 205
+          },
+          {
+            "d": "2026-09-15",
+            "k": 10,
+            "n": 262
+          },
+          {
+            "d": "2026-09-16",
+            "k": 8,
+            "n": 230
+          },
+          {
+            "d": "2026-09-17",
+            "k": 6,
+            "n": 176
+          },
+          {
+            "d": "2026-09-18",
+            "k": 9,
+            "n": 219
+          },
+          {
+            "d": "2026-09-19",
+            "k": 5,
+            "n": 150
+          },
+          {
+            "d": "2026-09-20",
+            "k": 8,
+            "n": 231
+          },
+          {
+            "d": "2026-09-21",
+            "k": 5,
+            "n": 160
+          },
+          {
+            "d": "2026-09-22",
+            "k": 11,
+            "n": 290
+          },
+          {
+            "d": "2026-09-23",
+            "k": 7,
+            "n": 214
+          },
+          {
+            "d": "2026-09-24",
+            "k": 6,
+            "n": 188
+          },
+          {
+            "d": "2026-09-25",
+            "k": 9,
+            "n": 247
+          },
+          {
+            "d": "2026-09-26",
+            "k": 4,
+            "n": 121
+          },
+          {
+            "d": "2026-09-27",
+            "k": 0,
+            "n": 38
+          },
+          {
+            "d": "2026-09-28",
+            "k": 7,
+            "n": 205
+          },
+          {
+            "d": "2026-09-29",
+            "k": 10,
+            "n": 262
+          },
+          {
+            "d": "2026-09-30",
+            "k": 8,
+            "n": 230
+          },
+          {
+            "d": "2026-10-01",
+            "k": 6,
+            "n": 176
+          },
+          {
+            "d": "2026-10-02",
+            "k": 9,
+            "n": 219
+          },
+          {
+            "d": "2026-10-03",
+            "k": 5,
+            "n": 150
+          }
+        ],
+        "window": {
+          "ratio": 1.04,
+          "lo": 0.62,
+          "hi": 1.73,
+          "mde": 1.9
+        }
+      },
+      "events": [
+        {
+          "day": "2026-10-01",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.277 → 2.1.281",
+          "new": false
+        },
+        {
+          "day": "2026-09-27",
+          "kind": "mcp",
+          "side": "you",
+          "strength": "strong",
+          "label": "MCP server added",
+          "new": false
+        },
+        {
+          "day": "2026-09-24",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.274 → 2.1.277",
+          "new": false
+        },
+        {
+          "day": "2026-09-21",
+          "kind": "effort",
+          "side": "you",
+          "strength": "strong",
+          "label": "Effort high → medium",
+          "new": false
+        },
+        {
+          "day": "2026-09-18",
+          "kind": "version",
+          "side": "agent",
+          "strength": "routine",
+          "label": "Claude Code 2.1.270 → 2.1.274",
+          "new": false
+        }
+      ]
+    }
+  ],
+  "privacy": {
+    "containsText": false
+  }
+}

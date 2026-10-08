@@ -1,0 +1,212 @@
+[
+ {
+  "name": "cc-insufficient",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-none",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-unclear",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-you",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-agent",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-codex-insufficient",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-timeline",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-compare",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "cc-setup",
+  "w": 1280,
+  "h": 800,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "report-agent",
+  "w": 1280,
+  "h": 1180,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "readme-hero",
+  "w": 1280,
+  "h": 640,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "menubar-glyphs",
+  "w": 1280,
+  "h": 2010,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "appicon-sheet",
+  "w": 1280,
+  "h": 820,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "popover-insufficient",
+  "w": 352,
+  "h": 480,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "popover-none",
+  "w": 352,
+  "h": 480,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "popover-you",
+  "w": 352,
+  "h": 480,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "popover-stale",
+  "w": 352,
+  "h": 480,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "desktop-panel",
+  "w": 1280,
+  "h": 620,
+  "modes": [
+   "light",
+   "dark"
+  ]
+ },
+ {
+  "name": "text-dark",
+  "w": 1280,
+  "h": 1100,
+  "modes": [
+   "light"
+  ]
+ },
+ {
+  "name": "text-light",
+  "w": 1280,
+  "h": 1100,
+  "modes": [
+   "light"
+  ]
+ },
+ {
+  "name": "text-ansi16",
+  "w": 1280,
+  "h": 1100,
+  "modes": [
+   "light"
+  ]
+ },
+ {
+  "name": "text-nocolor",
+  "w": 1280,
+  "h": 1100,
+  "modes": [
+   "light"
+  ]
+ },
+ {
+  "name": "text-codetab-light",
+  "w": 1280,
+  "h": 1200,
+  "modes": [
+   "light"
+  ]
+ },
+ {
+  "name": "text-codetab-dark",
+  "w": 1280,
+  "h": 1200,
+  "modes": [
+   "light"
+  ]
+ }
+]

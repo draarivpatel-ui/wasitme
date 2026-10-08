@@ -1,0 +1,10 @@
+# check-repo.allow - findings of scripts/check-repo.mjs that are known and tolerated while the repository is private.
+#
+# Format, one entry per line:   rule | path glob | needle | reason
+# The needle is text from the SAME line as the finding, within 80 characters of it; it must not contain the guarded
+# text itself (a real home path or address), or this file would be a finding too. "*" (any rule) is not accepted and
+# forbidden-email can never be listed. An entry that matches nothing fails the check (stale).
+#
+# EVERY ENTRY HERE WOULD BE A PRE-PUBLISH BLOCKER (D27). `node scripts/check-repo.mjs --strict`
+# (scripts/ci-local.sh --prepublish) ignores this file entirely, so the public-repo gate stays red until each is scrubbed.
+

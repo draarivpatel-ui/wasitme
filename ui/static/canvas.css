@@ -1,0 +1,252 @@
+/* The live canvas on top of the design system's screen components (components.css), to docs/design/UX-V2.md: one
+   left-aligned column per page (§5), six type sizes (§6), the 18 px badges (§7), disclosures, and the Settings rows and
+   switches (§9). Only var(--...) from tokens.css; no colour literal, no literal font size, no opacity dimming, no
+   transition or animation (DESIGN.md rules, D48). */
+
+html, body { height: 100%; background: var(--surface-sheet); }
+#app { height: 100vh; }
+
+/* ---------- window: fills the web view; the content column scrolls ---------- */
+.window { width: 100%; height: 100vh; min-height: 600px; grid-template-rows: 100%; }
+.window--content { grid-template-columns: 1fr; }
+.sidebar { overflow: hidden; }
+.content { overflow: auto; scroll-padding-block: var(--space-4); }   /* a control focused at the edge keeps its whole focus ring in view */
+
+/* ---------- the page column (§5): 32 / 40 / 48 padding, at most 960 px of content, left-aligned ---------- */
+.page { padding: var(--space-8) var(--space-10) var(--space-12); max-width: calc(960px + 2 * var(--space-10)); }
+.page :where(p) { margin: 0; }   /* zero specificity: every class rule below sets its own margins */
+.t-section { font: var(--type-section); margin: 0; color: var(--ink-primary); }
+.t-small { font: var(--type-small); color: var(--ink-secondary); max-width: 72ch; }
+.t-title { margin: 0; }
+.t-deck { max-width: 56ch; margin-top: var(--space-2); text-wrap: balance; }
+.page .t-title + .t-deck, .answer .t-display + .t-deck { margin-top: var(--space-2); }
+.answer .t-small { margin-top: var(--space-2); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* demo banner and scan notice: one quiet line above the title */
+.banner { font: var(--type-small); color: var(--ink-secondary); background: var(--surface-well); padding: 4px var(--space-3); border-radius: var(--radius-chip); margin-bottom: var(--space-6); max-width: max-content; }
+.notice { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); font: var(--type-body); color: var(--ink-primary);
+  border-left: var(--stroke-rule) solid var(--rule-ink); padding: 2px 0 2px var(--space-3); margin-bottom: var(--space-6); }
+
+/* ---------- buttons are real <button>s (the mockups use spans) ---------- */
+button { -webkit-appearance: none; appearance: none; margin: 0; cursor: default; }
+.btn { line-height: 1; }
+.btn:disabled { color: var(--ink-muted); border-color: var(--rule-strong); background: var(--surface-sheet); }
+.btn--plain { height: auto; padding: 0 2px; border: 0; color: var(--ink-primary); font: var(--type-body); }
+
+/* ---------- sidebar (full chrome only: the README hero and design comparisons) ---------- */
+.brand { padding-top: 22px; }
+.nav li { padding: 0; }
+.navbtn { display: flex; align-items: center; justify-content: space-between; width: 100%; height: 100%; padding: 0 16px 0 20px;
+  border: 0; background: none; font: inherit; color: inherit; text-align: left; }
+.nblock .nblock-title { font: var(--type-small); font-weight: 700; color: var(--ink-primary); margin: 0 0 6px; }
+.nblock div { font: var(--type-small); }
+.localonly { font: var(--type-small); color: var(--ink-secondary); }
+.switcher .seg { font: var(--type-typed-sm); font-weight: 700; text-align: center; padding: 6px 0; color: var(--ink-primary); background: none; border: 0; }
+.switcher .seg.on { background: var(--accent-action); color: var(--accent-action-text); }
+.switcher .seg.off { color: var(--ink-muted); font-weight: 400; }
+.switcher.single { grid-template-columns: 1fr; }
+/* focus rings drawn inside: the sidebar and the switcher clip their content, so the shared ring outside the box
+   (components.css :focus-visible, offset 2px) loses its sides there; on the selected segment the ring is light on ink */
+.navbtn:focus-visible { outline-offset: calc(-1 * var(--stroke-focus) - 1px); }   /* the selected row overlaps the sidebar's 1px border */
+.switcher .seg:focus-visible { outline-offset: calc(-2 * var(--stroke-focus)); }
+.switcher .seg.on:focus-visible { outline-color: var(--accent-action-text); }
+.switcher.n3 { grid-template-columns: repeat(3, 1fr); }
+.switcher.n4 { grid-template-columns: repeat(2, 1fr); }
+.switcher .seg { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-left: 4px; padding-right: 4px; }
+
+/* ---------- glyph boxes (the mockups size them inline) ---------- */
+.glyph.g16 { width: var(--size-chip-glyph); height: var(--size-chip-glyph); }
+.glyph.g22 { width: var(--size-pin-glyph); height: var(--size-pin-glyph); }
+
+/* ---------- Finding: the answer block (§8.1) ---------- */
+.answer .meta { display: flex; align-items: center; flex-wrap: wrap; gap: 4px var(--space-3); margin-bottom: var(--space-3); min-width: 0; }
+.answer .meta .ctx { font: var(--type-small); color: var(--ink-secondary); }
+.message .meta { display: flex; align-items: center; margin-bottom: var(--space-3); }
+
+/* ---------- the one chart (§5): deck → chart 32, chart → legend 8 ---------- */
+.chart-block { margin-top: var(--space-8); min-width: 0; }
+.chart-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px var(--space-4); margin-bottom: var(--space-1); }
+.chart-head .right { margin-left: auto; font: var(--type-typed-sm); color: var(--ink-secondary); }
+.chart-head .right b { color: var(--ink-primary); }
+svg.chart--strip { max-width: 100%; height: auto; }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px var(--space-5); font: var(--type-small); color: var(--ink-secondary); margin-top: var(--space-2); }
+.legend .lg { display: inline-flex; align-items: center; gap: 6px; }
+.legend svg { display: block; flex: none; }
+.c-unknown { fill: var(--surface-sheet); stroke: var(--ink-secondary); stroke-width: 1; stroke-dasharray: 2 2; }
+/* the chart's marks for crowded lanes (UX-V2 §7.3): a change of unknown origin as a faint tick on the line, and the
+   days an agent's range covers, on the underside of the line */
+.c-unknown-tick { stroke: var(--ink-secondary); stroke-width: 1.5; }
+.c-agent-span { fill: var(--agent-keyline); }
+.c-hit { fill: transparent; }
+
+/* ---------- Next and the disclaimer: legend → next block 24 ---------- */
+.next { margin-top: var(--space-6); max-width: 62ch; }
+.next .next-title { font: var(--type-body); font-weight: 700; margin: 0 0 var(--space-1); }
+.next p { font: var(--type-body); color: var(--ink-primary); margin-top: var(--space-1); }
+.progress { margin: 4px 0 6px; }
+.progress .lbl { font: var(--type-body); width: auto; }
+.disclaimer { margin-top: var(--space-4); }
+
+/* ---------- disclosures (§5): hairline above, 40 px tall, no animation; they share hairlines ---------- */
+.disc-block { border-top: 1px solid var(--rule-hair); border-bottom: 1px solid var(--rule-hair); }
+.disc-block + .disc-block { margin-top: -1px; }
+:not(.disc-block) + .disc-block { margin-top: var(--space-10); }
+.disc-h { margin: 0; font: inherit; }
+.disc { display: flex; align-items: center; gap: var(--space-2); width: 100%; height: 40px; padding: 0; border: 0; background: none;
+  font: var(--type-body); font-weight: 700; color: var(--ink-primary); text-align: left; }
+.disc .disc-count { font: var(--type-typed-sm); color: var(--ink-secondary); }
+.chev svg { display: block; }
+.chev-path { fill: none; stroke: var(--ink-secondary); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.disc-region { padding: var(--space-1) 0 var(--space-6); }
+.disc-region > * + * { margin-top: var(--space-3); }
+.disc-region p { font: var(--type-body); color: var(--ink-primary); max-width: 62ch; }
+.disc-region p.t-small { font: var(--type-small); color: var(--ink-secondary); max-width: 72ch; }
+.disc-region .t-section { margin-top: var(--space-5); }
+.disc-region > .t-section:first-child { margin-top: var(--space-2); }
+
+/* ---------- change rows (§7.4): date · badge · label · one quiet tag ---------- */
+.chg-list { list-style: none; margin: 0; padding: 0; }
+.chg { display: grid; grid-template-columns: 56px 22px auto minmax(0, 1fr); align-items: center; gap: var(--space-2); min-height: 30px; padding: 2px 0; border-bottom: 1px solid var(--rule-hair); }
+.chg .d { font: var(--type-typed-sm); color: var(--ink-secondary); }
+.chg .b { display: inline-flex; align-items: center; }
+.chg .lbl { font: var(--type-body); color: var(--ink-primary); overflow-wrap: anywhere; min-width: 0; }
+.chg.dim .lbl { color: var(--ink-secondary); }
+.qtag { justify-self: start; font: var(--type-small); color: var(--ink-secondary); background: var(--surface-well); padding: 0 6px; border-radius: var(--radius-chip); }
+.qtag--you { background: var(--you-tint); color: var(--ink-primary); }
+.qtag--agent { background: var(--agent-tint); color: var(--ink-primary); }
+.qtag--candidate { background: var(--surface-selection); color: var(--ink-primary); }
+.group-head { margin: var(--space-4) 0 var(--space-1); }
+.chg-group:first-of-type .group-head { margin-top: 0; }
+.foot { margin-top: var(--space-2); }
+
+/* the badge in rows and tables: the drawn 18 px shape, one named image */
+.bdg { display: inline-flex; flex: none; vertical-align: middle; }
+.bdg svg { display: block; }
+
+/* ---------- ledger tables (restyled per §6: small upright headers, serif words, mono data) ---------- */
+.ledger { padding: 0; }
+.table-wrap { overflow-x: auto; }
+.ledger th { font: var(--type-small); color: var(--ink-secondary); }
+.ledger td.sig { font: var(--type-body); padding-top: 3px; padding-bottom: 3px; }
+.ledger td.sig .name { display: block; }
+.ledger td.sig .fam { display: block; font: var(--type-small); color: var(--ink-secondary); margin: 0; }
+.ledger td.st { font: var(--type-small); color: var(--ink-primary); }
+.ledger td.st .bdg { margin-left: 6px; }
+.ledger td.st.ctx { color: var(--ink-secondary); }
+.ledger td.words { font: var(--type-small); white-space: normal; overflow-wrap: anywhere; }
+.ledger .foot, .ledger .conf { display: block; margin-top: var(--space-2); font: var(--type-small); color: var(--ink-secondary); }
+.ledger td.when { white-space: nowrap; }
+.ledger td.when > * { vertical-align: middle; }
+.ledger td.when .bdg { margin-right: var(--space-2); }
+.ledger td.when .kn { font: var(--type-typed-sm); color: var(--ink-secondary); margin-right: 6px; }
+.ledger.setup td.x { font: var(--type-typed-sm); font-weight: 700; }
+.ledger.setup td.sig { padding-top: 0; padding-bottom: 0; }
+.ledger.setup table { margin-top: var(--space-8); }
+.links { margin-top: var(--space-4); }
+
+/* ---------- daily counts: one small table per two weeks ---------- */
+.daily-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-6); align-items: start; }
+table.daily { border-collapse: collapse; width: 100%; }
+table.daily th, table.daily td { padding: 2px 8px 2px 0; border-bottom: 1px solid var(--rule-hair); text-align: left; white-space: nowrap; }
+table.daily thead th { font: var(--type-small); color: var(--ink-secondary); border-bottom: 1px solid var(--rule-ink); }
+table.daily tbody th { font: var(--type-typed-sm); color: var(--ink-secondary); font-weight: 400; }
+table.daily td { font: var(--type-typed-sm); color: var(--ink-primary); }
+table.daily .num { text-align: right; }
+
+/* ---------- Timeline, Compare ---------- */
+.finding-line { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); margin-top: var(--space-3); }
+.finding-line .fl-text { font: var(--type-body); color: var(--ink-primary); min-width: 0; flex: 0 1 auto; overflow-wrap: anywhere; }
+.page-compare .ledger { margin-top: var(--space-8); }
+.cmp-two { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.cmp-half { min-width: 0; }
+.cmp-half .chart-head { margin-bottom: 0; }
+
+/* ---------- Report preview (§8.5) ---------- */
+.report-sheet { margin-top: var(--space-8); padding: 20px 24px 16px; border: 1px solid var(--rule-hair); border-top: var(--stroke-rule) solid var(--rule-ink); background: var(--surface-raised); max-width: 720px; overflow-wrap: anywhere; }
+.report-sheet p { font: var(--type-body); margin: 0 0 10px; }
+.report-sheet p.t-small { font: var(--type-small); }
+.report-sheet .r-title { font: var(--type-section); margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--rule-hair); }
+.report-sheet .r-h { margin: 18px 0 6px; }
+.report-sheet .r-finding .glyph { vertical-align: -2px; }
+.report-sheet .r-foot { margin: 16px 0 0; }
+.report-sheet .checked div { grid-template-columns: 110px 1fr; }
+.report-sheet .legend { margin-bottom: 4px; }
+.r-table { border-collapse: collapse; font: var(--type-typed-sm); }
+.r-table th, .r-table td { text-align: left; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--rule-hair); white-space: nowrap; }
+.r-table th { font: var(--type-small); color: var(--ink-secondary); font-weight: 400; border-bottom: 1px solid var(--rule-ink); }
+.r-table td.words, .r-table td:first-child { font: var(--type-small); }
+.r-table .num { text-align: right; }
+.r-daily th, .r-daily td { padding-right: 8px; }
+.r-trace { margin: 0; padding: 0; list-style: none; font: var(--type-body); }
+.r-trace li { padding: 2px 0; color: var(--ink-secondary); }
+.r-trace li.matched { color: var(--ink-primary); }
+
+/* ---------- Sources (§8.6) ---------- */
+.src-list { list-style: none; margin: var(--space-8) 0 0; padding: 0; border-top: 2px solid var(--rule-ink); }
+.src { display: grid; grid-template-columns: 160px 220px minmax(0, 1fr); align-items: baseline; gap: 2px var(--space-4); padding: 8px 0; border-bottom: 1px solid var(--rule-hair); }
+.src-name { font: var(--type-body); font-weight: 700; }
+.src-status { font: var(--type-body); color: var(--ink-primary); }
+.src-facts { font: var(--type-typed-sm); color: var(--ink-secondary); }
+.src-aside { grid-column: 2 / -1; }
+.src:last-child { border-bottom: 0; }
+.gap { margin-top: var(--space-10); margin-bottom: var(--space-2); }
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { font: var(--type-body); padding: 2px 0; }
+dl.checked.wide div { grid-template-columns: 200px 1fr; }
+dl.checked.wide dd .plain-list li { font: var(--type-small); }
+.checked dt { font: var(--type-small); font-weight: 700; }
+.checked dd { font: var(--type-small); }
+
+/* ---------- Settings (§9): grouped rows, buttons and switches ---------- */
+.sgroup { margin-top: var(--space-10); max-width: 760px; }
+.page-settings .t-deck + .sgroup { margin-top: var(--space-8); }
+.sgroup > .t-section { margin-bottom: var(--space-2); }
+.sbox { list-style: none; margin: 0; padding: 0; border: 1px solid var(--rule-strong); border-radius: var(--radius-control); background: var(--surface-raised); }
+.srow { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-4); min-height: 56px; padding: var(--space-2) var(--space-4); }
+.srow + .srow { border-top: 1px solid var(--rule-hair); }
+.srow-text { min-width: 0; }
+.srow-title { display: block; font: var(--type-body); color: var(--ink-primary); }
+.srow-desc { display: block; font: var(--type-small); color: var(--ink-secondary); }
+.srow-desc.muted { color: var(--ink-muted); }
+.srow-state { font: var(--type-small); color: var(--ink-secondary); text-align: right; }
+.srow-ctl { display: inline-flex; justify-content: flex-end; min-width: 36px; }
+.sgroup .btn { font: var(--type-typed); font-weight: 700; }
+.switch { position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 10px; background: var(--rule-strong); }
+.switch.on { background: var(--accent-action); }
+.switch .knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface-raised); }
+.switch.on .knob { left: 18px; }
+.switch:disabled { background: var(--surface-well); border: 1px solid var(--rule-strong); }
+.switch:disabled .knob { top: 1px; }
+.switch.on:disabled .knob { left: 17px; background: var(--rule-strong); }
+.switch:not(.on):disabled .knob { left: 1px; background: var(--rule-strong); }
+.privacy { font: var(--type-body); max-width: 62ch; margin-top: var(--space-1); }
+.sgroup .disc-block { margin-top: var(--space-4); }
+.calls code { font: var(--type-typed-sm); color: var(--ink-primary); overflow-wrap: anywhere; }
+.can li { font: var(--type-body); }
+/* a command in running text (never shown with Markdown backticks): the surrounding size, in the mono face */
+code.cmd { font: inherit; font-family: var(--font-mono); white-space: nowrap; }   /* UI-owned and short: never split a command */
+
+/* ---------- document-level messages ---------- */
+.message { padding-top: var(--space-6); max-width: 760px; }
+.message .t-display { margin-bottom: 8px; }
+.message .t-deck + p { margin-top: var(--space-4); }
+
+/* ---------- the last known state beside the stale mark: dimmed by tokens, never by opacity ---------- */
+.lastknown {
+  --ink-primary: var(--ink-muted); --ink-secondary: var(--ink-muted); --rule-ink: var(--rule-strong);
+  --chart-mark: var(--rule-strong); --chart-axis: var(--rule-strong); --chart-range: var(--ink-muted); --chart-estimate: var(--ink-muted);
+  --you-fill: var(--you-tint); --agent-fill: var(--agent-tint); --you-keyline: var(--rule-strong); --agent-keyline: var(--rule-strong);
+  /* a marker's letter on the dimmed tint: the near-black party ink is unreadable on the dark theme's tints (1.2:1) */
+  --you-ink: var(--ink-muted); --agent-ink: var(--ink-muted);
+}
+/* the tint behind a moved ratio names a side; a last-known state names none (custom properties resolve per element) */
+.lastknown .ledger td.x.moved { background: var(--surface-well); }
+.lastknown .qtag--you, .lastknown .qtag--agent { background: var(--surface-well); }
+
+/* ---------- engine text never widens the page (hostile labels, long unbroken runs) ---------- */
+.chip { max-width: 100%; }
+.chip .chip-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.t-display, .t-deck, .t-small, .next p, .checked dd, .disc-region p, .message, .notice { overflow-wrap: anywhere; }
+.ledger td.sig { white-space: normal; overflow-wrap: anywhere; }
+.chart-head .t-section { overflow-wrap: anywhere; min-width: 0; }

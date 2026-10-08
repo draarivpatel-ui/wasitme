@@ -1,0 +1,37 @@
+wasit[4mme[0m                                                           [38;2;156;155;149mClaude Code   checked Oct 4, 12:00[0m
+[38;2;116;117;123m════════════════════════════════════════════════════════════════════════════════════════════════════[0m
+[1mWhat changed[0m    [38;2;156;155;149myours numbered above the line, Claude Code's lettered below[0m
+[38;2;156;155;149myour side[0m                                                   [38;2;27;28;33;48;2;242;194;48m 1 [0m
+                [38;2;116;117;123m┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄[0m
+[38;2;156;155;149mClaude Code[0m
+                [38;2;156;155;149mSep 13[0m                      [38;2;156;155;149mSep 20[0m                      [38;2;156;155;149mSep 27[0m                [38;2;156;155;149mOct 3[0m
+[38;2;156;155;149merrors[0m            8   8   8   8   8   8   8   8   8   8   8  24  24  24  24  24  24  24  24  24  24
+[38;2;156;155;149mtool calls[0m      [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m [38;2;156;155;149m200[0m
+                [38;2;156;155;149m└───────── before ─────────┘└────────────────── recent, 14 days ───────────────────┘[0m
+
+                [38;2;27;28;33;48;2;242;194;48m 1 [0m [38;2;156;155;149mSep 24[0m   Model m1 → m2                       [38;2;156;155;149myour side · lines up with the shift[0m
+
+[1mFinding[0m         ■── [38;2;27;28;33;48;2;242;194;48m Your side [0m
+                Your numbers moved around the time of your model change from m1 to m2 (Sep 24).
+                [38;2;156;155;149mTool errors (×2.4) and edits without reading first (×1.7) rose; nothing recorded[0m
+                [38;2;156;155;149mchanged on Claude Code's side in the same window.[0m
+                [38;2;156;155;149mBased on 168 exchanges over 168 session-days (168 sessions) on this Mac.[0m
+                [38;2;156;155;149mSessions on other machines aren't visible.[0m
+                [38;2;156;155;149mThese indicators don't measure answer quality. Evidence, not proof.[0m
+
+[1mSignals[0m                  [38;2;156;155;149mrecent[0m         [38;2;156;155;149mbefore[0m   [38;2;156;155;149mchange  range[0m            [38;2;156;155;149m×1[0m [38;2;156;155;149m×2[0m [38;2;156;155;149m×4[0m     [38;2;156;155;149mstatus[0m
+[38;2;116;117;123m────────────────────────────────────────────────────────────────────────────────────────────────────[0m
+Tool errors         272 / 2,800    224 / 5,600   ×2.43  ×1.93–×3.05       ░│░ ├○┤      context
+Tool errors         272 / 2,800    224 / 5,600   ×2.43  ×1.93–×3.05       ░│░ ├●┤      moved, more
+(excl. commands)
+Reads per edit    2,240 / 1,120  4,480 / 2,240   ×1.00  ×0.93–×1.08        ○           not detected
+Edits without       192 / 1,120    224 / 2,240   ×1.71  ×1.35–×2.18       ░│├●┤        moved, more
+reading first
+Interruptions            0 / 56        0 / 112   [38;2;156;155;149monly 0 in the recent window[0m           [38;2;156;155;149mcontext[0m
+Pushback prompts         0 / 56        0 / 112   [38;2;156;155;149mprompts are not in English[0m            [38;2;156;155;149mcontext[0m
+Files edited 3+          0 / 56        0 / 112   [38;2;156;155;149monly 0 in the recent window[0m           [38;2;156;155;149mcontext[0m
+times
+                                   [38;2;156;155;149m○ estimate, not detected  ● moved  ├─┤ range  ░ too small to show[0m
+
+[1mNext[0m            To check, switch the model back to m1.
+[1mShare[0m           wasitme report --md | pbcopy   [38;2;156;155;149mnumbers only: no prompts, code or paths[0m

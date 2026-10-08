@@ -1,0 +1,132 @@
+SETTINGS PAGE: before and after (UX-V2.md section 9)
+Content pane 1060 pt wide, light.
+
+Legend
+  [Remove…]   in-page button (mono bold 13, ink outline); "…" means it opens a native confirmation sheet first
+  (●  )       switch, on        (  ●) switch, off        [Update…]°  disabled, with its reason as the row's description
+  ▸ / ▾       disclosure, closed / open
+
+
+BEFORE (today, chrome "content"; 142 visible words, no controls)
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Recent  Sep 20 – Oct 3  14 days   compared with  Aug 23 – Sep 19  28 days                     [Check again]  │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ Settings  integrations, data and privacy; removing anything is done from Terminal for now, and the           │
+│           uninstaller asks before each part                                                                  │
+│ ─────────────────────────────────────────────────────  ───────────────────────────────────────────────────── │
+│ Privacy                                                 Data                                                 │
+│ No network code. Only the installer downloads, and      wasitme keeps derived numbers and dates in its own   │
+│ only when you run it.                                   folder, never prompts or code. Deleting that history │
+│ Reports contain numbers only: no prompts, code or       is part of uninstalling for now: add --purge to the  │
+│ paths.                                                  command below.                                       │
+│ The Claude Code mod runs inside Claude Code with your   ──────────────────────────────────────────────────── │
+│ permissions and can call only:                          Integrations                                         │
+│ $.clock.every, $.clock.now, $.command.register,         The menu bar, desktop panel, Claude Code mod, status │
+│ $.fs.read, $.fs.stat, $.state.get, $.state.set,         line and Codex skills. To remove one, run the        │
+│ $.ui.close, $.ui.open, $.ui.resolve                     uninstaller and keep the parts you want: it asks     │
+│                                                         about each one.                                      │
+│                                                         ──────────────────────────────────────────────────── │
+│                                                         Uninstall                                            │
+│                                                         Removes wasitme and restores what it changed. In     │
+│                                                         Terminal, run sh ~/.wasitme/current/scripts/         │
+│                                                         uninstall.sh.                                        │
+├──────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
+│ demo data (wasitme demo) — not from your logs                                          checked Oct 4, 14:14   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+AFTER (chrome "content"; budget 180 visible words). Each row: title (body 15) + one description line (small,
+secondary, ≤ 12 words) on the left; state word (small) + one control on the right. Groups are boxed lists.
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│ Settings                                                                            (title 30)              │
+│ wasitme 0.1.0 · local only                                                          (deck)                  │
+│                                                                                                              │
+│ Integrations                                                                        (section 17 bold)       │
+│ ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────╮ │
+│ │ Menu bar app                                                               On          [Remove…]        │ │
+│ │ This app: the finding in your menu bar.                                                                 │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Desktop panel                                                                          (●  )            │ │
+│ │ A small finding panel on your desktop.                                                                  │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Claude Code plugin                                                         On          [Remove…]        │ │
+│ │ The /wasitme pane, and a check when sessions start and end.                                             │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Status line                                                                Off         [Add…]           │ │
+│ │ The finding in Claude Code's status line.                                                               │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Codex skill                                                                Off         [Add…]           │ │
+│ │ Lets Codex print the wasitme report.                                                                    │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Background scan                                                            On          [Turn Off…]      │ │
+│ │ Checks every 15 minutes, at low priority.                                                               │ │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+│                                                                                                              │
+│ General                                                                                                      │
+│ ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────╮ │
+│ │ Launch at login                                                                        (●  )            │ │
+│ │ Open wasitme in the menu bar when you log in.                                                           │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Updates                                                                                [Update…]°       │ │
+│ │ Updates arrive with the first public release.                                (muted: the reason)        │ │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+│                                                                                                              │
+│ Data                                                                                                         │
+│ ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────╮ │
+│ │ Saved history                                                                          [Show in Finder] │ │
+│ │ ~/.wasitme: numbers and dates only.                                                                     │ │
+│ ├──────────────────────────────────────────────────────────────────────────────────────────────────────────┤ │
+│ │ Clear history                                                                          [Clear History…] │ │
+│ │ Deletes the saved numbers. Your agent logs are never touched.                                           │ │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+│                                                                                                              │
+│ Privacy                                                                                                      │
+│ No network code. Only the installer downloads, and only when you run it.                                     │
+│ Reports hold numbers only: no prompts, code or paths.                                                        │
+│ ──────────────────────────────────────────────────────────────────────────────────────────────────────────── │
+│ ▸ What the Claude Code plugin can do                                                                         │
+│                                                                                                              │
+│ Uninstall                                                                                                    │
+│ ╭──────────────────────────────────────────────────────────────────────────────────────────────────────────╮ │
+│ │ Uninstall wasitme                                                                      [Uninstall…]     │ │
+│ │ Removes every part and restores what wasitme changed.                                                   │ │
+│ ╰──────────────────────────────────────────────────────────────────────────────────────────────────────────╯ │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+Other row states (section 9.2)
+│ │ Claude Code plugin                                                         Not available               │ │
+│ │ Claude Code isn't installed.                                                                            │ │
+│ │ Status line                                                                Yours                       │ │
+│ │ You have your own status line; wasitme leaves it alone.                                                 │ │
+│ │ Claude Code plugin                                                         Working…   [Remove…]°        │ │
+│ │ Launch at login                                                                        (  ●)°           │ │
+│ │ Set by the installer.                                                        (unknown: switch disabled) │ │
+
+"What the Claude Code plugin can do", opened
+│ ▾ What the Claude Code plugin can do                                                                         │
+│   It runs inside Claude Code with your permissions, and can only:                                            │
+│   · Re-read wasitme's status once a minute.                                                                  │
+│   · Read the time, to tell when the status is out of date.                                                   │
+│   · Add the /wasitme command.                                                                                │
+│   · Read one file: wasitme's status file.                                                                    │
+│   · See that file's size and when it changed.                                                                │
+│   · Remember what it last showed.                                                                            │
+│   · Open, draw and close its own pane.                                                                       │
+│   · When a session starts or ends, ask wasitme to check now.                                                 │
+│   · When a session starts, note whether six setup files exist in the project (CLAUDE.md, CLAUDE.local.md,    │
+│     .claude/CLAUDE.md, .claude/settings.json, .claude/settings.local.json, .mcp.json), keeping a salted       │
+│     fingerprint, size and line count: never their contents.                                                  │
+│   Exact calls: $.clock.every, $.clock.now, $.command.register, $.fs.read, $.fs.stat, $.state.get,             │
+│   $.state.set, $.ui.close, $.ui.open, $.ui.resolve                                    (typedSm)              │
+
+Native confirmation, e.g. after [Uninstall…] (an NSAlert sheet on the window; the page sends only "uninstallAll")
+                 ╭────────────────────────────────────────────────────────────────╮
+                 │  Uninstall wasitme?                                             │
+                 │  This removes the app, the background scan, the plugins, the    │
+                 │  status line it set and the wasitme command, and restores what  │
+                 │  it changed. Your agent logs are never touched. Your saved      │
+                 │  history in ~/.wasitme is kept unless you tick the box.         │
+                 │  [ ] Also delete my saved history                               │
+                 │                                   [Cancel]  [Uninstall]         │
+                 ╰────────────────────────────────────────────────────────────────╯
+                   (Uninstall is the destructive button; Escape is Cancel and changes nothing)

@@ -1,0 +1,2142 @@
+{
+ "_label": "ANALYTIC DEMO DATA v3 — synthetic and deterministic (gen/make-demo-v3.mjs). NOT engine output. Every image made from it says \"demo data v3 (analytic) — not engine output\". README and launch images must come from `wasitme demo` engine output instead (release gate, D21).",
+ "version": 3,
+ "supersedes": "design/demo-data.v2.json for every rendered screen (adds a timeline and integer daily rows per case, numbers for the agent case, engine-template copy, ranges and MDEs derived with the engine formulas; removes the false-agent-rate claim; research signals, not friction, unlock a finding per D30). Every number change from v2 is listed in DESIGN.md section 11.",
+ "windows": {
+  "recent": {
+   "from": "2026-09-20",
+   "to": "2026-10-03",
+   "days": 14
+  },
+  "baseline": {
+   "from": "2026-08-23",
+   "to": "2026-09-19",
+   "days": 28
+  },
+  "today": "2026-10-04",
+  "note": "today excluded (incomplete day)"
+ },
+ "trackingStarted": "2026-09-05",
+ "method": {
+  "range": "exp(ln ratio ± t.995(df)·se), METHOD.md §6; printed as \"range\"",
+  "mde": "exp((t.995 + t.80)(df)·se·1.1), METHOD.md §6 and engine gates/evaluate.ts: the smallest change that would show at this volume",
+  "df": "Welch–Satterthwaite over the two windows: session-days − 1 per window, variance weight 1/events (edits for reads per edit)",
+  "se": "hand-set analytic value, chosen so the MDE rounds to the number the copy prints; not computed from daily rows",
+  "ratiosFrom": "recent k/n ÷ baseline k/n, rounded to 2 places (the range is centred on the unrounded ratio)"
+ },
+ "confidenceTemplate": "Based on {exchanges} exchanges over {sessionDays} session-days ({sessions} sessions) on this Mac. Sessions on other machines aren’t visible.",
+ "cases": {
+  "insufficient": {
+   "_why": "Most common real outcome for a single user (D61: only tool errors have enough data; research signals are gated on edits, METHOD.md §5). Decision table row 2 or 14 (METHOD.md §11): insufficient, reason needs_data (with progress).",
+   "agent": "claude-code",
+   "state": "insufficient",
+   "reason": "needs_data",
+   "headline": "Too early to tell.",
+   "because": "wasitme can already rule out changes bigger than about ×2.5 in tool errors.",
+   "detail": "Reads per edit and edits without reading first need 40 edits; you have 31. Interruptions and pushback are context only.",
+   "next": "Keep working normally; wasitme checks every 15 minutes.",
+   "progress": {
+    "family": "research",
+    "unlocking": "readsPerEdit",
+    "have": 31,
+    "need": 40,
+    "unit": "edits"
+   },
+   "n": {
+    "recent": {
+     "exchanges": 214,
+     "sessions": 6,
+     "sessionDays": 19,
+     "activeDays": 13
+    },
+    "baseline": {
+     "exchanges": 520,
+     "sessions": 10,
+     "sessionDays": 47,
+     "activeDays": 25
+    },
+    "total": {
+     "exchanges": 734,
+     "sessionDays": 66,
+     "sessions": 16
+    }
+   },
+   "metrics": [
+    {
+     "id": "toolErrors",
+     "label": "Tool errors",
+     "family": "errors",
+     "eligible": true,
+     "recent": {
+      "k": 88,
+      "n": 3290
+     },
+     "baseline": {
+      "k": 201,
+      "n": 5610
+     },
+     "ratio": 0.75,
+     "range": [
+      0.4,
+      1.41
+     ],
+     "mde": 2.5,
+     "se": 0.2328,
+     "df": 34.6,
+     "status": "none",
+     "unit": "of tool calls"
+    },
+    {
+     "id": "readsPerEdit",
+     "label": "Reads per edit",
+     "family": "research",
+     "eligible": false,
+     "ineligibleReason": "31 edits in the recent window (needs 40)",
+     "progress": {
+      "have": 31,
+      "need": 40
+     },
+     "recent": {
+      "reads": 131,
+      "edits": 31
+     },
+     "baseline": {
+      "reads": 1130,
+      "edits": 233
+     }
+    },
+    {
+     "id": "interrupts",
+     "label": "Interruptions",
+     "family": "friction",
+     "eligible": false,
+     "ineligibleReason": "2 in the recent window (needs 10); context only",
+     "recent": {
+      "k": 2,
+      "n": 214
+     },
+     "baseline": {
+      "k": 13,
+      "n": 520
+     }
+    },
+    {
+     "id": "pushback",
+     "label": "Pushback prompts",
+     "family": "friction",
+     "eligible": false,
+     "ineligibleReason": "8 in the recent window (needs 10); context only",
+     "recent": {
+      "k": 8,
+      "n": 214
+     },
+     "baseline": {
+      "k": 31,
+      "n": 520
+     }
+    }
+   ],
+   "timeline": [
+    {
+     "day": "2026-08-27",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.249 → 2.1.255",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-03",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.255 → 2.1.262",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-12",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.262 → 2.1.266",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-09-15",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.266 → 2.1.270",
+     "routine": true,
+     "marker": "D"
+    },
+    {
+     "day": "2026-09-18",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.270 → 2.1.274",
+     "routine": true,
+     "marker": "E"
+    },
+    {
+     "day": "2026-09-21",
+     "side": "you",
+     "kind": "effort",
+     "label": "Effort high → medium",
+     "marker": "1"
+    },
+    {
+     "day": "2026-09-24",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.274 → 2.1.277",
+     "routine": true,
+     "marker": "F"
+    },
+    {
+     "day": "2026-09-27",
+     "side": "you",
+     "kind": "mcp",
+     "label": "MCP server added (MCP-1)",
+     "marker": "2"
+    },
+    {
+     "day": "2026-10-01",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.277 → 2.1.281",
+     "routine": true,
+     "marker": "G"
+    }
+   ],
+   "daily": {
+    "metric": "toolErrors",
+    "baseline": [
+     {
+      "d": "08-23",
+      "k": 8,
+      "n": 223
+     },
+     {
+      "d": "08-24",
+      "k": 8,
+      "n": 227
+     },
+     {
+      "d": "08-25",
+      "k": 9,
+      "n": 237
+     },
+     {
+      "d": "08-26",
+      "k": 7,
+      "n": 201
+     },
+     {
+      "d": "08-27",
+      "k": 10,
+      "n": 283
+     },
+     {
+      "d": "08-28",
+      "k": 11,
+      "n": 300
+     },
+     {
+      "d": "08-29",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "08-30",
+      "k": 2,
+      "n": 64
+     },
+     {
+      "d": "08-31",
+      "k": 7,
+      "n": 203
+     },
+     {
+      "d": "09-01",
+      "k": 10,
+      "n": 284
+     },
+     {
+      "d": "09-02",
+      "k": 7,
+      "n": 205
+     },
+     {
+      "d": "09-03",
+      "k": 8,
+      "n": 219
+     },
+     {
+      "d": "09-04",
+      "k": 11,
+      "n": 293
+     },
+     {
+      "d": "09-05",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-06",
+      "k": 2,
+      "n": 64
+     },
+     {
+      "d": "09-07",
+      "k": 8,
+      "n": 227
+     },
+     {
+      "d": "09-08",
+      "k": 9,
+      "n": 238
+     },
+     {
+      "d": "09-09",
+      "k": 9,
+      "n": 237
+     },
+     {
+      "d": "09-10",
+      "k": 9,
+      "n": 258
+     },
+     {
+      "d": "09-11",
+      "k": 10,
+      "n": 274
+     },
+     {
+      "d": "09-12",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-13",
+      "k": 2,
+      "n": 64
+     },
+     {
+      "d": "09-14",
+      "k": 9,
+      "n": 242
+     },
+     {
+      "d": "09-15",
+      "k": 9,
+      "n": 253
+     },
+     {
+      "d": "09-16",
+      "k": 10,
+      "n": 277
+     },
+     {
+      "d": "09-17",
+      "k": 9,
+      "n": 243
+     },
+     {
+      "d": "09-18",
+      "k": 7,
+      "n": 208
+     },
+     {
+      "d": "09-19",
+      "k": 10,
+      "n": 286
+     }
+    ],
+    "recent": [
+     {
+      "d": "09-20",
+      "k": 7,
+      "n": 266
+     },
+     {
+      "d": "09-21",
+      "k": 2,
+      "n": 77
+     },
+     {
+      "d": "09-22",
+      "k": 8,
+      "n": 286
+     },
+     {
+      "d": "09-23",
+      "k": 6,
+      "n": 235
+     },
+     {
+      "d": "09-24",
+      "k": 7,
+      "n": 247
+     },
+     {
+      "d": "09-25",
+      "k": 8,
+      "n": 288
+     },
+     {
+      "d": "09-26",
+      "k": 8,
+      "n": 320
+     },
+     {
+      "d": "09-27",
+      "k": 2,
+      "n": 77
+     },
+     {
+      "d": "09-28",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-29",
+      "k": 8,
+      "n": 308
+     },
+     {
+      "d": "09-30",
+      "k": 9,
+      "n": 326
+     },
+     {
+      "d": "10-01",
+      "k": 9,
+      "n": 323
+     },
+     {
+      "d": "10-02",
+      "k": 7,
+      "n": 271
+     },
+     {
+      "d": "10-03",
+      "k": 7,
+      "n": 266
+     }
+    ]
+   },
+   "confidence": "Based on 734 exchanges over 66 session-days (16 sessions) on this Mac. Sessions on other machines aren’t visible."
+  },
+  "none": {
+   "_why": "Decision table row 13 (METHOD.md §11): not changed; no voting metric material; a sensitive voting metric (MDE <= 2) in each voting family.",
+   "agent": "claude-code",
+   "state": "none",
+   "headline": "No detectable change.",
+   "because": "Changes bigger than about ×1.9 in 3 indicators would have shown.",
+   "detail": "Your effort change on Sep 21 didn’t move anything wasitme can detect at your volume.",
+   "next": "If it still feels different, keep working; wasitme keeps checking every 15 minutes.",
+   "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+   "n": {
+    "recent": {
+     "exchanges": 388,
+     "sessions": 9,
+     "sessionDays": 30,
+     "activeDays": 14
+    },
+    "baseline": {
+     "exchanges": 790,
+     "sessions": 16,
+     "sessionDays": 58,
+     "activeDays": 26
+    },
+    "total": {
+     "exchanges": 1178,
+     "sessionDays": 88,
+     "sessions": 25
+    }
+   },
+   "metrics": [
+    {
+     "id": "toolErrors",
+     "label": "Tool errors",
+     "family": "errors",
+     "eligible": true,
+     "recent": {
+      "k": 203,
+      "n": 3110
+     },
+     "baseline": {
+      "k": 338,
+      "n": 5580
+     },
+     "ratio": 1.08,
+     "range": [
+      0.69,
+      1.68
+     ],
+     "mde": 1.9,
+     "se": 0.1665,
+     "df": 62.8,
+     "status": "none"
+    },
+    {
+     "id": "blindEdits",
+     "label": "Edits without reading first",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "k": 61,
+      "n": 402
+     },
+     "baseline": {
+      "k": 128,
+      "n": 815
+     },
+     "ratio": 0.97,
+     "range": [
+      0.67,
+      1.39
+     ],
+     "mde": 1.7,
+     "se": 0.1373,
+     "df": 56.7,
+     "status": "none"
+    },
+    {
+     "id": "readsPerEdit",
+     "label": "Reads per edit",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "reads": 2010,
+      "edits": 402
+     },
+     "baseline": {
+      "reads": 4160,
+      "edits": 815
+     },
+     "ratio": 0.98,
+     "range": [
+      0.78,
+      1.24
+     ],
+     "mde": 1.4,
+     "se": 0.0871,
+     "df": 57.5,
+     "status": "none"
+    },
+    {
+     "id": "interrupts",
+     "label": "Interruptions",
+     "family": "friction",
+     "eligible": false,
+     "ineligibleReason": "9 in the recent window (needs 10); context only",
+     "recent": {
+      "k": 9,
+      "n": 388
+     },
+     "baseline": {
+      "k": 22,
+      "n": 790
+     }
+    }
+   ],
+   "timeline": [
+    {
+     "day": "2026-08-27",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.249 → 2.1.255",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-03",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.255 → 2.1.262",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-12",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.262 → 2.1.266",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-09-15",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.266 → 2.1.270",
+     "routine": true,
+     "marker": "D"
+    },
+    {
+     "day": "2026-09-18",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.270 → 2.1.274",
+     "routine": true,
+     "marker": "E"
+    },
+    {
+     "day": "2026-09-21",
+     "side": "you",
+     "kind": "effort",
+     "label": "Effort high → medium",
+     "marker": "1"
+    },
+    {
+     "day": "2026-09-24",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.274 → 2.1.277",
+     "routine": true,
+     "marker": "F"
+    },
+    {
+     "day": "2026-09-27",
+     "side": "you",
+     "kind": "mcp",
+     "label": "MCP server added (MCP-1)",
+     "marker": "2"
+    },
+    {
+     "day": "2026-10-01",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.277 → 2.1.281",
+     "routine": true,
+     "marker": "G"
+    }
+   ],
+   "daily": {
+    "metric": "toolErrors",
+    "baseline": [
+     {
+      "d": "08-23",
+      "k": 12,
+      "n": 198
+     },
+     {
+      "d": "08-24",
+      "k": 12,
+      "n": 191
+     },
+     {
+      "d": "08-25",
+      "k": 12,
+      "n": 193
+     },
+     {
+      "d": "08-26",
+      "k": 13,
+      "n": 221
+     },
+     {
+      "d": "08-27",
+      "k": 13,
+      "n": 213
+     },
+     {
+      "d": "08-28",
+      "k": 12,
+      "n": 207
+     },
+     {
+      "d": "08-29",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "08-30",
+      "k": 13,
+      "n": 215
+     },
+     {
+      "d": "08-31",
+      "k": 16,
+      "n": 270
+     },
+     {
+      "d": "09-01",
+      "k": 12,
+      "n": 192
+     },
+     {
+      "d": "09-02",
+      "k": 16,
+      "n": 260
+     },
+     {
+      "d": "09-03",
+      "k": 12,
+      "n": 207
+     },
+     {
+      "d": "09-04",
+      "k": 11,
+      "n": 184
+     },
+     {
+      "d": "09-05",
+      "k": 3,
+      "n": 57
+     },
+     {
+      "d": "09-06",
+      "k": 11,
+      "n": 185
+     },
+     {
+      "d": "09-07",
+      "k": 16,
+      "n": 269
+     },
+     {
+      "d": "09-08",
+      "k": 16,
+      "n": 261
+     },
+     {
+      "d": "09-09",
+      "k": 12,
+      "n": 205
+     },
+     {
+      "d": "09-10",
+      "k": 17,
+      "n": 275
+     },
+     {
+      "d": "09-11",
+      "k": 15,
+      "n": 242
+     },
+     {
+      "d": "09-12",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-13",
+      "k": 15,
+      "n": 244
+     },
+     {
+      "d": "09-14",
+      "k": 12,
+      "n": 201
+     },
+     {
+      "d": "09-15",
+      "k": 11,
+      "n": 175
+     },
+     {
+      "d": "09-16",
+      "k": 13,
+      "n": 211
+     },
+     {
+      "d": "09-17",
+      "k": 14,
+      "n": 224
+     },
+     {
+      "d": "09-18",
+      "k": 15,
+      "n": 256
+     },
+     {
+      "d": "09-19",
+      "k": 14,
+      "n": 224
+     }
+    ],
+    "recent": [
+     {
+      "d": "09-20",
+      "k": 13,
+      "n": 202
+     },
+     {
+      "d": "09-21",
+      "k": 13,
+      "n": 205
+     },
+     {
+      "d": "09-22",
+      "k": 18,
+      "n": 276
+     },
+     {
+      "d": "09-23",
+      "k": 15,
+      "n": 229
+     },
+     {
+      "d": "09-24",
+      "k": 12,
+      "n": 179
+     },
+     {
+      "d": "09-25",
+      "k": 12,
+      "n": 182
+     },
+     {
+      "d": "09-26",
+      "k": 18,
+      "n": 269
+     },
+     {
+      "d": "09-27",
+      "k": 17,
+      "n": 266
+     },
+     {
+      "d": "09-28",
+      "k": 4,
+      "n": 58
+     },
+     {
+      "d": "09-29",
+      "k": 17,
+      "n": 255
+     },
+     {
+      "d": "09-30",
+      "k": 18,
+      "n": 272
+     },
+     {
+      "d": "10-01",
+      "k": 17,
+      "n": 264
+     },
+     {
+      "d": "10-02",
+      "k": 17,
+      "n": 267
+     },
+     {
+      "d": "10-03",
+      "k": 12,
+      "n": 186
+     }
+    ]
+   },
+   "confidence": "Based on 1,178 exchanges over 88 session-days (25 sessions) on this Mac. Sessions on other machines aren’t visible."
+  },
+  "unclear": {
+   "_why": "Decision table row 6 (METHOD.md §11), unclear (both_sides): your effort change (Sep 21, you-strong) and Claude Code serving a different model than you picked (Sep 23, agent-strong) land in the same week. Two changes on your own side alone would be `you` (row 7, CONTRACT.md decision 13).",
+   "agent": "claude-code",
+   "state": "unclear",
+   "reason": "both_sides",
+   "headline": "Can’t tell which.",
+   "because": "Your numbers moved, but your effort change (Sep 21) and Claude Code’s model switch (Sep 23) happened the same week.",
+   "next": "Undo your effort change to separate them.",
+   "n": {
+    "recent": {
+     "exchanges": 402,
+     "sessions": 9,
+     "sessionDays": 31,
+     "activeDays": 14
+    },
+    "baseline": {
+     "exchanges": 520,
+     "sessions": 11,
+     "sessionDays": 49,
+     "activeDays": 25
+    },
+    "total": {
+     "exchanges": 922,
+     "sessionDays": 80,
+     "sessions": 20
+    }
+   },
+   "metrics": [
+    {
+     "id": "toolErrors",
+     "label": "Tool errors",
+     "family": "errors",
+     "eligible": true,
+     "recent": {
+      "k": 286,
+      "n": 3120
+     },
+     "baseline": {
+      "k": 201,
+      "n": 5610
+     },
+     "ratio": 2.56,
+     "range": [
+      1.59,
+      4.12
+     ],
+     "mde": 2,
+     "se": 0.1807,
+     "df": 77.7,
+     "status": "moved"
+    },
+    {
+     "id": "blindEdits",
+     "label": "Edits without reading first",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "k": 74,
+      "n": 410
+     },
+     "baseline": {
+      "k": 79,
+      "n": 820
+     },
+     "ratio": 1.87,
+     "range": [
+      1.3,
+      2.7
+     ],
+     "mde": 1.7,
+     "se": 0.1382,
+     "df": 72.7,
+     "status": "moved"
+    },
+    {
+     "id": "pushback",
+     "label": "Pushback prompts",
+     "family": "friction",
+     "eligible": true,
+     "recent": {
+      "k": 29,
+      "n": 402
+     },
+     "baseline": {
+      "k": 31,
+      "n": 520
+     },
+     "ratio": 1.21,
+     "range": [
+      0.63,
+      2.34
+     ],
+     "mde": 2.6,
+     "se": 0.2488,
+     "df": 72.6,
+     "status": "none",
+     "context": true
+    }
+   ],
+   "timeline": [
+    {
+     "day": "2026-08-27",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.249 → 2.1.255",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-03",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.255 → 2.1.262",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-12",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.262 → 2.1.266",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-09-15",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.266 → 2.1.270",
+     "routine": true,
+     "marker": "D"
+    },
+    {
+     "day": "2026-09-18",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.270 → 2.1.274",
+     "routine": true,
+     "marker": "E"
+    },
+    {
+     "day": "2026-09-21",
+     "side": "you",
+     "kind": "effort",
+     "label": "Effort high → medium",
+     "candidate": true,
+     "marker": "1"
+    },
+    {
+     "day": "2026-09-23",
+     "side": "agent",
+     "kind": "model",
+     "label": "Claude Code served a different model than you picked",
+     "short": "model",
+     "strength": "strong",
+     "candidate": true,
+     "marker": "F"
+    },
+    {
+     "day": "2026-09-24",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.274 → 2.1.277",
+     "routine": true,
+     "marker": "G"
+    },
+    {
+     "day": "2026-09-27",
+     "side": "you",
+     "kind": "mcp",
+     "label": "MCP server added (MCP-1)",
+     "marker": "2"
+    },
+    {
+     "day": "2026-10-01",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.277 → 2.1.281",
+     "routine": true,
+     "marker": "H"
+    }
+   ],
+   "daily": {
+    "metric": "toolErrors",
+    "baseline": [
+     {
+      "d": "08-23",
+      "k": 7,
+      "n": 201
+     },
+     {
+      "d": "08-24",
+      "k": 7,
+      "n": 183
+     },
+     {
+      "d": "08-25",
+      "k": 6,
+      "n": 178
+     },
+     {
+      "d": "08-26",
+      "k": 10,
+      "n": 267
+     },
+     {
+      "d": "08-27",
+      "k": 6,
+      "n": 178
+     },
+     {
+      "d": "08-28",
+      "k": 10,
+      "n": 265
+     },
+     {
+      "d": "08-29",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "08-30",
+      "k": 2,
+      "n": 58
+     },
+     {
+      "d": "08-31",
+      "k": 9,
+      "n": 254
+     },
+     {
+      "d": "09-01",
+      "k": 6,
+      "n": 177
+     },
+     {
+      "d": "09-02",
+      "k": 7,
+      "n": 205
+     },
+     {
+      "d": "09-03",
+      "k": 8,
+      "n": 215
+     },
+     {
+      "d": "09-04",
+      "k": 10,
+      "n": 272
+     },
+     {
+      "d": "09-05",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-06",
+      "k": 10,
+      "n": 284
+     },
+     {
+      "d": "09-07",
+      "k": 10,
+      "n": 276
+     },
+     {
+      "d": "09-08",
+      "k": 8,
+      "n": 218
+     },
+     {
+      "d": "09-09",
+      "k": 7,
+      "n": 183
+     },
+     {
+      "d": "09-10",
+      "k": 10,
+      "n": 284
+     },
+     {
+      "d": "09-11",
+      "k": 8,
+      "n": 225
+     },
+     {
+      "d": "09-12",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-13",
+      "k": 9,
+      "n": 263
+     },
+     {
+      "d": "09-14",
+      "k": 9,
+      "n": 247
+     },
+     {
+      "d": "09-15",
+      "k": 7,
+      "n": 188
+     },
+     {
+      "d": "09-16",
+      "k": 10,
+      "n": 282
+     },
+     {
+      "d": "09-17",
+      "k": 10,
+      "n": 287
+     },
+     {
+      "d": "09-18",
+      "k": 7,
+      "n": 193
+     },
+     {
+      "d": "09-19",
+      "k": 8,
+      "n": 227
+     }
+    ],
+    "recent": [
+     {
+      "d": "09-20",
+      "k": 7,
+      "n": 199
+     },
+     {
+      "d": "09-21",
+      "k": 18,
+      "n": 191
+     },
+     {
+      "d": "09-22",
+      "k": 24,
+      "n": 254
+     },
+     {
+      "d": "09-23",
+      "k": 26,
+      "n": 268
+     },
+     {
+      "d": "09-24",
+      "k": 24,
+      "n": 252
+     },
+     {
+      "d": "09-25",
+      "k": 22,
+      "n": 233
+     },
+     {
+      "d": "09-26",
+      "k": 18,
+      "n": 186
+     },
+     {
+      "d": "09-27",
+      "k": 27,
+      "n": 280
+     },
+     {
+      "d": "09-28",
+      "k": 5,
+      "n": 57
+     },
+     {
+      "d": "09-29",
+      "k": 25,
+      "n": 260
+     },
+     {
+      "d": "09-30",
+      "k": 21,
+      "n": 218
+     },
+     {
+      "d": "10-01",
+      "k": 20,
+      "n": 207
+     },
+     {
+      "d": "10-02",
+      "k": 23,
+      "n": 245
+     },
+     {
+      "d": "10-03",
+      "k": 26,
+      "n": 270
+     }
+    ]
+   },
+   "confidence": "Based on 922 exchanges over 80 session-days (20 sessions) on this Mac. Sessions on other machines aren’t visible."
+  },
+  "you": {
+   "_why": "Isolated change on your side (effort high → medium, Sep 21); the Claude Code updates on Sep 24 and Oct 1 came after the shift.",
+   "agent": "claude-code",
+   "state": "you",
+   "headline": "Your side changed.",
+   "because": "Your numbers moved around the time of your effort change from high to medium (Sep 21).",
+   "detail": "The Claude Code updates on Sep 24 and Oct 1 came after the shift; updates alone aren’t evidence.",
+   "next": "To check, set effort back to high.",
+   "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+   "n": {
+    "recent": {
+     "exchanges": 402,
+     "sessions": 9,
+     "sessionDays": 31,
+     "activeDays": 14
+    },
+    "baseline": {
+     "exchanges": 655,
+     "sessions": 13,
+     "sessionDays": 52,
+     "activeDays": 26
+    },
+    "total": {
+     "exchanges": 1057,
+     "sessionDays": 83,
+     "sessions": 22
+    }
+   },
+   "metrics": [
+    {
+     "id": "toolErrors",
+     "label": "Tool errors",
+     "family": "errors",
+     "eligible": true,
+     "recent": {
+      "k": 296,
+      "n": 3150
+     },
+     "baseline": {
+      "k": 193,
+      "n": 5528
+     },
+     "ratio": 2.69,
+     "range": [
+      1.67,
+      4.34
+     ],
+     "mde": 2,
+     "se": 0.1809,
+     "df": 80.8,
+     "status": "moved",
+     "linesUpWith": "1"
+    },
+    {
+     "id": "blindEdits",
+     "label": "Edits without reading first",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "k": 71,
+      "n": 400
+     },
+     "baseline": {
+      "k": 79,
+      "n": 820
+     },
+     "ratio": 1.84,
+     "range": [
+      1.28,
+      2.66
+     ],
+     "mde": 1.7,
+     "se": 0.1382,
+     "df": 73.3,
+     "status": "moved",
+     "linesUpWith": "1"
+    },
+    {
+     "id": "readsPerEdit",
+     "label": "Reads per edit",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "reads": 1240,
+      "edits": 400
+     },
+     "baseline": {
+      "reads": 4830,
+      "edits": 820
+     },
+     "ratio": 0.53,
+     "range": [
+      0.4,
+      0.7
+     ],
+     "mde": 1.5,
+     "se": 0.105,
+     "df": 58.3,
+     "status": "moved",
+     "linesUpWith": "1"
+    },
+    {
+     "id": "interrupts",
+     "label": "Interruptions",
+     "family": "friction",
+     "eligible": false,
+     "ineligibleReason": "4 in the recent window (needs 10); context only",
+     "recent": {
+      "k": 4,
+      "n": 402
+     },
+     "baseline": {
+      "k": 13,
+      "n": 655
+     }
+    }
+   ],
+   "timeline": [
+    {
+     "day": "2026-08-27",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.249 → 2.1.255",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-03",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.255 → 2.1.262",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-12",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.262 → 2.1.266",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-09-15",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.266 → 2.1.270",
+     "routine": true,
+     "marker": "D"
+    },
+    {
+     "day": "2026-09-18",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.270 → 2.1.274",
+     "routine": true,
+     "marker": "E"
+    },
+    {
+     "day": "2026-09-21",
+     "side": "you",
+     "kind": "effort",
+     "label": "Effort high → medium",
+     "marker": "1"
+    },
+    {
+     "day": "2026-09-24",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.274 → 2.1.277",
+     "routine": true,
+     "marker": "F"
+    },
+    {
+     "day": "2026-09-27",
+     "side": "you",
+     "kind": "mcp",
+     "label": "MCP server added (MCP-1)",
+     "marker": "2"
+    },
+    {
+     "day": "2026-10-01",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.277 → 2.1.281",
+     "routine": true,
+     "marker": "G"
+    }
+   ],
+   "daily": {
+    "metric": "toolErrors",
+    "baseline": [
+     {
+      "d": "08-23",
+      "k": 2,
+      "n": 57
+     },
+     {
+      "d": "08-24",
+      "k": 7,
+      "n": 200
+     },
+     {
+      "d": "08-25",
+      "k": 10,
+      "n": 284
+     },
+     {
+      "d": "08-26",
+      "k": 9,
+      "n": 273
+     },
+     {
+      "d": "08-27",
+      "k": 7,
+      "n": 192
+     },
+     {
+      "d": "08-28",
+      "k": 9,
+      "n": 252
+     },
+     {
+      "d": "08-29",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "08-30",
+      "k": 7,
+      "n": 202
+     },
+     {
+      "d": "08-31",
+      "k": 6,
+      "n": 173
+     },
+     {
+      "d": "09-01",
+      "k": 7,
+      "n": 194
+     },
+     {
+      "d": "09-02",
+      "k": 7,
+      "n": 212
+     },
+     {
+      "d": "09-03",
+      "k": 10,
+      "n": 278
+     },
+     {
+      "d": "09-04",
+      "k": 8,
+      "n": 216
+     },
+     {
+      "d": "09-05",
+      "k": 9,
+      "n": 264
+     },
+     {
+      "d": "09-06",
+      "k": 8,
+      "n": 231
+     },
+     {
+      "d": "09-07",
+      "k": 5,
+      "n": 160
+     },
+     {
+      "d": "09-08",
+      "k": 11,
+      "n": 290
+     },
+     {
+      "d": "09-09",
+      "k": 7,
+      "n": 214
+     },
+     {
+      "d": "09-10",
+      "k": 6,
+      "n": 188
+     },
+     {
+      "d": "09-11",
+      "k": 9,
+      "n": 247
+     },
+     {
+      "d": "09-12",
+      "k": 4,
+      "n": 121
+     },
+     {
+      "d": "09-13",
+      "k": 0,
+      "n": 38
+     },
+     {
+      "d": "09-14",
+      "k": 7,
+      "n": 205
+     },
+     {
+      "d": "09-15",
+      "k": 10,
+      "n": 262
+     },
+     {
+      "d": "09-16",
+      "k": 8,
+      "n": 230
+     },
+     {
+      "d": "09-17",
+      "k": 6,
+      "n": 176
+     },
+     {
+      "d": "09-18",
+      "k": 9,
+      "n": 219
+     },
+     {
+      "d": "09-19",
+      "k": 5,
+      "n": 150
+     }
+    ],
+    "recent": [
+     {
+      "d": "09-20",
+      "k": 7,
+      "n": 201
+     },
+     {
+      "d": "09-21",
+      "k": 19,
+      "n": 224
+     },
+     {
+      "d": "09-22",
+      "k": 24,
+      "n": 251
+     },
+     {
+      "d": "09-23",
+      "k": 22,
+      "n": 230
+     },
+     {
+      "d": "09-24",
+      "k": 18,
+      "n": 196
+     },
+     {
+      "d": "09-25",
+      "k": 15,
+      "n": 171
+     },
+     {
+      "d": "09-26",
+      "k": 26,
+      "n": 262
+     },
+     {
+      "d": "09-27",
+      "k": 21,
+      "n": 228
+     },
+     {
+      "d": "09-28",
+      "k": 6,
+      "n": 64
+     },
+     {
+      "d": "09-29",
+      "k": 23,
+      "n": 244
+     },
+     {
+      "d": "09-30",
+      "k": 25,
+      "n": 259
+     },
+     {
+      "d": "10-01",
+      "k": 27,
+      "n": 276
+     },
+     {
+      "d": "10-02",
+      "k": 30,
+      "n": 296
+     },
+     {
+      "d": "10-03",
+      "k": 33,
+      "n": 248
+     }
+    ]
+   },
+   "confidence": "Based on 1,057 exchanges over 83 session-days (22 sessions) on this Mac. Sessions on other machines aren’t visible."
+  },
+  "agent": {
+   "_why": "Rare. By elimination (METHOD.md §11 row 9): no recorded change on your side since tracking started, only an update in the window, fully observed, and the shift starts at that update in both projects.",
+   "agent": "claude-code",
+   "state": "agent",
+   "reason": "by_elimination",
+   "headline": "The agent changed.",
+   "because": "Nothing recorded changed on your side; your tool errors and edits without reading first rose at the 2.1.277 update (Sep 23), in 2 projects.",
+   "next": "If you file an issue, share the report; it says what it can and can’t show.",
+   "disclaimer": "These indicators don't measure answer quality. Evidence, not proof.",
+   "checked": [
+    [
+     "Your setup",
+     "No recorded change since tracking started (Sep 5): model, effort, MCP servers, skills, instructions."
+    ],
+    [
+     "Workload",
+     "The same 2 projects; task sizes inside the range of the 4 weeks before."
+    ],
+    [
+     "The shift",
+     "Starts at 2.1.277 (Sep 23) in both projects."
+    ],
+    [
+     "Sample",
+     "1,195 exchanges, 87 session-days, 24 sessions (both windows)."
+    ],
+    [
+     "Not visible",
+     "Other machines; anything before Sep 5."
+    ]
+   ],
+   "n": {
+    "recent": {
+     "exchanges": 395,
+     "sessions": 9,
+     "sessionDays": 30,
+     "activeDays": 14
+    },
+    "baseline": {
+     "exchanges": 800,
+     "sessions": 15,
+     "sessionDays": 57,
+     "activeDays": 26
+    },
+    "total": {
+     "exchanges": 1195,
+     "sessionDays": 87,
+     "sessions": 24
+    }
+   },
+   "metrics": [
+    {
+     "id": "toolErrors",
+     "label": "Tool errors",
+     "family": "errors",
+     "eligible": true,
+     "recent": {
+      "k": 274,
+      "n": 3080
+     },
+     "baseline": {
+      "k": 196,
+      "n": 5560
+     },
+     "ratio": 2.52,
+     "range": [
+      1.57,
+      4.07
+     ],
+     "mde": 2,
+     "se": 0.1809,
+     "df": 82.9,
+     "status": "moved",
+     "linesUpWith": "E"
+    },
+    {
+     "id": "blindEdits",
+     "label": "Edits without reading first",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "k": 70,
+      "n": 402
+     },
+     "baseline": {
+      "k": 80,
+      "n": 815
+     },
+     "ratio": 1.77,
+     "range": [
+      1.23,
+      2.56
+     ],
+     "mde": 1.7,
+     "se": 0.1382,
+     "df": 73,
+     "status": "moved",
+     "linesUpWith": "E"
+    },
+    {
+     "id": "readsPerEdit",
+     "label": "Reads per edit",
+     "family": "research",
+     "eligible": true,
+     "recent": {
+      "reads": 2010,
+      "edits": 402
+     },
+     "baseline": {
+      "reads": 4240,
+      "edits": 815
+     },
+     "ratio": 0.96,
+     "range": [
+      0.76,
+      1.21
+     ],
+     "mde": 1.4,
+     "se": 0.0871,
+     "df": 57.4,
+     "status": "none"
+    },
+    {
+     "id": "interrupts",
+     "label": "Interruptions",
+     "family": "friction",
+     "eligible": false,
+     "ineligibleReason": "6 in the recent window (needs 10); context only",
+     "recent": {
+      "k": 6,
+      "n": 395
+     },
+     "baseline": {
+      "k": 14,
+      "n": 800
+     }
+    }
+   ],
+   "timeline": [
+    {
+     "day": "2026-08-27",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.249 → 2.1.255",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-03",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.255 → 2.1.262",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-12",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.262 → 2.1.266",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-09-18",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.266 → 2.1.274",
+     "routine": true,
+     "marker": "D"
+    },
+    {
+     "day": "2026-09-23",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.274 → 2.1.277",
+     "shift": true,
+     "marker": "E"
+    },
+    {
+     "day": "2026-09-30",
+     "side": "agent",
+     "kind": "version",
+     "label": "Claude Code 2.1.277 → 2.1.281",
+     "routine": true,
+     "marker": "F"
+    }
+   ],
+   "daily": {
+    "metric": "toolErrors",
+    "baseline": [
+     {
+      "d": "08-23",
+      "k": 7,
+      "n": 187
+     },
+     {
+      "d": "08-24",
+      "k": 9,
+      "n": 256
+     },
+     {
+      "d": "08-25",
+      "k": 8,
+      "n": 238
+     },
+     {
+      "d": "08-26",
+      "k": 8,
+      "n": 219
+     },
+     {
+      "d": "08-27",
+      "k": 7,
+      "n": 200
+     },
+     {
+      "d": "08-28",
+      "k": 8,
+      "n": 240
+     },
+     {
+      "d": "08-29",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "08-30",
+      "k": 7,
+      "n": 195
+     },
+     {
+      "d": "08-31",
+      "k": 7,
+      "n": 198
+     },
+     {
+      "d": "09-01",
+      "k": 7,
+      "n": 208
+     },
+     {
+      "d": "09-02",
+      "k": 8,
+      "n": 214
+     },
+     {
+      "d": "09-03",
+      "k": 9,
+      "n": 259
+     },
+     {
+      "d": "09-04",
+      "k": 8,
+      "n": 230
+     },
+     {
+      "d": "09-05",
+      "k": 2,
+      "n": 53
+     },
+     {
+      "d": "09-06",
+      "k": 7,
+      "n": 206
+     },
+     {
+      "d": "09-07",
+      "k": 7,
+      "n": 205
+     },
+     {
+      "d": "09-08",
+      "k": 8,
+      "n": 229
+     },
+     {
+      "d": "09-09",
+      "k": 7,
+      "n": 190
+     },
+     {
+      "d": "09-10",
+      "k": 8,
+      "n": 215
+     },
+     {
+      "d": "09-11",
+      "k": 6,
+      "n": 169
+     },
+     {
+      "d": "09-12",
+      "k": 0,
+      "n": 0
+     },
+     {
+      "d": "09-13",
+      "k": 8,
+      "n": 225
+     },
+     {
+      "d": "09-14",
+      "k": 9,
+      "n": 252
+     },
+     {
+      "d": "09-15",
+      "k": 8,
+      "n": 242
+     },
+     {
+      "d": "09-16",
+      "k": 7,
+      "n": 186
+     },
+     {
+      "d": "09-17",
+      "k": 8,
+      "n": 222
+     },
+     {
+      "d": "09-18",
+      "k": 9,
+      "n": 256
+     },
+     {
+      "d": "09-19",
+      "k": 9,
+      "n": 266
+     }
+    ],
+    "recent": [
+     {
+      "d": "09-20",
+      "k": 7,
+      "n": 204
+     },
+     {
+      "d": "09-21",
+      "k": 10,
+      "n": 290
+     },
+     {
+      "d": "09-22",
+      "k": 8,
+      "n": 223
+     },
+     {
+      "d": "09-23",
+      "k": 26,
+      "n": 243
+     },
+     {
+      "d": "09-24",
+      "k": 19,
+      "n": 179
+     },
+     {
+      "d": "09-25",
+      "k": 24,
+      "n": 232
+     },
+     {
+      "d": "09-26",
+      "k": 28,
+      "n": 262
+     },
+     {
+      "d": "09-27",
+      "k": 6,
+      "n": 58
+     },
+     {
+      "d": "09-28",
+      "k": 22,
+      "n": 207
+     },
+     {
+      "d": "09-29",
+      "k": 30,
+      "n": 286
+     },
+     {
+      "d": "09-30",
+      "k": 25,
+      "n": 240
+     },
+     {
+      "d": "10-01",
+      "k": 23,
+      "n": 219
+     },
+     {
+      "d": "10-02",
+      "k": 23,
+      "n": 215
+     },
+     {
+      "d": "10-03",
+      "k": 23,
+      "n": 222
+     }
+    ]
+   },
+   "confidence": "Based on 1,195 exchanges over 87 session-days (24 sessions) on this Mac. Sessions on other machines aren’t visible."
+  },
+  "codex": {
+   "agent": "codex",
+   "state": "insufficient",
+   "reason": "calibration_pending",
+   "label": "Timeline only",
+   "headline": "Timeline only, for now.",
+   "because": "Findings for Codex are off until wasitme’s tests pass for Codex logs. Here’s what changed.",
+   "detail": "Codex’s baseline also has 8 of the 10 session-days a comparison needs, and your recent Codex sessions are mostly scripted runs.",
+   "next": "Keep working normally; the timeline updates every 15 minutes.",
+   "progress": {
+    "have": 8,
+    "need": 10,
+    "unit": "session-days in the baseline"
+   },
+   "n": {
+    "recent": {
+     "exchanges": 96,
+     "sessions": 14,
+     "sessionDays": 12,
+     "activeDays": 9
+    },
+    "baseline": {
+     "exchanges": 41,
+     "sessions": 6,
+     "sessionDays": 8,
+     "activeDays": 8
+    },
+    "total": {
+     "exchanges": 137,
+     "sessionDays": 20,
+     "sessions": 20
+    }
+   },
+   "timeline": [
+    {
+     "day": "2026-09-09",
+     "side": "agent",
+     "kind": "version",
+     "label": "Codex CLI 0.91 → 0.92",
+     "routine": true,
+     "marker": "A"
+    },
+    {
+     "day": "2026-09-16",
+     "side": "agent",
+     "kind": "version",
+     "label": "Codex CLI 0.92 → 0.94",
+     "routine": true,
+     "marker": "B"
+    },
+    {
+     "day": "2026-09-25",
+     "side": "you",
+     "kind": "model",
+     "label": "Model gpt-6 → gpt-6-luna",
+     "marker": "1"
+    },
+    {
+     "day": "2026-09-29",
+     "side": "agent",
+     "kind": "version",
+     "label": "Codex CLI 0.94 → 0.95",
+     "routine": true,
+     "marker": "C"
+    },
+    {
+     "day": "2026-10-02",
+     "side": "you",
+     "kind": "effort",
+     "label": "Reasoning effort medium → high",
+     "marker": "2"
+    }
+   ],
+   "confidence": "Based on 137 exchanges over 20 session-days (20 sessions) on this Mac. Sessions on other machines aren’t visible."
+  }
+ },
+ "setup": {
+  "agentVersion": "Claude Code 2.1.281",
+  "model": "opus-5-5",
+  "effort": "medium",
+  "mcpServers": 6,
+  "skills": 14,
+  "instructionsSize": "3.1k tokens",
+  "hooks": 2,
+  "codex": {
+   "version": "Codex CLI 0.95",
+   "model": "gpt-6-luna",
+   "effort": "high"
+  }
+ },
+ "coverageNote": "Only sessions on this Mac are visible. Config tracking started Sep 5; earlier edits are invisible except what your logs recorded."
+}

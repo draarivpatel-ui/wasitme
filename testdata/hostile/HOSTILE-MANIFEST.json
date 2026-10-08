@@ -1,0 +1,788 @@
+{
+  "formatVersion": 1,
+  "tier": "small",
+  "roots": {
+    "claudeConfigDir": "claude",
+    "codexHome": "codex"
+  },
+  "canaries": [
+    {
+      "id": "SYNTHCANARY00001",
+      "kind": "path",
+      "value": "hostile-SYNTHCANARY00001",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00002",
+      "kind": "branch",
+      "value": "feature/SYNTHCANARY00002-branch",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00003",
+      "kind": "slug",
+      "value": "synthcanary00003-quiet-parser",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00004",
+      "kind": "private-key-body",
+      "value": "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCSYNTHCANARY00004Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSw",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00005",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00005-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00006",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00006Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00007",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00007Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00008",
+      "kind": "aws-access-key-id",
+      "value": "AKIASYNTHCANARY00008",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00009",
+      "kind": "email",
+      "value": "canary.synthcanary00009@example.invalid",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00010",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00010-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00011",
+      "kind": "path",
+      "value": "/Users/syn-user/SYNTHCANARY00011",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00012",
+      "kind": "path",
+      "value": "/Users/syn-user/.claude/skills/SYNTHCANARY00012/SKILL.md",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00013",
+      "kind": "instructions-sentinel",
+      "value": "the launch codename is SYNTHCANARY00013",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00014",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00014Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00015",
+      "kind": "system-prompt-sentinel",
+      "value": "the launch codename is SYNTHCANARY00015",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00016",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00016Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00017",
+      "kind": "thinking-sentinel",
+      "value": "the launch codename is SYNTHCANARY00017",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00018",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00018-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00019",
+      "kind": "email",
+      "value": "canary.synthcanary00019@example.invalid",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00020",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00020-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00021",
+      "kind": "tool-input-sentinel",
+      "value": "the launch codename is SYNTHCANARY00021",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00022",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00022Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00023",
+      "kind": "aws-access-key-id",
+      "value": "AKIASYNTHCANARY00023",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00024",
+      "kind": "tool-output-sentinel",
+      "value": "the launch codename is SYNTHCANARY00024",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00025",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00025Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00026",
+      "kind": "path",
+      "value": "/Users/syn-user/code/hostile-SYNTHCANARY00001/SYNTHCANARY00026-private-notes.md",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00027",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00027-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00028",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00028Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00029",
+      "kind": "queued-sentinel",
+      "value": "the launch codename is SYNTHCANARY00029",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00030",
+      "kind": "aws-access-key-id",
+      "value": "AKIASYNTHCANARY00030",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00031",
+      "kind": "email",
+      "value": "canary.synthcanary00031@example.invalid",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00032",
+      "kind": "prompt-sentinel",
+      "value": "the launch codename is SYNTHCANARY00032",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00033",
+      "kind": "response-sentinel",
+      "value": "the launch codename is SYNTHCANARY00033",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00034",
+      "kind": "email",
+      "value": "canary.synthcanary00034@example.invalid",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00035",
+      "kind": "email",
+      "value": "canary.synthcanary00035@example.invalid",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00036",
+      "kind": "lineseps-sentinel",
+      "value": "the launch codename is SYNTHCANARY00036",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-lineseps/56e39879-8d42-4519-895e-b86f5b3b05ac.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00037",
+      "kind": "notes-sentinel",
+      "value": "the launch codename is SYNTHCANARY00037",
+      "where": [
+        "claude/projects/-Users-syn-user-code-hostile-junk/notes.txt"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00038",
+      "kind": "path",
+      "value": "/Users/syn-user/code/hostile-SYNTHCANARY00038",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00039",
+      "kind": "private-key-body",
+      "value": "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCSYNTHCANARY00039Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSw",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00040",
+      "kind": "branch",
+      "value": "feature/SYNTHCANARY00040-branch",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00041",
+      "kind": "system-prompt-sentinel",
+      "value": "the launch codename is SYNTHCANARY00041",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00042",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00042-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00043",
+      "kind": "tool-name",
+      "value": "mcp__synthcanary00043__search",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00044",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00044Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00045",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00045Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00046",
+      "kind": "email",
+      "value": "canary.synthcanary00046@example.invalid",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00047",
+      "kind": "agents-sentinel",
+      "value": "the launch codename is SYNTHCANARY00047",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00048",
+      "kind": "aws-access-key-id",
+      "value": "AKIASYNTHCANARY00048",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00049",
+      "kind": "reasoning-sentinel",
+      "value": "the launch codename is SYNTHCANARY00049",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00050",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00050Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00051",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00051-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00052",
+      "kind": "tool-output-sentinel",
+      "value": "the launch codename is SYNTHCANARY00052",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00053",
+      "kind": "github-token",
+      "value": "ghp_SYNTHCANARY00053Zx9QkLm3Rt7VbN2cWd5Y",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00054",
+      "kind": "path",
+      "value": "SYNTHCANARY00054-notes.md",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00055",
+      "kind": "anthropic-key",
+      "value": "sk-ant-api03-SYNTHCANARY00055-Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyHnBvCr0AqSwZx9QkLm3Rt7VbN",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00056",
+      "kind": "email",
+      "value": "canary.synthcanary00056@example.invalid",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00057",
+      "kind": "openai-key",
+      "value": "sk-proj-SYNTHCANARY00057Zx9QkLm3Rt7VbN2cWd5YhJ8sPa4GfXe1UoIi6TyH",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00058",
+      "kind": "response-sentinel",
+      "value": "the launch codename is SYNTHCANARY00058",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00059",
+      "kind": "email",
+      "value": "canary.synthcanary00059@example.invalid",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl"
+      ]
+    },
+    {
+      "id": "SYNTHCANARY00060",
+      "kind": "lineseps-sentinel",
+      "value": "the launch codename is SYNTHCANARY00060",
+      "where": [
+        "codex/sessions/2026/06/01/rollout-2026-06-01T10-07-00-ff3e7111-b2af-4938-b0b9-553420d18d7b.jsonl"
+      ]
+    }
+  ],
+  "poison": [
+    {
+      "id": "POISON001",
+      "kind": "ansi-version",
+      "escaped": "\\u001b[31m2.1.289\\u001b[0m"
+    },
+    {
+      "id": "POISON002",
+      "kind": "bidi-model",
+      "escaped": "claude-opus-5-5\\u202e"
+    },
+    {
+      "id": "POISON003",
+      "kind": "html-effort",
+      "escaped": "<script>alert(1)</script>"
+    },
+    {
+      "id": "POISON004",
+      "kind": "html-entrypoint",
+      "escaped": "cli\\\"><img src=x onerror=alert(1)>"
+    },
+    {
+      "id": "POISON005",
+      "kind": "bidi-mode",
+      "escaped": "default\\u2066"
+    },
+    {
+      "id": "POISON006",
+      "kind": "script-branch",
+      "escaped": "</script><script>alert(2)</script>"
+    },
+    {
+      "id": "POISON007",
+      "kind": "ansi-slug",
+      "escaped": "\\u001b[1mbold\\u001b[0m-slug"
+    },
+    {
+      "id": "POISON008",
+      "kind": "ansi-prompt",
+      "escaped": "\\u001b]0;pwned\\u0007 run \\u001b[2Jthis <a href=\\\"javascript:alert(1)\\\">link</a> \\u202eexe.txt"
+    },
+    {
+      "id": "POISON009",
+      "kind": "html-assistant",
+      "escaped": "<script>alert(document.cookie)</script><svg onload=alert(1)>"
+    },
+    {
+      "id": "POISON010",
+      "kind": "bidi-command",
+      "escaped": "echo \\u202ehello\\u202c"
+    },
+    {
+      "id": "POISON011",
+      "kind": "ansi-output",
+      "escaped": "\\u001b[31mred\\u001b[0m \\u001b[?1049h"
+    },
+    {
+      "id": "POISON012",
+      "kind": "ansi-codex-version",
+      "escaped": "\\u001b[31m0.160.0\\u001b[0m"
+    },
+    {
+      "id": "POISON013",
+      "kind": "html-codex-source",
+      "escaped": "<b>cli</b>"
+    },
+    {
+      "id": "POISON014",
+      "kind": "bidi-codex-originator",
+      "escaped": "codex-tui\\u202e"
+    },
+    {
+      "id": "POISON015",
+      "kind": "script-provider",
+      "escaped": "openai</script>"
+    },
+    {
+      "id": "POISON016",
+      "kind": "bidi-codex-model",
+      "escaped": "gpt-6-luna\\u2067"
+    },
+    {
+      "id": "POISON017",
+      "kind": "ansi-codex-effort",
+      "escaped": "\\u001b[1mhigh"
+    },
+    {
+      "id": "POISON018",
+      "kind": "html-codex-approval",
+      "escaped": "never<img src=x>"
+    },
+    {
+      "id": "POISON019",
+      "kind": "ansi-codex-prompt",
+      "escaped": "\\u001b[31mred prompt\\u001b[0m <script>1</script> \\u202eevil"
+    }
+  ],
+  "patterns": [
+    "sk-ant-[A-Za-z0-9_-]{20,}",
+    "sk-proj-[A-Za-z0-9_-]{20,}",
+    "ghp_[A-Za-z0-9]{36}",
+    "AKIA[0-9A-Z]{16}",
+    "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+    "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}",
+    "SYNTHCANARY[0-9]{5}"
+  ],
+  "files": [
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-SYNTHCANARY00001/a36d04d1-82fe-458a-9d73-2dac3beb9f55.jsonl",
+      "kind": "secrets",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 2,
+      "note": "valid session; secrets in prompts, tool inputs/outputs, cwd, branch, slug, attachments, queue, title"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-labels/7b6ec4a7-38a6-4587-b8be-044ae09cabad.jsonl",
+      "kind": "poison-labels",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 2,
+      "note": "ANSI / bidi / HTML in version, model, effort, entrypoint, permissionMode, gitBranch, slug and text; second exchange is clean"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-malformed/516717eb-4a41-41c9-9f20-e13d81399109.jsonl",
+      "kind": "malformed",
+      "badLines": 9,
+      "truncatedTail": 1,
+      "humanPrompts": null,
+      "note": "ambiguous: bad lines, NUL, invalid UTF-8, unknown record types (synthetic-future-record x2), out-of-range / missing / junk timestamps, odd shapes, duplicate uuid and tool ids, API 'Request was aborted' record, CRLF, truncated tail"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-bom/5dd21fde-7f0e-403f-b63b-dbc3a7ac3fab.jsonl",
+      "kind": "bom-crlf",
+      "badLines": null,
+      "truncatedTail": 0,
+      "humanPrompts": null,
+      "note": "UTF-8 BOM before the first record and CRLF everywhere: whether the first record survives is reader policy"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-deep/e9515ff9-25ac-4463-b205-8720c436e9fa.jsonl",
+      "kind": "deep-nesting",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "a tool result whose toolUseResult is an object nested 3000 deep: parses fine, breaks recursive walkers"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-lineseps/56e39879-8d42-4519-895e-b86f5b3b05ac.jsonl",
+      "kind": "line-separators",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 2,
+      "note": "raw U+2028/U+2029 inside strings (JSON.stringify does not escape them): readline-style splitting corrupts these records; a smuggled record text must not become a prompt"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/garbage.jsonl",
+      "kind": "binary-garbage",
+      "badLines": null,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "4 KB of random bytes"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/empty.jsonl",
+      "kind": "zero-byte",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "zero-byte session file"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/newlines.jsonl",
+      "kind": "blank-only",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "only newlines"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/notes.txt",
+      "kind": "non-jsonl",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "not a session file"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/fake-session.jsonl/inner.jsonl",
+      "kind": "dir-named-jsonl",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "directory named *.jsonl: not a session file; its content must not be read (version 9.9.8)"
+    },
+    {
+      "path": "claude/projects/-Users-syn-user-code-hostile-junk/e7bb2e20-668e-4aed-953a-9158b05074e8/subagents/agent-634eb48c32c22963a.jsonl",
+      "kind": "orphan-subagent",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "subagent file whose main session file does not exist"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-00-00-92159391-7b29-4eb7-9723-e6820504979a.jsonl",
+      "kind": "secrets",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "secrets in prompt, injected AGENTS.md, base_instructions, cwd, branch, tool names, call args/outputs, item fields, final message"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-01-00-0f163b36-450f-47d2-a671-e0a30df6328c.jsonl",
+      "kind": "poison-labels",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "ANSI / bidi / HTML in cli_version, source, originator, provider, model, effort, approval_policy, prompt"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-02-00-d09a4b03-8d28-4fcc-bab6-730fb36fa655.jsonl",
+      "kind": "malformed",
+      "badLines": 3,
+      "truncatedTail": 1,
+      "humanPrompts": null,
+      "note": "ambiguous: bad lines, unknown envelope types (future_envelope x2), odd payload shapes, missing ids, impossible numbers, stale timestamp, truncated tail"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-03-00-70b0ca85-b7d6-4259-85b1-7f0d0874e7e9.jsonl",
+      "kind": "zero-byte",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "zero-byte rollout"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-04-00-80dc3b04-96ba-40fa-81e5-7b725a4c3eaf.jsonl",
+      "kind": "binary-garbage",
+      "badLines": null,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "2 KB of random bytes named like a rollout"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-05-00-6773f070-e27b-4e21-ba1d-fd65d6ef4eab.jsonl",
+      "kind": "archived-duplicate",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "byte-identical copy also under archived_sessions (dedupe by basename)"
+    },
+    {
+      "path": "codex/archived_sessions/rollout-2026-06-01T10-05-00-6773f070-e27b-4e21-ba1d-fd65d6ef4eab.jsonl",
+      "kind": "archived-duplicate-copy",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 0,
+      "note": "the archived copy: must not count twice"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-05-30-be17b09b-aa36-45d4-964b-6f48830be067.jsonl",
+      "kind": "legacy-format",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "legacy rollout: id instead of session_id, no ordinal, no item_completed, tool events as exec_command_end"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-06-00-c94aed1c-da1e-4ad0-9a2b-4c79f8a33afe.jsonl",
+      "kind": "deep-nesting",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "a payload nested 3000 deep"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-07-00-ff3e7111-b2af-4938-b0b9-553420d18d7b.jsonl",
+      "kind": "line-separators",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "raw U+2028/U+2029 inside a prompt"
+    },
+    {
+      "path": "codex/sessions/2026/06/01/rollout-2026-06-01T10-08-00-0e66b85c-7556-4102-aacd-837b8c404854.jsonl",
+      "kind": "fork-of-nothing",
+      "badLines": 0,
+      "truncatedTail": 0,
+      "humanPrompts": 1,
+      "note": "forked_from_id points at a missing parent: its own turns still count"
+    }
+  ],
+  "notes": [
+    "Canaries (CANARIES.txt) must never appear in any output of the engine. Poison strings (poison[].escaped, JSON-escaped here) must never appear raw.",
+    "badLines / truncatedTail are what readJsonl reports for the file; null means the count depends on reader policy (BOM handling).",
+    "The file whose note says 'ambiguous' holds records whose classification is a policy choice (e.g. an API 'Request was aborted' error); no count is asserted.",
+    "A symlink loop / outside-tree link exists only in the full tier. Version 9.9.9 marks records that live outside the scanned tree: seeing it in output means a symlink was followed."
+  ]
+}

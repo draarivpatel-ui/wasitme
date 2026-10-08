@@ -1,0 +1,15 @@
+{
+  "name": "wasitme",
+  "owner": { "name": "Aariv Patel" },
+  "metadata": {
+    "description": "wasitme: was it me, or the agent? Reads your own local Claude Code and Codex session logs and says whether your setup changed or the agent did. Local-only. Independent; not affiliated with or endorsed by Anthropic or OpenAI."
+  },
+  "plugins": [
+    {
+      "name": "wasitme",
+      "source": "./plugin",
+      "description": "A glanceable pane and quiet band for Claude Code, a /wasitme:report skill, and hooks that keep the local scan fresh. The mod reads only ~/.wasitme/glance.json and never touches the network. Not affiliated with or endorsed by Anthropic.",
+      "category": "productivity"
+    }
+  ]
+}

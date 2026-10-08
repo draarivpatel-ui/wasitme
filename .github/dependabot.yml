@@ -1,0 +1,18 @@
+# Keeps the SHA-pinned GitHub Actions and the dev-only npm packages current.
+# The engine has zero runtime dependencies, so every npm update here is a build/test tool.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      dev-tools:
+        dependency-type: development

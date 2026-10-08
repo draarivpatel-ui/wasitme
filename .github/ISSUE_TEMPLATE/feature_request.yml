@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an improvement to what wasitme measures, shows or explains.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        wasitme answers one question: did your setup change, or did the agent? Ideas that make that answer clearer or
+        more honest are the best fit. Cost tracking, synthetic benchmarks, cloud features and anything that sends data
+        off the machine are out of scope (see CONTRIBUTING.md). Please do not paste real log content.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to find out?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like wasitme to do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
