@@ -124,7 +124,7 @@ export function strip(c, { width = 984, show = 28, gutter = 104, kLabel = 'error
   const maxK = Math.max(...rows.map(r => r.k), 10);
   const S = T.chart.strip, dense = maxK > S.denseAbove;
   const th = dense ? S.denseTickHeight : S.tickHeight, unit = th + (dense ? S.denseTickGap : S.tickGap);
-  const top = Math.ceil(maxK / 5) * 5, stripH = !ticks ? 18 : compact ? compactHeight : Math.max(42, top * unit);
+  const top = Math.min(Math.ceil(maxK / 5) * 5, S.maxTicks), stripH = !ticks ? 18 : compact ? compactHeight : Math.max(42, top * unit); // a column never grows past maxTicks
   const cu = stripH / top; // compact: one solid column per day, k printed under it
   const oy = compact ? 16 : 0, yTop = (compact ? 24 : 30) + oy, yA = yTop + stripH;
   const dayX = d => x0 + rows.findIndex(r => r.d === d) * pitch; // left edge of the day's slot
@@ -140,13 +140,17 @@ export function strip(c, { width = 984, show = 28, gutter = 104, kLabel = 'error
   if (ticks) rows.forEach((r, i) => {
     const cx = x0 + i * pitch + (pitch - colW) / 2;
     if (r.n === 0) return;
-    if (compact && r.k > 0) { const h = r.k * cu, w = r.n < lowN ? colW / 2 : colW; s += `<rect class="c-tick" x="${(cx + (colW - w) / 2).toFixed(1)}" y="${(yA - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}"/>`; return; }
+    if (compact && r.k > 0) { const h = Math.min(r.k, top) * cu, w = r.n < lowN ? colW / 2 : colW; s += `<rect class="c-tick" x="${(cx + (colW - w) / 2).toFixed(1)}" y="${(yA - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}"/>`; return; }
     if (r.k === 0) { s += `<rect class="c-zero" x="${(cx + colW / 2 - 1).toFixed(1)}" y="${yA - 3}" width="2" height="2"/>`; return; }
-    for (let j = 0; j < r.k; j++) {
+    for (let j = 0; j < Math.min(r.k, top); j++) {
       const y = yA - (j + 1) * unit;
       s += r.n < lowN
         ? `<rect class="c-tick" x="${(cx + colW / 4).toFixed(1)}" y="${y}" width="${colW / 2}" height="${th}"/>`
         : `<rect class="c-tick" x="${cx.toFixed(1)}" y="${y}" width="${colW}" height="${th}"/>`;
+    }
+    if (r.k > top) { // past the cap: an open arrowhead above the last tick
+      const mid = cx + colW / 2, hw = (r.n < lowN ? colW / 4 : colW / 2) - 1;
+      s += `<path class="c-tick-over" d="M${(mid - hw).toFixed(1)} ${yTop - 2} L${mid.toFixed(1)} ${yTop - 6} L${(mid + hw).toFixed(1)} ${yTop - 2}"/>`;
     }
   });
   // events in view

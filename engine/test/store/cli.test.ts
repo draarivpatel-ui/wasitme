@@ -9,7 +9,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseUntil } from "../../src/store/time.js";
 import { SessionBuilder, text } from "../fixtures/claude/builder.js";
-import { copyCorpus, readJson, REPO, scanIn, TESTDATA, tempEnv, type TempEnv } from "./helpers.js";
+import { copyCorpus, readJson, REPO, scanIn, TESTDATA, tempEnv, treeDigest, type TempEnv } from "./helpers.js";
 
 const CLI = join(REPO, "engine", "dist", "src", "cli", "main.js");
 
@@ -41,6 +41,25 @@ test("scan: one summary line, no paths; --read-only and --json print the snapsho
       assert.match(r.stderr, re);
       assert.doesNotMatch(r.stderr, /\/Users\/|\/private\//);
     }
+  } finally {
+    env.cleanup();
+  }
+});
+
+test("scan --until without --read-only is read-only too: the live results, decisions and history stay byte-identical", () => {
+  const env = tempEnv("cli-until");
+  try {
+    copyCorpus(env, join(TESTDATA, "seed", "tiny-both"));
+    const run = (...args: string[]) => spawnSync(process.execPath, [CLI, ...args], { encoding: "utf8", env: cliEnv(env) });
+    const live = run("scan", "--tz", "UTC");
+    assert.equal(live.status, 0, live.stderr);
+    const before = treeDigest(env.wh);
+    assert.ok(before.has("glance.json") && before.has("snapshot.json") && before.has(join("state", "decisions.json")), [...before.keys()].join(", "));
+    const past = run("scan", "--tz", "UTC", "--until", "2026-07-05T23:59");
+    assert.equal(past.status, 0, past.stderr);
+    assert.deepEqual(treeDigest(env.wh), before, "nothing under the wasitme home was written");
+    assert.equal(JSON.parse(past.stdout).schema, "wasitme.snapshot/1", "a time-travelled scan prints its snapshot, like --read-only");
+    assert.doesNotMatch(past.stdout, new RegExp(env.root.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   } finally {
     env.cleanup();
   }

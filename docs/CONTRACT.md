@@ -53,6 +53,9 @@ calibrated, sequences, falseChanged, falseAgent}}`.
   (vocabulary change by the contract owner, not an acceptance dispute).
 - Added, **optional until the readers fill them (required from WP-12)**: `ChangeEvent.strength`, `ChangeEvent.provenance`,
   `Exchange.toolErrorsEdit`, `Exchange.toolErrorsCmd`, `Exchange.interactiveClass` (`interactive | scripted | unknown`).
+- Added after the freeze, optional ([D81](DECISIONS.md)): `ChangeEvent.session`, the salted id (`s-…`, the same hash as
+  `Exchange.session`) of the session an in-log change was recorded in. The Claude reader fills it; history keeps it; it
+  never appears in the snapshot or glance (their event objects list their fields).
 - `ParseStats.unknownTypes` keys are log-derived: readers now count with `bump()` (util.ts), so `constructor`,
   `toString` or `__proto__` are counted instead of reading `Object.prototype` (a freeze item; the plain-object
   shape is kept so existing `deepEqual(..., {})` tests hold).

@@ -33,6 +33,47 @@ test("review #19: check-no-network: host modules, Swift networking APIs and shel
   }
 });
 
+test("bug hunt 2026-10-09: check-no-network sees process.getBuiltinModule, absolute-path network commands and the NSURL / raw-string URL forms", () => {
+  const rules = (src) => scanSource(src, "t.ts").violations.map((v) => v.rule);
+  // process.getBuiltinModule loads node:http or child_process with no import, so it is refused whatever the receiver.
+  assert.deepEqual(rules('const http = process.getBuiltinModule("node:http");'), ["dynamic-module-load"]);
+  assert.deepEqual(rules('const cp = process.getBuiltinModule("child_process");'), ["dynamic-module-load"]);
+  assert.deepEqual(rules('const net = globalThis.process.getBuiltinModule("net");'), ["dynamic-module-load"]);
+  assert.deepEqual(rules('const m = process?.getBuiltinModule("fs");'), ["dynamic-module-load"]);
+  assert.deepEqual(rules("// process.getBuiltinModule is mentioned here\nconst s = 'getBuiltinModule';"), [], "prose and strings still pass");
+
+  // Shell: a command called by absolute or relative path is still that command (the plugin hooks call every tool by
+  // absolute path, so that is the style an accidental call would take).
+  const shell = (src) => scanShellSource(src, "t.sh").violations.map((v) => v.rule);
+  assert.deepEqual(shell("/usr/bin/curl -fsS https://example.test/x\n"), ["shell-network-command"]);
+  assert.deepEqual(shell('x=$(/usr/bin/wget -qO- "$u")\n'), ["shell-network-command"]);
+  assert.deepEqual(shell("if true; then ./nc -l 8080; fi\n"), ["shell-network-command"]);
+  assert.deepEqual(shell("/usr/bin/ssh host true\n"), ["shell-network-command"]);
+  assert.deepEqual(shell("/usr/bin/head -c 10 \"$f\"\n/bin/launchctl kickstart x\n/usr/bin/ssh-keygen -l\n/usr/bin/sed s/a/b/\n"), []);
+
+  // Swift: NSURL and raw string literals with a network scheme.
+  const swift = (src) => scanSwiftSource(src, "t.swift").violations.map((v) => v.rule);
+  assert.deepEqual(swift('let u = NSURL(string: "https://example.invalid/x")\n'), ["swift-network-url"]);
+  assert.deepEqual(swift('let u = URL(string: #"https://example.invalid/x"#)!\n'), ["swift-network-url"]);
+  assert.deepEqual(swift('let u = URL(string: ##"wss://example.invalid/x"##)!\n'), ["swift-network-url"]);
+  assert.deepEqual(swift('let u = URL(string: "wasitme-app://app/index.html")!\nlet v = NSURL(string: #"wasitme-app://x"#)\n'), []);
+
+  // Lexer: a regex literal right after `)` or `}` that holds a backtick or `/*` must not hide the lines that follow.
+  const tail = 'import net from "node:net";\nconst r = await fetch("https://example.invalid");\n';
+  for (const [name, head] of [
+    ["class with /* after )", "if (ok) /[/*]/.test(s);\n"],
+    ["backtick after )", "if (ok) /`/.test(s);\n"],
+    ["class with /* after }", "function f() {}\n/[/*]/.test(s);\n"],
+    ["backtick after }", "function f() {}\n/`/.test(s);\n"],
+  ]) {
+    assert.deepEqual(rules(head + tail), ["network-module", "network-global"], name);
+    assert.deepEqual(rules(head + tail + "// */\n"), ["network-module", "network-global"], `${name}, with a closing */ later`);
+  }
+  // Division still reads as division (and a real block comment after it still comments).
+  assert.deepEqual(rules("const a = (b) / c; /* note */\nconst d = (e) / f / g;\n"), []);
+  assert.deepEqual(rules("const t = (a) / `x` / 2;\n" + tail), ["network-module", "network-global"]);
+});
+
 test("review #19: the real macOS app sources have no networking code (verified, not assumed)", () => {
   const dir = join(REPO_ROOT, "macos", "Sources");
   const r = scanDirectories([dir]);

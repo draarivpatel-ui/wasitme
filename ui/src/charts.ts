@@ -367,7 +367,9 @@ export function strip(o: StripOptions): VNode[] {
   const maxK = Math.max(10, ...rows.map((r) => r.k));
   const dense = maxK > S.denseAbove;
   const th = dense ? S.denseTickHeight : S.tickHeight, unit = th + (dense ? S.denseTickGap : S.tickGap);
-  const top = Math.ceil(maxK / 5) * 5, stripH = !ticks ? 18 : Math.max(42, top * unit);
+  // A column never grows past maxTicks (a day of thousands of events must not make a thousand-pixel strip, or a page of
+  // thousands of nodes): `top` is the tallest column drawn, and a column that holds more ends in an open arrowhead.
+  const top = Math.min(Math.ceil(maxK / 5) * 5, S.maxTicks), stripH = !ticks ? 18 : Math.max(42, top * unit);
   const yTop = 30, yA = yTop + stripH;
   const yYou = 6, yAgent = yA + 3;                    // badge boxes: yours 6..24 above, the agent's yA+3..yA+23 below
   const labY = { you: yYou + 13, agent: yAgent + 16 }; // label baselines, level with the badge's own letter
@@ -386,10 +388,16 @@ export function strip(o: StripOptions): VNode[] {
     if (r.n === 0) return;
     if (r.k === 0) { out.push(s("rect", { class: "c-zero", x: cx + colW / 2 - 1, y: yA - 3, width: 2, height: 2 })); return; }
     const low = r.n < S.lowNThreshold;
-    for (let j = 0; j < r.k; j++) {
+    for (let j = 0; j < Math.min(r.k, top); j++) {
       const y = yA - (j + 1) * unit;
       out.push(low ? s("rect", { class: "c-tick", x: cx + colW / 4, y, width: colW / 2, height: th })
         : s("rect", { class: "c-tick", x: cx, y, width: colW, height: th }));
+    }
+    // past the cap: an open arrowhead above the column's last tick (DESIGN.md §8, as a forest range that runs off its axis);
+    // the day's exact count is in its hover tip, the k row and the text description
+    if (r.k > top) {
+      const mid = cx + colW / 2, hw = (low ? colW / 4 : colW / 2) - 1;
+      out.push(s("path", { class: "c-tick-over", d: `M${(mid - hw).toFixed(1)} ${yTop - 2} L${mid.toFixed(1)} ${yTop - 6} L${(mid + hw).toFixed(1)} ${yTop - 2}` }));
     }
   });
   // per-day hover tooltips (date, k, n, changes that day)

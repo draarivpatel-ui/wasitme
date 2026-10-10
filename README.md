@@ -6,9 +6,9 @@
 </h1>
 
 <p align="center">
-  <a href="https://draarivpatel-ui.github.io/wasitme/#film"><img src="docs/images/film-teaser.gif" width="720" alt="A ten-second excerpt of the wasitme film: the question &quot;Was it me, or the model?&quot; over a hairline, then the case line, with your changes as yellow numbered squares above it and the agent's updates as blue lettered tags below it. Demo data from wasitme demo."></a>
+  <a href="https://draarivpatel-ui.github.io/wasitme/#film"><img src="docs/images/film-teaser.gif" width="720" alt="A ten-second excerpt of the wasitme film: the question &quot;Was it me, or the model?&quot; spelled in tool-error ticks, which then fall back into their days on the case line, with your changes as yellow numbered stickers above it and the agent's updates as lettered tags below it, until a stamp lands. Demo data from wasitme demo."></a>
   <br>
-  <a href="https://draarivpatel-ui.github.io/wasitme/#film"><b>&#9654; Watch the 42-second film</b></a> &nbsp;·&nbsp; <a href="https://draarivpatel-ui.github.io/wasitme/">Website</a>
+  <a href="https://draarivpatel-ui.github.io/wasitme/#film"><b>&#9654; Watch the 37-second film</b></a> &nbsp;·&nbsp; <a href="https://draarivpatel-ui.github.io/wasitme/">Website</a>
 </p>
 
 <p align="center"><em>Measure twice, blame once.</em></p>

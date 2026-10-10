@@ -232,7 +232,8 @@ function knownLabel(v: unknown): v is string {
  *  1. the event's own `from`, when it names a value (an in-session switch: the reader saw the value it left);
  *  2. else the latest earlier exchange of the event's session with a known label. The event's session is the one
  *     of the exchange it happened in: the latest exchange on the event's local day with the event's `to` and a
- *     `t` at or before the event's (events carry no session id);
+ *     `t` at or before the event's, in the event's own session when it names one (`session`, D81: the Claude reader
+ *     stamps it), else in any session (older stored events, configsnap);
  *  3. else the previous active day's majority label (the between-session derivation's rule, same weights);
  *  4. else null (nothing before it: it cannot be a re-pick).
  * `days` are the dimension's day majorities (`dayMajorities`). Pure.
@@ -245,8 +246,12 @@ export function valueInEffect(e: AttributionEvent, kind: "model" | "effort", use
   if (Number.isFinite(at)) {
     let host: MetricExchange | undefined;
     let hostT = -Infinity;
+    // An event that names its session (ChangeEvent.session, D81) is hosted there only: a parallel session's prompt
+    // can land between the command and its first response.
+    const ownSession = typeof e.session === "string" && e.session !== "" ? e.session : null;
     for (const x of used) {
       if (x.day !== day || labelOf(x, kind) !== e.to) continue;
+      if (ownSession !== null && x.session !== ownSession) continue;
       const t = Date.parse(String(x.t));
       if (!Number.isFinite(t) || t > at) continue;
       if (t > hostT || (t === hostT && host !== undefined && (x.seq > host.seq || (x.seq === host.seq && String(x.id) > String(host.id))))) {

@@ -223,5 +223,33 @@ test("clock going backward: file order kept, durations never negative", async ()
   assert.deepEqual(exchanges.map((e) => e.t), ["2026-09-20T10:00:00.000Z", "2026-09-20T08:00:00.000Z"]);
   assert.deepEqual(exchanges.map((e) => e.seq), [0, 1]);
   assert.ok(exchanges.every((e) => e.durationMs >= 0));
-  assert.equal(exchanges[0]!.durationMs, 3_600_000);
+  // 10:00, then a confirmed reset to 09:00 and 5 s of work: the reset adds nothing (same SpanClock as the Claude reader).
+  // This used to pin 3,600,000, the raw max-minus-min span that the reset inflated.
+  assert.equal(exchanges[0]!.durationMs, 5_000);
+});
+
+test("durationMs follows the records in file order: a clock reset or a corrected excursion mid-exchange adds nothing", async () => {
+  const id = uuid(7);
+  const [c1, c2, c3, c4] = [uuid(701), uuid(702), uuid(703), uuid(704)];
+  const content = new Rollout("2026-10-01T10:00:00Z").meta({ id })
+    // c1: the clock is set back an hour after 10:01; the turn goes on at 09:02 and 09:03. Real activity: 2 min.
+    .started(c1).ctx(c1).user(c1, "first")
+    .at("2026-10-01T10:01:00Z").agent(c1)
+    .at("2026-10-01T09:02:00Z").agent(c1)
+    .at("2026-10-01T09:03:00Z").complete(c1)
+    // c2: the clock jumps a day ahead for one record and is corrected; two records follow. Real activity: 4 min.
+    .at("2026-10-01T11:00:00Z").started(c2).ctx(c2).user(c2, "second")
+    .at("2026-10-01T11:01:00Z").agent(c2)
+    .at("2026-10-02T11:02:00Z").agent(c2)
+    .at("2026-10-01T11:03:00Z").agent(c2)
+    .at("2026-10-01T11:04:00Z").complete(c2)
+    // c3 + c4: one exchange over two turns (c4 has no prompt of its own), the reset falls between the turns.
+    .at("2026-10-01T12:00:00Z").started(c3).ctx(c3).user(c3, "third")
+    .at("2026-10-01T12:02:00Z").agent(c3).complete(c3)
+    .at("2026-10-01T11:30:00Z").started(c4).ctx(c4).cmd(c4)
+    .at("2026-10-01T11:31:00Z").complete(c4)
+    .text();
+  const { root } = writeTree([{ id, content }]);
+  const { exchanges } = await scan(root);
+  assert.deepEqual(exchanges.map((e) => e.durationMs), [120_000, 240_000, 180_000]);
 });

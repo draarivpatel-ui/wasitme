@@ -19,7 +19,7 @@ const COUNT_FIELDS = [
 const FLAG_FIELDS = ["humanPrompt", "interrupted", "pushback", "churned"] as const;
 const LABEL_FIELDS = ["version", "model", "servedModel", "effort", "mode", "entrypoint"] as const;
 const KINDS: ChangeKind[] = ["version", "model", "served-model", "effort", "mode", "entrypoint", "config", "instructions", "mcp", "skills", "plugins", "hooks", "system-prompt"];
-const EVENT_KEYS = new Set(["id", "t", "day", "agent", "kind", "side", "from", "to", "evidence", "strength", "provenance", "userInitiated", "note"]);
+const EVENT_KEYS = new Set(["id", "t", "day", "agent", "kind", "side", "from", "to", "evidence", "strength", "provenance", "userInitiated", "note", "session"]);
 
 /** Parse every scenario (the empty session file only if the reader lists it — that is optional). */
 async function all(): Promise<Map<ScenarioName, ParseResult>> {
@@ -143,6 +143,9 @@ test("events are well-formed ChangeEvents from logs", async () => {
       }
       if (e.userInitiated !== undefined) assert.equal(typeof e.userInitiated, "boolean", at);
       if (e.note !== undefined) assert.equal(typeof e.note, "string", at);
+      // D81: the salted id of the session it was logged in — the same hash its exchanges carry, never a raw id.
+      assert.match(e.session!, HASH_ID, `${at}.session`);
+      if (r.exchanges.length > 0) assert.ok(r.exchanges.some((x) => x.session === e.session), `${at}.session matches an exchange`);
     }
   }
 });

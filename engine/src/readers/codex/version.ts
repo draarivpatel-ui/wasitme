@@ -27,13 +27,22 @@ export const CODEX_PARSER_VERSIONS = Object.freeze({
   // 2 (D62a): child threads attributed with evidence (D39) also fill subReads / subEdits / subBlindEdits, which the
   // research metrics count with the main thread's reads / edits.
   research: 2,
-  friction: 1,
-  context: 1,
+  // 2 (0.1.1 bug-hunt): promptEnglish ignores sentence punctuation at the end of a word, so a one-word prompt like
+  // "Continue." is English instead of unknown. Stored shards re-derive the family from the logs that still exist.
+  friction: 2,
+  // 2 (0.1.1 bug hunt): `durationMs` is measured over the exchange's records in file order with the Claude reader's
+  // SpanClock, so a clock reset or a corrected excursion mid-exchange no longer counts as time (it was max minus min).
+  context: 2,
   // 2 (WP-12 review): id-shaped model labels, effort and approval-policy enums, semver-like versions; event
   // from/to carry the same labels. Stored shards re-derive both families from the logs that still exist.
   labels: 2,
   interactive: 1,
-  events: 2,
+  // 3 (0.1.1 bug hunt): a provider switch is dated and ordered by the session's first start time no later than now + 1
+  // day (session_meta, else the leading records after it), so a session_meta stamped with the clock set ahead no
+  // longer dates a you · strong switch in the future or hides the real switches around it.
+  // 4 (0.1.1, same release): kept equal to the Claude reader's events version (4, D81) so the snapshot's
+  // health.parserVersions reports one "events" key; it re-derives exactly what 3 would have.
+  events: 4,
 } as const);
 
 export type CodexParserFamily = keyof typeof CODEX_PARSER_VERSIONS;

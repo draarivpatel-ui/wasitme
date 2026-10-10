@@ -35,6 +35,21 @@ test("promptEnglish: English → 1, other languages / scripts → 0, nothing to 
   for (const s of ["", "   ", "42", "🙂🙂", "/tmp/x.ts", "```\ncode only\n```"]) assert.equal(promptEnglish(s), undefined, JSON.stringify(s));
 });
 
+test("promptEnglish: trailing sentence punctuation does not make a word look like code", () => {
+  // One-word replies ending in a period used to be dropped as identifiers (the "." in the code-token rule), which left
+  // no letters and made them unknown, so they counted as not English in pushback's 70% rule.
+  for (const s of ["Continue.", "Yes.", "Thanks.", "Done.", "OK.", "No.", "Stop.", "Proceed...", "Thanks, continue."]) {
+    assert.equal(promptEnglish(s), 1, s);
+  }
+  // Quotes and brackets around such a reply do not hide it either.
+  for (const s of ['"Continue."', "(Thanks.)", "“Yes.”", "'Done.'", '"Thanks!"']) assert.equal(promptEnglish(s), 1, s);
+  assert.equal(promptEnglish("Merci."), 0);
+  // Identifiers stay code with punctuation, quotes or brackets around them; numbers stay numbers.
+  for (const s of ["parser.ts.", "/tmp/x.ts.", "42.", "x_y.", '"parser.ts."', "foo().", "(42)", "'x_y'"]) {
+    assert.equal(promptEnglish(s), undefined, s);
+  }
+});
+
 test("Claude: cmdCalls counts command calls that ran; rejected and blocked ones are taken back", async () => {
   const s = new SessionBuilder("sess-cmd");
   s.prompt("run the tests and then the linter");

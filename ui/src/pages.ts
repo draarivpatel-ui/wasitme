@@ -14,10 +14,11 @@
  */
 
 import { CALIBRATION_PENDING, CANVAS_COPY as T, COPY, CHART, STATES } from "./gen/design.js";
+import { agentName } from "./decode.js";
 import type { Agent, Doc, Metric, TEvent } from "./decode.js";
 import {
   bindingGate, eventLabel, findingSide, ineligibleWhy, isContext, isTimelineOnly, knWords, laneLabel, lineUpEvent, metricLabel,
-  moved, openCandidates, recentEvents, rowTag, statusWords, stripDays, sumDays, windowLine, windowOf, baselineWords,
+  metricName, moved, openCandidates, recentEvents, rowTag, statusWords, stripDays, sumDays, windowLine, windowOf, baselineWords,
 } from "./derive.js";
 import type { StripDay } from "./derive.js";
 import { badge, brandMark, forest, forestAxis, glyph, legend, strip } from "./charts.js";
@@ -705,7 +706,7 @@ function sourcesPage(c: Ctx): Kid[] {
       setAside(s) ? h("span", { cls: "src-aside t-small" }, fill(S.setAside, { lines: plural(setAside(s), "line", "lines") })) : null)))
       : h("p", { cls: "t-small" }, S.noSources),
     hl && hl.paused.length ? [h("h2", { cls: "t-section gap" }, S.paused),
-      h("ul", { cls: "plain-list" }, hl.paused.map((p) => h("li", null, h("strong", null, p.metric), ` ${fill(S.pausedRow, { agent: p.agent, why: PAUSE_WHY[p.why] ?? p.why })}`)))] : null,
+      h("ul", { cls: "plain-list" }, hl.paused.map((p) => h("li", null, h("strong", null, metricName(p.metric)), ` ${fill(S.pausedRow, { agent: agentName(p.agent, p.agent), why: PAUSE_WHY[p.why] ?? p.why })}`)))] : null,
     srcs.length ? disclosure(c, "sources.setAside", T.disclosure.setAside, null, false, () => [
       h("div", { cls: "ledger" }, h("div", { cls: "table-wrap" }, h("table", null, h("caption", { cls: "sr" }, S.caption),
         h("thead", null, h("tr", null, [S.col.agent, S.col.files, S.col.bad, S.col.cut, S.col.dup, S.col.days, S.col.unknown].map((t, i) => h("th", { cls: i >= 1 && i <= 4 ? "num" : null, attrs: { scope: "col" } }, t)))),
@@ -872,6 +873,19 @@ function messagePage(c: Ctx): Kid[] {
     loading: T.message.loading, notSetUp: T.message.notSetUp, unreadable: T.message.unreadable, mismatch: T.message.mismatch, refused: T.message.refused,
   };
   let title: string, text: string;
+  if (d === "stale") {
+    // out of date AND nothing to show (the engine wrote no agents): say both, as the Finding page does when it has agents
+    const f = c.doc.freshness;
+    const why = f.kind === "future" ? T.finding.staleFuture : f.kind === "unknown" ? T.finding.staleUnknown
+      : f.kind === "stale" ? fill(T.finding.staleAge, { age: duration(f.ageSec ?? 0) }) : "";
+    const found = (c.doc.health?.sources ?? []).some((s) => s.found);
+    return [h("section", { cls: "message", attrs: { "aria-live": "polite" } },
+      h("div", { cls: "meta" }, chip("stale", STATES.stale.label)),
+      h("h1", { cls: "t-display" }, STATES.stale.headline),
+      why ? h("p", { cls: "t-deck" }, why) : null,
+      h("p", { cls: "t-deck" }, withCode(found ? T.message.emptyFound : T.message.emptyNone)),
+      c.doc.health ? h("p", null, btn(T.seeSources, { action: "showPage", page: "sources" }, "btn btn--plain")) : null)];
+  }
   if (d === "empty") {
     const found = (c.doc.health?.sources ?? []).some((s) => s.found);
     title = T.message.empty.title;

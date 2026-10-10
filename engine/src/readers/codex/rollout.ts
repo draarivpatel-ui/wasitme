@@ -63,6 +63,9 @@ interface RawTurn {
   firstTs?: number;
   minTs?: number;
   maxTs?: number;
+  /** Every valid record time of the turn, with its dispatch position (file order): the exchange's SpanClock input. */
+  stamps: number[];
+  stampOrder: number[];
   records: number;
   hasContext: boolean;
   hasWork: boolean;
@@ -255,6 +258,8 @@ export class RolloutParser {
   private pendingSettings: CtxObservation["settings"] = [];
   private metas: MetaObservation[] = [];
   private index = 0;
+  /** Position of the next touched record in dispatch (file) order. */
+  private touches = 0;
 
   constructor(private readonly stats: ParseStats, private readonly opts: RolloutOptions) {}
 
@@ -265,7 +270,7 @@ export class RolloutParser {
 
   private open(key: string, firstRecordId: string, explicit: boolean): RawTurn {
     const t: RawTurn = {
-      key, firstRecordId, explicit, records: 0, hasContext: false, hasWork: false, inherit: this.inEffect,
+      key, firstRecordId, explicit, stamps: [], stampOrder: [], records: 0, hasContext: false, hasWork: false, inherit: this.inEffect,
       versions: [this.version], models: [], efforts: [], modes: [], items: 0, itemIds: new Set(),
       messages: [], legacyMessages: [], itemTools: [], endTools: [], respTools: [], recordUsage: [], countUsage: [], repeatedCounts: 0,
       interrupted: false, errorEvents: 0, completeErrors: 0, retries: 0, compactItems: 0, compactedRecords: 0,
@@ -306,6 +311,8 @@ export class RolloutParser {
   private touch(t: RawTurn, ts: number | undefined): void {
     t.records++;
     if (ts === undefined) return;
+    t.stamps.push(ts);
+    t.stampOrder.push(this.touches++);
     if (t.firstTs === undefined) t.firstTs = ts;
     if (t.minTs === undefined || ts < t.minTs) t.minTs = ts;
     if (t.maxTs === undefined || ts > t.maxTs) t.maxTs = ts;
@@ -626,6 +633,7 @@ export class RolloutParser {
       const inherit = (own: string[], v: string | undefined): string[] => (own.length || !v ? own : [v]);
       turns.push({
         key: r.key, firstRecordId: r.firstRecordId, firstTs: r.firstTs, minTs: r.minTs, maxTs: r.maxTs,
+        stamps: r.stamps, stampOrder: r.stampOrder,
         versions: r.versions,
         models: inherit(r.models, r.inherit?.model), efforts: inherit(r.efforts, r.inherit?.effort), modes: inherit(r.modes, r.inherit?.mode),
         messages, tools, usage,

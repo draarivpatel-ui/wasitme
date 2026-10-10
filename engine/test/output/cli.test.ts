@@ -14,6 +14,7 @@ import { lintCopy } from "../../src/contract/check.js";
 import { loadExclude } from "../../src/store/exclude.js";
 import { tokensBanned } from "../words/helpers.js";
 import { main } from "../../src/cli/main.js";
+import { ENGINE_VERSION } from "../../src/version.js";
 import type { CliContext } from "../../src/cli/context.js";
 import { copyCorpus, modes, TESTDATA, tempEnv, treeDigest, type TempEnv } from "../store/helpers.js";
 import { outputsOf, readJson, ROOT } from "./cases.js";
@@ -196,8 +197,8 @@ test("status: one line from the results file, 'out of date' when old, exit 1 wit
     // The command every "Update needed" surface names exists, downloads nothing, and says how to update.
     const upd = run(env, ["update"]);
     assert.equal(upd.status, 0);
-    assert.match(upd.stdout, /^wasitme 0\.1\.0 is installed\.\nwasitme has no network code, so it never downloads an update itself\. To update, run the installer of the newer/);
-    assert.deepEqual(JSON.parse(run(env, ["update", "--json"]).stdout), { schema: "wasitme.update/1", version: "0.1.0", downloads: false });
+    assert.ok(upd.stdout.startsWith(`wasitme ${ENGINE_VERSION} is installed.\nwasitme has no network code, so it never downloads an update itself. To update, run the installer of the newer`), upd.stdout);
+    assert.deepEqual(JSON.parse(run(env, ["update", "--json"]).stdout), { schema: "wasitme.update/1", version: ENGINE_VERSION, downloads: false });
     // A failed last scan: the line keeps the last state; --json says the scan failed.
     writeFileSync(join(env.wh, "glance.json"), `${JSON.stringify({ ...outputsOf("you").glance, generatedAt: iso(), scanOk: false, scanError: "internal" })}\n`);
     const failed = JSON.parse(run(env, ["status", "--json"]).stdout);
@@ -388,7 +389,7 @@ test("doctor: counts, versions and enums only; the redacted form is safe to past
       const r = run(env, args);
       assert.equal(r.status, 0, `${args.join(" ")}: ${r.stderr}`);
       noPath(env, r.stdout, args.join(" "));
-      assert.match(r.stdout, /engine +0\.1\.0, node v\d+/);
+      assert.match(r.stdout, new RegExp(`engine +${ENGINE_VERSION.replace(/\./g, "\\.")}, node v\\d+`));
       assert.ok(!r.stdout.includes("\x1b"));
     }
     const text = run(env, ["doctor", "--redacted"]).stdout;
@@ -571,9 +572,9 @@ test("--version prints the version the installer's self-check looks for; usage e
   try {
     for (const args of [["--version"], ["-V"], ["-v"], ["version"]]) {
       const r = run(env, args);
-      assert.deepEqual([r.status, r.stdout, r.stderr], [0, "wasitme 0.1.0\n", ""], args.join(" "));
+      assert.deepEqual([r.status, r.stdout, r.stderr], [0, `wasitme ${ENGINE_VERSION}\n`, ""], args.join(" "));
     }
-    assert.deepEqual(JSON.parse(run(env, ["--version", "--json"]).stdout), { schema: "wasitme.version/1", version: "0.1.0" });
+    assert.deepEqual(JSON.parse(run(env, ["--version", "--json"]).stdout), { schema: "wasitme.version/1", version: ENGINE_VERSION });
     assert.match(run(env, ["help"]).stdout, /wasitme --version/);
     const extra = run(env, ["status", "extra"]);
     assert.equal(extra.status, 2);

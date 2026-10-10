@@ -1,6 +1,6 @@
 {
   "name": "wasitme",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A /wasitme pane and a quiet band that read one local file (~/.wasitme/glance.json), a /wasitme:report skill, and two hooks that start the local wasitme scan. No network code. Independent; not affiliated with or endorsed by Anthropic.",
   "author": {
     "name": "Aariv Patel"

@@ -8,7 +8,7 @@ import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync,
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { installStatusLine, ourFragment, statusLineFiles, statusLineState, StatusLineError, uninstallStatusLine } from "../../src/statusline/settings.js";
+import { installStatusLine, ourFragment, shellQuoted, statusLineFiles, statusLineState, StatusLineError, uninstallStatusLine } from "../../src/statusline/settings.js";
 import { ROOT } from "./cases.js";
 
 const SCRIPT = `${ROOT}packaging/statusline.sh`;
@@ -187,6 +187,52 @@ test("status line settings: a symlinked settings file is not followed", () => {
     symlinkSync(join(e.root, "real.json"), e.settings);
     assert.throws(() => installStatusLine(e.files, SCRIPT), StatusLineError);
     assert.equal(readFileSync(join(e.root, "real.json"), "utf8"), "{}\n");
+  } finally {
+    e.cleanup();
+  }
+});
+
+test("status line settings: wasitme's line is recognised in both spellings, and a path with a space is written quoted", () => {
+  // The installer writes the command shell-quoted (scripts/lib/common.sh quote_arg); 0.1.0's `wasitme statusline install`
+  // wrote the raw path. A quoted line with no backup used to be "not ours" to uninstall, so the uninstaller deleted the
+  // script and left settings.json pointing at it.
+  assert.equal(shellQuoted("/a/b-c_d.e/f.sh"), "/a/b-c_d.e/f.sh");
+  assert.equal(shellQuoted("/Users/a b/x.sh"), "'/Users/a b/x.sh'");
+  assert.equal(shellQuoted("/it's/x.sh"), "'/it'\\''s/x.sh'");
+  assert.equal(shellQuoted("~/x.sh"), "'~/x.sh'");
+  const e = env();
+  try {
+    const dir = join(e.root, "with space");
+    mkdirSync(dir);
+    const script = join(dir, "statusline.sh");
+    writeFileSync(script, "#!/bin/sh\n");
+    chmodSync(script, 0o755);
+
+    // the installer's spelling, no backup: ours, and uninstall removes it
+    writeFileSync(e.settings, `${JSON.stringify({ model: "opus", statusLine: { type: "command", command: shellQuoted(script), padding: 0 } }, null, 2)}\n`);
+    assert.equal(statusLineState(e.files, script), "ours");
+    assert.deepEqual(uninstallStatusLine(e.files, script), { restored: true, why: "removed" });
+    assert.deepEqual(JSON.parse(readFileSync(e.settings, "utf8")), { model: "opus" });
+
+    // the raw spelling (0.1.0's CLI), no backup: still ours
+    writeFileSync(e.settings, `${JSON.stringify({ statusLine: { type: "command", command: script, padding: 0 } })}\n`);
+    assert.equal(statusLineState(e.files, script), "ours");
+    assert.deepEqual(uninstallStatusLine(e.files, script), { restored: true, why: "removed" });
+
+    // install writes the quoted spelling, is idempotent, and uninstall restores the file byte for byte
+    const before = `${JSON.stringify({ model: "opus" }, null, 2)}\n`;
+    writeFileSync(e.settings, before);
+    assert.equal(installStatusLine(e.files, script).changed, true);
+    const line = (JSON.parse(readFileSync(e.settings, "utf8")) as { statusLine: { command: string } }).statusLine;
+    assert.equal(line.command, `'${script}'`);
+    assert.equal(ourFragment(script).includes(JSON.stringify(`'${script}'`)), true);
+    assert.equal(installStatusLine(e.files, script).changed, false, "already ours: nothing changes");
+    assert.deepEqual(uninstallStatusLine(e.files, script), { restored: true, why: "removed" });
+    assert.equal(readFileSync(e.settings, "utf8"), before);
+
+    // someone else's command that merely contains the path is not ours
+    writeFileSync(e.settings, `${JSON.stringify({ statusLine: { type: "command", command: `${shellQuoted(script)} --x` } })}\n`);
+    assert.equal(statusLineState(e.files, script), "other");
   } finally {
     e.cleanup();
   }

@@ -126,7 +126,7 @@ export const codexReader: Reader = {
     const file = source.files[0];
     if (!file) return { exchanges: [], events: [], stats };
     stats.files = 1;
-    const index = codexScanIndex.get(rootOf(file.path) ?? codexRoot());
+    const index = codexScanIndex.get(rootOf(file.path) ?? codexRoot(), ctx.now);
     const opts: RolloutOptions = {
       now: ctx.now,
       shortHash: (v) => ctx.hash(v, "h:").slice(0, 10),

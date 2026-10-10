@@ -20,19 +20,23 @@
 //     dependencies), including URL and data: imports
 //   * dynamic import()/require() whose specifier is not a plain string literal (cannot be checked statically)
 //   * the globals fetch, WebSocket, XMLHttpRequest, EventSource, WebTransport, RTCPeerConnection, sendBeacon,
-//     createRequire, eval and the Function constructor, process.binding / process.dlopen, and computed access
-//     such as globalThis["fetch"]
+//     createRequire, getBuiltinModule (process.getBuiltinModule("node:http") loads a built-in with no import), eval and
+//     the Function constructor, process.binding / process.dlopen, and computed access such as globalThis["fetch"]
 //   * native/binary code (.node, .wasm, ...) and symlinks inside a scanned tree
 //   * "<scanned dir>/../package.json" declaring runtime dependencies or install-time scripts
 //
-// Swift files (.swift): a URL literal with a network scheme (`URL(string: "https://…")`, ws/wss/ftp) anywhere; and in code
+// Swift files (.swift): a URL literal with a network scheme (`URL(string: "https://…")`, `NSURL(string: …)`, raw strings
+// `#"…"#`; ws/wss/ftp too) anywhere; and in code
 // (comments and strings masked), `import Network` / CFNetwork / FoundationNetworking /
 // NetworkExtension / MultipeerConnectivity / CloudKit, and the APIs URLSession, URLRequest (allowed only on a line marked
 // `wasitme:allow-local-scheme -- <reason>`, for loads of the app's own wasitme-app:// scheme), NSURLConnection,
 // NWConnection/NWListener/NWBrowser/NWPathMonitor, CFSocket, CFStream socket pairs, CFHost, SCNetworkReachability,
-// Stream.getStreamsToHost, getaddrinfo/gethostbyname and BSD socket(AF_INET...). The macOS app has none.
+// Stream.getStreamsToHost, getaddrinfo/gethostbyname and BSD socket(AF_INET...). The macOS app has none. Not seen: a
+// remote URL built from a variable or URLComponents and handed to Data(contentsOf:) / String(contentsOf:) (the app reads
+// local files that way too, so the call alone proves nothing); code review is the defence there.
 // Shell scripts (.sh/.bash/.zsh, or a #!/bin/sh shebang): the commands curl, wget, nc/ncat/netcat, socat, telnet,
-// ssh, scp, sftp, ftp, rsync outside quotes and comments, and /dev/tcp or /dev/udp anywhere.
+// ssh, scp, sftp, ftp, rsync outside quotes and comments (by name or by path: /usr/bin/curl), and /dev/tcp or /dev/udp
+// anywhere.
 //
 // Allow-listing child_process (never any network module): put this comment on the same line as the import, or on
 // the line directly above it, with a real reason:
@@ -43,7 +47,8 @@
 // The real defences are zero dependencies, code review, and the hostile-input tests; this just makes the easy
 // mistakes loud. It uses a small purpose-built lexer so that words inside comments, strings and regexes do not
 // trigger it. A `/` right after `)` or `}` is read as division, so a regex literal in that position may be
-// mis-lexed; the damage is limited to the rest of that line.
+// mis-lexed. When such a regex holds a backtick or `/*` (which would otherwise open a template or a comment that runs
+// on across lines) it is read as a regex, so the damage is limited to the rest of that line.
 
 import { builtinModules } from "node:module";
 import { existsSync, lstatSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
@@ -112,6 +117,18 @@ export function lex(src) {
     if (t.type === "id") return REGEX_AFTER_KEYWORD.has(t.value);
     if (t.type === "punct") return !(t.value === ")" || t.value === "]" || t.value === "}");
     return false;
+  };
+
+  // After `)` or `}` a `/` is ambiguous (division, or a regex at the start of a statement such as `if (ok) /[/*]/.test(s)`).
+  // It is read as a regex when its same-line body holds a backtick or `/*`: read as division, those would open a template
+  // or a block comment that swallows every following line, while a regex ends at the end of its line either way.
+  const regexBodyOpensBlock = () => {
+    const last = tokens[tokens.length - 1];
+    if (last?.type !== "punct" || (last.value !== ")" && last.value !== "}")) return false;
+    const eol = src.indexOf("\n", i);
+    const rest = src.slice(i + 1, eol === -1 ? n : eol);
+    const m = /^(?:\\.|\[(?:\\.|[^\]\\])*\]|[^/\\[])*\//.exec(rest);
+    return m !== null && /`|\/\*/.test(m[0]);
   };
 
   const readIdentifier = () => {
@@ -204,7 +221,7 @@ export function lex(src) {
       }
       if (c === '"' || c === "'") { readString(c); continue; }
       if (c === "`") { readTemplate(); continue; }
-      if (c === "/" && regexAllowed() && readRegex()) continue;
+      if (c === "/" && (regexAllowed() || regexBodyOpensBlock()) && readRegex()) continue;
       if (/[0-9]/.test(c) || (c === "." && /[0-9]/.test(src[i + 1] ?? ""))) {
         let j = i + 1;
         while (j < n && /[0-9A-Za-z_.]/.test(src[j])) j++;
@@ -293,6 +310,10 @@ export function scanSource(src, file = "<input>", { hostModules = [] } = {}) {
 
     if (t.type === "str" && prev?.type === "id" && prev.value === "from") checkSpecifier(t);
 
+    if (t.type === "id" && t.value === "getBuiltinModule") {
+      fail(t.line, "dynamic-module-load", "getBuiltinModule can load any built-in (node:http, child_process); use static imports");
+    }
+
     if (t.type === "id" && !isDot(prev)) {
       if (t.value === "import") {
         if (next?.type === "str") checkSpecifier(next);
@@ -361,13 +382,13 @@ export function scanSwiftSource(src, file = "<input>") {
     violations.push({ file, line, rule: "swift-network-api", message: `${name} is a networking API` });
   }
   // String literals are masked in `code`, so network-scheme URL literals are found in the raw source.
-  for (const m of src.matchAll(/\bURL\s*\(\s*string\s*:\s*"(?:https?|wss?|ftps?):/gi)) {
+  for (const m of src.matchAll(/\b(?:NS)?URL\s*\(\s*string\s*:\s*#*"(?:https?|wss?|ftps?):/gi)) {
     violations.push({ file, line: src.slice(0, m.index).split("\n").length, rule: "swift-network-url", message: "URL literal with a network scheme" });
   }
   return { violations, allowed };
 }
 
-const SHELL_NETWORK_COMMAND = /(?:^|[\s;&|(`]|\$\()(curl|wget|nc|ncat|netcat|socat|telnet|ssh|scp|sftp|ftp|rsync)(?=$|[\s;&|)`])/g;
+const SHELL_NETWORK_COMMAND = /(?:^|[\s;&|(`]|\$\()(?:[\w.~-]*\/)*(curl|wget|nc|ncat|netcat|socat|telnet|ssh|scp|sftp|ftp|rsync)(?=$|[\s;&|)`])/g;
 
 /** Network commands in a shell script (outside comments and quotes), and /dev/tcp|udp redirections anywhere. */
 export function scanShellSource(src, file = "<input>") {
@@ -560,6 +581,13 @@ function selfTest() {
   dirty("data import", `import x from "data:text/javascript,export default 1";`, "url-import");
   dirty("absolute import", `import x from "/etc/x.js";`, "absolute-import");
 
+  // A regex after `)` or `}` that holds `/*` or a backtick must not hide what follows (the lines after it still count).
+  const netAfter = `import net from "node:net";\n`;
+  dirty("regex with /* after )", `if (ok) /[/*]/.test(s);\n${netAfter}`, "network-module");
+  dirty("regex with a backtick after )", `if (ok) /\`/.test(s);\n${netAfter}`, "network-module");
+  dirty("regex with /* after }", `function f() {}\n/[/*]/.test(s);\n${netAfter}`, "network-module");
+  assert.deepEqual(scanSource("const a = (b) / c; /* note */\nconst d = (e) / f / g;\n", "t.ts").violations, []);
+
   // Unverifiable loads and code execution.
   dirty("dynamic non-literal import", `const m = await import(name);`, "dynamic-module-load");
   dirty("dynamic concatenated import", `await import("node:" + "http");`, "dynamic-module-load");
@@ -570,6 +598,8 @@ function selfTest() {
   dirty("eval", `eval("1");`, "dynamic-code");
   dirty("new Function", `const f = new Function("return 1");`, "dynamic-code");
   dirty("process.binding", `process.binding("tcp_wrap");`, "native-escape");
+  dirty("process.getBuiltinModule", `const h = process.getBuiltinModule("node:http");`, "dynamic-module-load");
+  dirty("globalThis.process.getBuiltinModule", `globalThis.process.getBuiltinModule("child_process");`, "dynamic-module-load");
 
   // Network globals.
   dirty("fetch call", `const r = await fetch(url);`, "network-global");
@@ -617,6 +647,8 @@ function selfTest() {
   assert.deepEqual(swiftRules("let s = URLSession.shared // wasitme:allow-local-scheme -- nope\n"), ["swift-network-api"], "the marker never covers URLSession");
   assert.deepEqual(swiftRules('let u = URL(string: "https://example.invalid/x")!\n'), ["swift-network-url"]);
   assert.deepEqual(swiftRules('let u = URL(string: "wasitme-app://app/index.html")!\n'), []);
+  assert.deepEqual(swiftRules('let u = NSURL(string: "https://example.invalid/x")\n'), ["swift-network-url"]);
+  assert.deepEqual(swiftRules('let u = URL(string: #"https://example.invalid/x"#)!\n'), ["swift-network-url"]);
   assert.deepEqual(swiftRules("let (d, _) = try await NSURLSession.shared.data(from: u)\n"), ["swift-network-api"]);
   assert.deepEqual(swiftRules("let c = NWConnection(host: h, port: 80, using: .tcp)\n"), ["swift-network-api"]);
   assert.deepEqual(swiftRules("let fd = socket(AF_INET, SOCK_STREAM, 0)\n"), ["swift-network-api"]);
@@ -628,6 +660,9 @@ function selfTest() {
   assert.deepEqual(shellRules('x=$(wget -qO- "$u")\n'), ["shell-network-command"]);
   assert.deepEqual(shellRules("if true; then nc -l 8080; fi\n"), ["shell-network-command"]);
   assert.deepEqual(shellRules('exec 3<>/dev/tcp/example.test/80\n'), ["shell-network-command"]);
+  assert.deepEqual(shellRules("/usr/bin/curl -fsS https://example.test/x\n"), ["shell-network-command"]);
+  assert.deepEqual(shellRules('x=$(/usr/bin/wget -qO- "$u")\n'), ["shell-network-command"]);
+  assert.deepEqual(shellRules("/usr/bin/head -c 9 f\n/bin/launchctl list\n"), []);
 
   // Trees: file types, symlinks, package.json, vacuous scans.
   const tmp = mkdtempSync(join(tmpdir(), "wasitme-nonet-"));

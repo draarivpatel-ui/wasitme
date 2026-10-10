@@ -124,6 +124,10 @@ if [ -n "$home_dir" ] && [ -f "$glance" ] && [ ! -L "$glance" ] && owned_by_me "
 
     if [ -n "$stale" ]; then
       seg='wasitme: out of date'
+    elif [ "$head" = "$line" ]; then
+      # No agent's `"n":{` anywhere, so no agents (no logs yet, or a failed first scan): the contract's "empty"
+      # (display rule 4, after the stale rule above). Nothing is printed, never a verdict rebuilt from nothing.
+      :
     else
       # --- the engine's own line, if it has the glance shape
       sl=${head#*'"statusLine":"'}

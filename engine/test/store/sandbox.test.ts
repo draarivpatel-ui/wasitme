@@ -77,6 +77,41 @@ test("engine.json records the feature test once per node version, keeping the in
   }
 });
 
+test("engine.json rewrite keeps arrays on one line, so the installer's sed still reads the tracked agents", () => {
+  const env = tempEnv("enginejson-arrays");
+  try {
+    const p = join(env.root, "engine.json");
+    // The installer's layout (scripts/lib/engine.sh engine_json_write): one key per line, arrays inline.
+    writeFileSync(p, [
+      "{",
+      '  "schema": "wasitme.engine/1",',
+      '  "node": "/opt/node",',
+      '  "onPath": false,',
+      '  "agents": ["claude-code", "codex"],',
+      '  "permission": null,',
+      '  "scanArgs": ["--permission", "--allow-fs-read=/opt/x"],',
+      '  "app": null',
+      "}",
+      "",
+    ].join("\n"), { mode: 0o600 });
+    // The exact reader of scripts/lib/install_main.sh agents_from_install.
+    const agents = () => spawnSync("sed", ["-n", 's/^[[:space:]]*"agents":[[:space:]]*\\[\\(.*\\)\\][[:space:]]*,\\{0,1\\}$/\\1/p', p], { encoding: "utf8" }).stdout.replace(/["\s]/g, "");
+    assert.equal(agents(), "claude-code,codex", "the installer's sed reads the file as written by the installer");
+    assert.equal(recordPermissionFlag(p, { probe: () => "--permission", nodeVersion: "v26.8.1" }).how, "probed");
+    assert.equal(agents(), "claude-code,codex", "and still reads it after the engine recorded the permission flag");
+    const text = readFileSync(p, "utf8");
+    for (const line of text.trimEnd().split("\n").slice(1, -1)) assert.match(line, /^ {2}"[A-Za-z]+": [^{[\s].*$|^ {2}"[A-Za-z]+": \[.*\],?$/, `one key per line: ${line}`);
+    assert.match(text, /^ {2}"scanArgs": \["--permission",\s?"--allow-fs-read=\/opt\/x"\],$/m);
+    assert.match(text, /^ {2}"permissionNode": "v26\.8\.1"$/m, "the last key carries no trailing comma");
+    assert.deepEqual(JSON.parse(text), {
+      schema: "wasitme.engine/1", node: "/opt/node", onPath: false, agents: ["claude-code", "codex"], permission: null,
+      scanArgs: ["--permission", "--allow-fs-read=/opt/x"], app: null, permissionFlag: "--permission", permissionNode: "v26.8.1",
+    });
+  } finally {
+    env.cleanup();
+  }
+});
+
 test("a full scan under node --permission with the D49 grants: readers AND config collector work, sandbox reported", { skip: FLAG === null ? "no permission flag on this node" : false }, () => {
   const h = homeWithLogs();
   try {

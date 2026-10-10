@@ -43,6 +43,8 @@ if (process.env.FAKE_SAY === "failed") { console.error("wasitme: report failed (
 console.log("argv=" + process.argv.slice(2).join(" "));
 console.log("cwd=" + process.cwd());
 console.log("home=" + (process.env.WASITME_HOME ?? "unset"));
+console.log("claudedir=" + (process.env.WASITME_CLAUDE_DIR ?? "unset") + " codexdir=" + (process.env.WASITME_CODEX_DIR ?? "unset"));
+console.log("claudecfg=" + (process.env.CLAUDE_CONFIG_DIR ?? "unset") + " codexhome=" + (process.env.CODEX_HOME ?? "unset"));
 console.error("stderr-line");
 process.exit(Number(process.env.FAKE_EXIT ?? "0"));
 EOF
@@ -146,6 +148,26 @@ expect "the engine's stderr reaches the person" 0 "stderr-line"
 # scans and writes its results into that folder, which must never be one the project chose).
 run "$h" "WASITME_HOME=$tmp/repo/wasitme-data" -- report --md
 expect "WASITME_HOME from the session's environment never reaches the engine" 0 "home=unset"
+# The folders `report` scans are the install's too: a session's environment (a project's settings) must not aim the scan at
+# a log folder of its own, because the results are written into ~/.wasitme and the foreign sessions would stay in the
+# history. Without a recorded folder the WASITME_*_DIR overrides are dropped; with one (engine.json's claudeDir/codexDir,
+# recorded by the installer) it is what the engine sees, whatever the session says. The paths here are not under $tmp: the
+# output must never carry one of ours, and these are only names.
+run "$h" WASITME_CLAUDE_DIR=/evil/claude WASITME_CODEX_DIR=/evil/codex -- report --md
+expect "WASITME_CLAUDE_DIR and WASITME_CODEX_DIR from the session never reach the engine" 0 "claudedir=unset codexdir=unset"
+h3=$(home h-json-dirs)
+cli=$(cli_in "$h3" main.js)
+{
+  printf '{\n  "schema": 1,\n  "version": "0.1.0",\n  "node": "%s",\n  "cli": "%s",\n' "$real_node" "$cli"
+  printf '  "claudeDir": "/recorded/claude",\n  "codexDir": "/recorded/codex",\n  "scanLabel": null\n}\n'
+} > "$h3/.wasitme/engine.json"
+chmod 600 "$h3/.wasitme/engine.json"
+run "$h3" -- report --md
+expect "the folders the installer recorded are the ones the engine scans" 0 "claudedir=/recorded/claude codexdir=/recorded/codex"
+run "$h3" WASITME_CLAUDE_DIR=/evil/claude WASITME_CODEX_DIR=/evil/codex CLAUDE_CONFIG_DIR=/evil/cfg CODEX_HOME=/evil/home -- report --md
+expect "a session cannot override them, by any of the four variables" 0 "claudedir=/recorded/claude codexdir=/recorded/codex"
+run "$h3" WASITME_CLAUDE_DIR=/evil/claude WASITME_CODEX_DIR=/evil/codex -- status
+expect "status gets the same folders" 0 "claudedir=/recorded/claude codexdir=/recorded/codex"
 run "$h" -- report --md --agent codex
 expect "the Codex skill's arguments pass through" 0 "argv=report --md --agent codex"
 run "$h" -- status
@@ -304,6 +326,41 @@ rc=$?
 expect "nor through a link that resolves into the session's folder" 0 "isn't where it was"
 cases=$((cases + 1))
 [ -e "$tmp/EVIL-abs-node" ] && fail "a node inside the session's folder was run from an absolute PATH entry"
+
+# --- a session started in HOME (or above it) has no project of its own to protect against, so a per-user node (nvm, fnm,
+# volta, asdf all live under HOME) is accepted there; from a project folder inside HOME the guard still applies.
+hh=$(home h-homesession)
+mkdir -p "$hh/.nvm/bin"
+printf '#!/bin/sh\ntouch "%s/USED-home-node"\nexec "%s" "$@"\n' "$tmp" "$real_node" >"$hh/.nvm/bin/node"
+chmod +x "$hh/.nvm/bin/node"
+cli=$(cli_in "$hh" main.js)
+engine_json "$hh" "/nonexistent/node" "$cli" 600
+cases=$((cases + 1))
+out=$(cd "$hh" && env -i PATH="$hh/.nvm/bin:/usr/bin:/bin" HOME="$hh" /bin/sh "$tmp/pathcopy/scripts/run.sh" report --md 2>&1)
+rc=$?
+expect "a session started in HOME may use a node under HOME" 0 "argv=report --md"
+out=$(cd "$tmp" && env -i PATH="$hh/.nvm/bin:/usr/bin:/bin" HOME="$hh" /bin/sh "$tmp/pathcopy/scripts/run.sh" report --md 2>&1)
+rc=$?
+expect "and so may a session started in a folder above HOME" 0 "argv=report --md"
+mkdir -p "$hh/proj"
+rm -f "$tmp/USED-home-node"
+out=$(cd "$hh/proj" && env -i PATH="$hh/proj/bin:/usr/bin:/bin" HOME="$hh" /bin/sh "$tmp/pathcopy/scripts/run.sh" report --md 2>&1)
+rc=$?
+expect "a node inside the project folder is still refused (the session in a folder under HOME)" 0 "isn't where it was"
+cases=$((cases + 1))
+[ -e "$tmp/USED-home-node" ] && fail "control: no node under the project folder was on PATH, so the home node must not have run"
+
+# --- the hint for a terminal names the command, never a fixed path (the installer's --prefix puts it elsewhere)
+h=$(home h-hint)
+cli=$(cli_in "$h" main.js)
+engine_json "$h" "$real_node" "/nonexistent/cli.js" 600
+run "$h" -- report --md
+expect "a missing engine says what to run in a terminal" 0 "wasitme doctor --repair"
+expect_not "without pointing at one fixed install location as the command" "Run ~/.local/bin/wasitme"
+engine_json "$h" "$real_node" "$cli" 600
+run "$h" FAKE_SAY=failed -- report --md
+expect "a failed report says what to run in a terminal" 0 "run in a terminal: wasitme doctor"
+expect_not "and does not start the command with a fixed path" "terminal: ~/.local/bin/wasitme"
 
 # --- nothing hostile ever ran
 cases=$((cases + 1))

@@ -7,6 +7,160 @@ All notable changes to wasitme are recorded here, newest release first. The form
 Unreleased changes are kept as one small file each in `changelog.d/` (see its README) and are folded in here when a
 release is cut.
 
+## 0.1.1 - 2026-10-09
+
+### Changed
+
+- **The showcase site waits 42 days before it names a side, like the method does.** The page now replays the demo's
+  42 days one day at a time: one tick per tool error, your changes as stickers above the line, Claude Code's updates as
+  tags below it, and a stamp that keeps saying "Too early to tell" until the last complete day closes and the excluded
+  today is hatched out. Then come the vote with its ranges, five demo histories, the synthetic calibration, every
+  surface, what wasitme keeps, and the install. Every number, date and sentence is generated from `wasitme demo`; with
+  reduced motion or without JavaScript the page shows every figure in its final state and nothing is pinned.
+- **A new film.** The film on the site and behind the README teaser is new: 37 seconds on a paper case line, drawn from
+  `wasitme demo` data and the app's own captures of it, with music and sound effects and no voice-over. Every line is on screen, every product shot
+  carries a demo-data label, and the site's text version lists each scene and every on-screen line.
+
+### Fixed
+
+- **A menu bar app opened with `--home <dir>` now keeps every engine run inside that folder.** The window and
+  `--self-check` read the folder you named, but the engine child it started for Check Again, Copy Report and Open as
+  Markdown was never told about it and fell back to the real `~/.wasitme`: it could export the real report, or scan into
+  the real folder, while the window showed the other one. Every engine run now carries the folder the app reads. Nothing
+  changes for the default folder, and nothing is stored or sent anywhere new.
+- **A window at 100% no longer gets a range of zero width.** When every edit in both windows was blind, for example,
+  the binomial variance floor dropped to zero, the standard error collapsed to rounding noise, and the range came out
+  as x1.0023 to x1.0023: it excluded x1 on two identical windows. The floor now keeps the same 0.5 pseudo-count of
+  non-events that it already kept for events, so such a range includes x1 and a 100% window adds its share of
+  uncertainty when the other window is not at 100%. Rates below 100% are unchanged.
+- **A resumed Claude Code session no longer counts copied history as subagent tokens.** When a resumed session spawned a
+  fork subagent, or ran an aside, whose transcript re-logged a response from the earlier session under a new record id,
+  that response's tokens were added to the exchange's subagent tokens although the earlier session had already counted
+  them. Such copies are now recognised by their request id, as they already were in a session that was not resumed.
+  Subagent tokens are a context-only number and never decide a finding; stored history re-derives them from the logs
+  that still exist.
+- **A clock reset in the middle of a Codex exchange no longer inflates its duration.** The Codex reader measured an
+  exchange's duration as its latest record time minus its earliest, so setting the clock back an hour mid-exchange added
+  the hour, and a clock that jumped a day ahead and was corrected added the day. It now measures the records in file
+  order with the same clock-reset handling the Claude Code reader already used. Duration is a context-only number and
+  never decides a finding; stored Codex history re-derives it from the logs that still exist.
+- **A Codex session started while the clock was set ahead no longer dates a provider switch in the future.** The
+  Codex provider-switch event (your side, strong) took its time from the session's first record without checking it
+  against the current time, so a session stamped years ahead put a switch on that future day and, sorted last, hid the
+  real switches before and after it. The time is now bounded like every other log time (no later than one day past
+  now); when the first record is out of range, the records written right after it date the session instead, and a
+  session with no usable time is left out of the provider comparison. Stored Codex events are re-derived from the logs
+  that still exist.
+- **The Control Center keeps your place when it refreshes.** Every repaint replaced the whole window, so opening a section
+  such as "How wasitme decided" while scrolled down, or the app refreshing itself (on each scan, a settings change or an
+  appearance change), sent you back to the top of the page. The position is now kept while you stay on the
+  same page and agent. Opening another page or switching agent still starts at the top.
+- **The installer keeps the agents you chose after the engine's first scan.** The first scan outside the sandbox records
+  the Node permission flag in `engine.json`, and it rewrote the file with every list spread over several lines. The
+  installer reads the tracked agents from a single line, so a later `--update`, `--repair` or `--add` fell back to every
+  agent folder it found, and `--add codex-plugin` on an install that tracked only Claude Code could fail. The engine
+  now keeps the installer's layout: one key per line, lists on that line.
+- **One-word replies such as "Continue." or "Thanks." count as English again.** The language check treated any word
+  containing a period as code, so a short reply ending in a period was judged "cannot tell", and that counted as not
+  English. Someone who often answers in one word could see pushback switched off with the reason that their prompts
+  are not in English. Trailing sentence punctuation, and quotes or brackets around a word ("Continue." in quotes),
+  are now ignored when deciding whether a word looks like code; names like `parser.ts.` are still treated as code. The next scan re-reads the prompt language from the logs that still exist.
+- **The Control Center no longer lists or numbers prompt-hash changes.** The command line, the Markdown report and the
+  Claude Code pane already left out the "system prompt changed" records the readers write when the agent's built-in system prompt
+  changes. The Control Center showed them, labelled with an internal name and counted among the agent's changes, so its
+  letters (A, B, C) could run ahead of the ones in a copied report. It now hides them too, so they no longer take a letter
+  from the changes around them.
+- **`--dry-run` can no longer delete the installed app.** A dry run that stopped part-way (for example because the menu
+  bar agent's plist had lost its "managed by the wasitme installer" comment) ran the installer's undo steps for real,
+  and the undo removed `~/Applications/wasitme.app` even though the dry run had only printed the move, then ended with
+  "nothing was changed". A dry run now skips every undo step, because it never did anything to undo.
+- **An installer that gives up waiting for the install lock no longer deletes the other run's staging folder.** When a
+  second install or update timed out waiting for the first one (for example while the first sat at a prompt), its
+  rollback removed `~/.wasitme/versions/.stage`, which belonged to the run holding the lock, and that run then failed
+  with a confusing error. The staging folder is now removed only by the run that holds the lock.
+- **Checking a second cluster scheme can no longer make a range narrower.** With at least 5 sessions in each
+  window, wasitme also measures the change with session-day clusters and keeps the larger standard error. It used to
+  take that scheme's degrees of freedom along with it, which are much higher, so when its error was larger by a
+  hair the range got narrower, the smallest detectable change got smaller, and an indicator with too few degrees of
+  freedom to count could start counting. The larger error now comes with the smaller of the two degrees of freedom,
+  so the second check only ever makes a result more cautious (D81). A from-scratch repeat of the calibration under
+  the new rule found the same false-alarm and detection counts as before.
+- **A move of exactly 25% is no longer missed because of rounding.** METHOD says an indicator is material when its ratio moved by at
+  least 25% (x1.25 up or x0.75 down). The ratio is computed from logarithms, so an exact x1.25 could come out as
+  1.2499999999999998 and be judged too small, even with a range that excluded x1. The threshold now has the same tiny
+  floating-point tolerance the one-point floor already had. Only ratios within a billionth of the boundary change.
+- **The `/wasitme:report` wrapper keeps a session from aiming the scan at other log folders, finds a per-user Node from
+  your home folder, and its hints say where the command usually lives instead of one fixed path.** A project's settings could set `WASITME_CLAUDE_DIR` or
+  `WASITME_CODEX_DIR` for a session, and a run while the results were missing or stale would then scan that folder and
+  keep its sessions in your history; the wrapper now drops those variables and gives the engine the log folders the
+  install recorded. A session started in your home folder (or above it) is no longer refused every Node under your
+  home, such as nvm's, when the recorded Node has moved. The "run this in a terminal" hints say `wasitme doctor` and
+  where the command usually lives, instead of a path that does not exist after `install.sh --prefix`.
+- **A damaged results file can no longer crash `wasitme` and `wasitme report`.** An indicator id named like a built-in
+  object key (`constructor`, `toString`) in `snapshot.json` made both commands stop with "report failed (internal)".
+  Such ids are now treated like any other unknown id.
+- **A `/model` switch is no longer dropped because another session was running at the same moment.** A `/model`
+  or `/effort` typed as a session's first prompt is ignored when it only re-selects the value already in effect. To
+  tell, wasitme looked for the exchange the command was typed in, but in any session, so a prompt sent in a second
+  Claude Code session before the first one answered could make a real switch look like a re-pick. The switch then
+  vanished from the timeline and the finding could move from "your side" to "agent side". Claude Code change events
+  now record which session they came from (as the same salted id the exchanges already carry, never shown in the
+  outputs), and the check stays inside that session (D81). The next scan re-reads the events from the logs that still
+  exist.
+- **The Report page can no longer be broken by an absurd recent-window length.** The page built one column per day of the
+  recent window as the snapshot states it, so a damaged or hand-edited snapshot with a huge value could stall the page or
+  stop it drawing. The daily table now never covers more than the 42 days a strip holds.
+- **`wasitme scan --until` no longer overwrites your live results.** A time-travelled scan was read-only for `wasitme`
+  and `wasitme report`, but `wasitme scan --until <time>` without `--read-only` wrote the past analysis over the
+  current results (stamped as current), cut the saved progress back to that day and replaced the saved decision, which
+  could throw away a pending confirmation and restart its wait. `--until` now always implies `--read-only`: the scan writes nothing and
+  prints the past analysis as JSON.
+- **The Setup page labels what a real scan records.** On real data the Control Center's Setup page called the installed
+  version "Version" with no link to the update that brought it, and showed "Entrypoint", "Instructions on" and
+  "Instructions bytes" as raw names, while `wasitme demo` showed a tidier page built from names no scan writes. Now the
+  version row is named after the agent and links to its last update, and the other rows read "Permission mode",
+  "Entry point", "Plugins enabled", "Plugins installed" and one CLAUDE.md (or AGENTS.md) row with the file's size in
+  bytes, or "none". The demo and the shared test documents now use exactly the names a scan writes, so the demo shows
+  the page you get. Nothing you have stored changes.
+- **A test copy of the app built somewhere else (a `dist/` build, say) with a temporary `--home` no longer pops up, or
+  shuts down, the installed one.** The
+  one-copy-per-user check counted every running app with wasitme's bundle id, so a `dist/` build started with its own
+  home beside the installed app handed off to it (opening its popover on screen) and quit, and an installed app that
+  launchd restarted while such a copy ran quit without being restarted. Only another copy of the same app bundle, at the
+  same place on disk, now counts; two launches with the same home still collide on the per-home lock as before. Two copies at the same place on disk
+  still hand off to each other, whatever their `--home`: the check cannot see another copy's home.
+- **The Sources page names a paused indicator and its agent in words.** A paused indicator used to be listed by its
+  internal id and the agent's id ("readsPerEdit claude-code: the reader changed; re-reading"). It now reads "Reads per
+  edit Claude Code: the reader changed; re-reading", with the same labels the rest of the Control Center uses.
+- **An out-of-date snapshot with no agents says so, instead of "Loading".** When a Mac with no Claude Code or Codex logs
+  went more than two hours without a scan (or the clock jumped), every page except Sources and Settings said "Loading.
+  Reading wasitme's status file." for as long as the snapshot stayed old. They now say "Out of date.", why (how long ago,
+  that the status file is dated in the future, or that it has no usable time), and what wasitme found, and link to Sources.
+- **The status line stays blank when there is nothing to report yet.** With no logs found, or after a first scan that
+  failed, the status line showed "wasitme: can't tell which", a verdict that claims the numbers moved. It now prints
+  nothing until there is an agent to report on, as the contract's "empty" rule says; an old file still shows
+  "wasitme: out of date".
+- **One runaway day can no longer stretch the Control Center's daily strip off the page.** The strip drew one tick per
+  event (1 px tall with a 1 px gap once a day had more than 25), so a day with thousands of reads or tool errors made the
+  strip thousands of pixels tall and the page thousands of shapes. A column now holds at most 60 ticks and ends in an open arrowhead when the day had more. The exact
+  count is still in the day's hover text and in the chart's text description.
+- **A day count outside the contract's range can no longer crash the menu bar app.** A `glance.json` that held a strip count
+  near the largest whole number the app can hold (far above the schema's limit of one billion) made the popover and the
+  desktop panel stop with an arithmetic overflow every time they drew. The app now keeps those counts within the
+  schema's range before it draws and does its chart rounding in floating point, so a damaged file draws a chart (scaled
+  to the clamped day) instead of crashing, until the next scan rewrites it.
+- **`uninstall.sh --only ... --dry-run` prints a plan that matches the real run.** It used to print a shell error about a
+  temporary folder that a dry run never creates, leave out the `rmdir` of folders the installer had made (such as
+  `~/.claude` for the status line), and plan a `wasitme statusline uninstall` call that the real run never makes because
+  the settings file is restored first. The plan now lists those folders and drops the extra call.
+- **The installer, the uninstaller and `wasitme statusline` now recognise wasitme's status line however it was
+  written.** The installer writes the status-line command shell-quoted, while `wasitme statusline install` wrote the
+  plain path, and each side only recognised its own spelling. With a space or `~` in the home folder or `--prefix`, an
+  uninstall could say "Nothing to remove" or finish without a word while `settings.json` still pointed at the deleted
+  status-line command, and an install said you "already have a status line" about wasitme's own. Both spellings now count
+  as wasitme's everywhere: the installer reports it as already set, and `wasitme statusline uninstall` removes it before
+  the command goes. `wasitme statusline install` now writes the quoted spelling too, so a path with a space in it runs.
+
 ## 0.1.0 - 2026-10-08
 
 ### Added

@@ -150,6 +150,21 @@ test("status line: the date arithmetic agrees with Date.UTC for 250 dates 2020�
   }
 });
 
+test("status line: a fresh glance with no agents (no logs yet, or a failed first scan) is the contract's 'empty': nothing printed; stale still says so", () => {
+  const h = home();
+  try {
+    const empty = { ...readJson(`${ROOT}contract/fixtures/glance/empty.json`), generatedAt: GEN };
+    const failed = { ...empty, scanOk: false, scanError: "internal" };
+    for (const [what, g] of [["no logs", empty], ["failed first scan", failed]] as const) {
+      writeGlance(h, g);
+      assert.deepEqual(run(h), { out: "", err: "", status: 0 }, what);
+      assert.equal(run(h, { now: GEN_S + 7201 }).out, "wasitme: out of date\n", `${what}, stale: the stale rule comes first`);
+    }
+  } finally {
+    h.cleanup();
+  }
+});
+
 // ───────────────────────────── nothing trustworthy → nothing printed ─────────────────────────────
 
 test("status line: no glance, another schema, a file that does not promise numbers only, a pretty-printed or damaged file → silent", () => {

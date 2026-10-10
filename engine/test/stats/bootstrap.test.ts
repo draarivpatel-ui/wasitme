@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { bootstrapRatio, quantileSorted } from "../../src/analysis/stats/bootstrap.js";
+import { analyticRatio } from "../../src/analysis/stats/analytic.js";
+import { bootstrapRatio, floorVariance, quantileSorted } from "../../src/analysis/stats/bootstrap.js";
 import { Rng } from "../../src/analysis/stats/rng.js";
 import type { Cluster } from "../../src/analysis/stats/types.js";
 
@@ -92,6 +93,33 @@ test("zero events in both windows never produces a 'change' (variance floor)", (
   }
   const unfloored = bootstrapRatio(r, b, { resamples: 500, floor: "none" });
   assert.ok(unfloored.t95.lo > 1, "documents why the floor exists");
+});
+
+test("a window at 100% keeps a binomial floor: identical all-events windows never look like a change", () => {
+  // Every cluster has num == den (say every edit blind) in both windows. The bootstrap sees no noise at all, and the
+  // binomial floor (1 − r)/(num + 0.5) used to be exactly 0 at r = 1, so the SE collapsed to rounding noise (2e-16) and
+  // the range x1.0023–x1.0023 excluded 1×. The mirror of the zero-events pseudo-count keeps it open.
+  const cells = (prefix: string, k: number, den: (i: number) => number): Cluster[] =>
+    Array.from({ length: k }, (_, i) => ({ id: `${prefix}${i}`, num: den(i), den: den(i) }));
+  for (const [name, r, b] of [
+    ["equal cells", cells("r", 6, () => 9), cells("b", 6, () => 12)],
+    ["unequal cells", cells("r", 6, (i) => 8 + i * 3), cells("b", 6, (i) => 10 + i * 2)],
+  ] as const) {
+    for (const est of ["bootstrap", "analytic"] as const) {
+      const out = (est === "bootstrap" ? bootstrapRatio : analyticRatio)(r, b, { resamples: 2000, floor: "binomial", smallSample: "cr2" });
+      const label = `${name}/${est}: ${JSON.stringify({ se: out.se, t95: out.t95 })}`;
+      assert.ok(out.ok, label);
+      const D = r.reduce((s, c) => s + c.den, 0), E = b.reduce((s, c) => s + c.den, 0);
+      const minSe = Math.sqrt(floorVariance("binomial", D, D, 0.5) + floorVariance("binomial", E, E, 0.5));
+      assert.ok(out.se >= minSe * (1 - 1e-12), label);
+      assert.ok(out.t95.lo < 1 && out.t95.hi > 1, label);
+    }
+  }
+  // The floor itself: positive at 100%, the 0.5 pseudo-count mirrored (0.5 / (den + 0.5) non-events); below 100% unchanged.
+  const near = (a: number, b: number) => assert.ok(Math.abs(a / b - 1) < 1e-12, `${a} vs ${b}`);
+  near(floorVariance("binomial", 54, 54, 0.5), (0.5 / 54.5) / 54.5);
+  near(floorVariance("binomial", 53, 54, 0.5), (1 - 53 / 54) / 53.5);
+  assert.equal(floorVariance("binomial", 0, 54, 0.5), 2);
 });
 
 test("cr2 reduces to the K/(K−1) correction for equal-size clusters, and widens for unequal ones", () => {

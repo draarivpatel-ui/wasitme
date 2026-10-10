@@ -73,14 +73,13 @@ public actor EngineRunner {
 
     /// `wasitme history clear --yes --json`: the Settings page's Clear History, run only after the user confirmed it in a
     /// native sheet. A fixed argv (`[cli, "history", "clear", "--yes", "--json"]`), deliberately NOT one of the
-    /// `EngineAction`s, so the raw-string entry point can never reach it. `WASITME_HOME` names this runner's own folder,
-    /// so exactly the history the app reads is the history cleared. Exit 1 (a scan held the lock; nothing was deleted)
+    /// `EngineAction`s, so the raw-string entry point can never reach it. `WASITME_HOME` names this runner's own folder
+    /// (set for every run, see `execute(argv:config:environment:)`), so exactly the history the app reads is the history cleared. Exit 1 (a scan held the lock; nothing was deleted)
     /// comes back as `EngineError.nonZeroExit(code: 1, ...)`.
     public func clearHistory() async throws -> HistoryClearResult {
         let config = try EngineConfigLoader.load(from: directory)
-        var env = EngineEnvironment.make(base: baseEnvironment, node: config.node,
+        let env = EngineEnvironment.make(base: baseEnvironment, node: config.node,
                                          claudeDir: config.claudeDir, codexDir: config.codexDir)
-        env["WASITME_HOME"] = directory.url.path
         let out = try await execute(argv: HistoryClearResult.argv(cli: config.cli), config: config, environment: env)
         guard let result = HistoryClearResult.parse(out) else {
             throw EngineError.invalidArgument("history clear did not answer with wasitme.history-clear/1")
@@ -97,6 +96,12 @@ public actor EngineRunner {
     }
 
     private func execute(argv: [String], config: EngineConfig, environment: [String: String]) async throws -> ProcessResult {
+        // Every run names the folder this runner (and the app's GlanceStore) reads, so the engine never falls back to
+        // `$HOME/.wasitme` when the app was opened with `--home <dir>`: a sandbox instance's Check Again, Copy Report and
+        // `--self-check` then scan, report and diagnose that folder, never the real one. For the default folder this is
+        // the very path the engine would pick anyway. Set last, so an inherited value can never redirect a run.
+        var environment = environment
+        environment["WASITME_HOME"] = directory.url.path
         let spec = ProcessSpec(
             executable: config.node,
             arguments: argv,

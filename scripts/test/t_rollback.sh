@@ -106,6 +106,8 @@ sleep 30 &
 HOLDER=$!
 mkdir -p "$W/.install.lock"
 printf '%s\n' "$HOLDER" >"$W/.install.lock/pid"
+mkdir -p "$W/versions/.stage/engine"   # the holder is mid-install: its staging folder exists
+printf 'holder work\n' >"$W/versions/.stage/engine/file"
 export WASITME_LOCK_WAIT=1
 inst_from $CORE_ONLY
 unset WASITME_LOCK_WAIT
@@ -113,6 +115,9 @@ kill "$HOLDER" 2>/dev/null
 wait "$HOLDER" 2>/dev/null
 assert_rc 1 "a lock held by a live process makes the second installer give up"
 assert_contains "$(err)" "another wasitme install or uninstall is running" "message explains"
+assert_file "$W/versions/.stage/engine/file" "an installer that never got the lock must not delete the lock holder's staging folder"
+assert_dir "$W/.install.lock" "and it leaves the holder's lock alone"
+rm -rf "$W/versions/.stage"
 rm -rf "$W/.install.lock"
 
 t_section "plugin failures undo only the plugin"

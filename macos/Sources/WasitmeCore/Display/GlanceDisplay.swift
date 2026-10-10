@@ -86,6 +86,14 @@ public struct AgentDisplay: Equatable, Sendable, Identifiable {
         strip = a.strip.map { s in
             var s = s
             s.metric = TextSanitizer.clean(s.metric, maxCharacters: 32)
+            // The schema's range for a day's counts (contract/glance.v1.schema.json: 0...1e9). A hostile file's Int.max
+            // would otherwise overflow the sums and roundings the views do over the days.
+            s.days = s.days.map { d in
+                var d = d
+                d.k = min(max(d.k, 0), Self.maxStripCount)
+                d.n = min(max(d.n, 0), Self.maxStripCount)
+                return d
+            }
             return s
         }
         events = a.events.prefix(5).map { e in
@@ -96,6 +104,9 @@ public struct AgentDisplay: Equatable, Sendable, Identifiable {
             return e
         }
     }
+
+    /// The schema's `count` maximum (contract/glance.v1.schema.json).
+    static let maxStripCount = 1_000_000_000
 
     static func displayName(_ id: AgentID) -> String {
         let clean = TextSanitizer.clean(id.rawValue, maxCharacters: 32)

@@ -113,6 +113,33 @@ import Testing
         #expect(popover.markers.count == 1 || zip(popover.markers, popover.markers.dropFirst()).allSatisfy { $1.x - ($0.x + $0.width) >= 2 - 0.001 }, "\(xs)")
     }
 
+    /// A strip day outside the schema (count above 1e9) must not trap: `Int(...) * 5` overflowed for k >= 2^63 - 512.
+    @Test(arguments: [Int.max, Int.max - 511, 1_000_000_000])
+    func anOutOfRangeStripCountDoesNotTrap(k: Int) throws {
+        let d = try display("glance/you-timeline.json")
+        let strip = try #require(d.primary?.strip)
+        let last = try #require(strip.days.last?.d)
+        let huge = Strip(metric: strip.metric, days: strip.days.dropLast() + [StripDay(d: last, k: k, n: 5)], window: strip.window)
+        let l = StripLayout.make(strip: huge, events: [], width: 320, compactHeight: 28, kRow: true, caption: "c")
+        let column = try #require(l.columns.last)
+        #expect(column.height.isFinite && column.height > 0 && column.height <= 28 + 0.001, "the tallest column fills the chart")
+    }
+
+    /// The display model bounds a hostile strip to the schema's range, so no later sum over the days can overflow either.
+    @Test func theDisplayBoundsStripCountsToTheSchemaRange() throws {
+        let entry = try #require(Repo.manifest.first { $0.file == "glance/you-timeline.json" })
+        let data = try Data(contentsOf: Repo.fixtures.appendingPathComponent(entry.file))
+        var agent = try #require(ContractFile.readGlance(data).glance?.agents.first)
+        let days = [StripDay(d: "2026-10-01", k: Int.max, n: Int.max), StripDay(d: "2026-10-02", k: Int.max, n: -5),
+                    StripDay(d: "2026-10-03", k: -7, n: 3)]
+        agent.strip = Strip(metric: "tool_errors", days: days)
+        let shown = try #require(AgentDisplay(agent, isCurrent: true).strip)
+        #expect(shown.days.map(\.k) == [1_000_000_000, 1_000_000_000, 0])
+        #expect(shown.days.map(\.n) == [1_000_000_000, 0, 3])
+        let layout = StripLayout.make(strip: shown, events: [], width: 320, compactHeight: 28, kRow: true, caption: "c")
+        #expect(!PopoverView.stripAccessibility(layout, metric: nil, strip: shown).isEmpty)
+    }
+
     @Test func markerLettersRunPastZ() {
         #expect(StripLayout.letters(0) == "A" && StripLayout.letters(25) == "Z" && StripLayout.letters(26) == "AA")
     }

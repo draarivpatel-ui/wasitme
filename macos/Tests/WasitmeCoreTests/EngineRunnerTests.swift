@@ -257,6 +257,25 @@ private func text(_ o: EngineOutput) -> String { String(decoding: o.stdout, as: 
         #expect(!out.contains("/should/not/leak"))
     }
 
+    /// Every engine run names the folder the app itself reads (`--home <dir>`), so a sandbox instance never scans, reports
+    /// or diagnoses the real `~/.wasitme` (the engine otherwise falls back to `$HOME/.wasitme`).
+    @Test(arguments: [EngineAction.scan, .report, .compare, .statusline, .doctor])
+    func everyRunNamesTheFolderTheAppReads(action: EngineAction) async throws {
+        let e = try FakeEngine(nodeBody: "env")
+        let out = text(try await e.runner(env: ["HOME": "/home/test"]).run(action))
+        let lines = Set(out.split(separator: "\n").map(String.init))
+        #expect(lines.contains("WASITME_HOME=\(e.directory.url.path)"), "\(action)")
+        #expect(lines.contains("HOME=/home/test"), "HOME itself is untouched")
+    }
+
+    /// WASITME_HOME is not passed through from the app's own environment: the runner's folder always wins.
+    @Test func anInheritedWasitmeHomeCannotRedirectARun() async throws {
+        let e = try FakeEngine(nodeBody: "env")
+        let out = text(try await e.runner(env: ["HOME": "/home/test", "WASITME_HOME": "/elsewhere"]).run(.report))
+        let lines = Set(out.split(separator: "\n").map(String.init))
+        #expect(lines.contains("WASITME_HOME=\(e.directory.url.path)") && !lines.contains("WASITME_HOME=/elsewhere"))
+    }
+
     @Test func environmentBuilderIsPure() {
         let node = URL(fileURLWithPath: "/opt/node/bin/node")
         let env = EngineEnvironment.make(base: ["HOME": "/h", "SECRET": "x", "TZ": "", "LANG": "C"], node: node)

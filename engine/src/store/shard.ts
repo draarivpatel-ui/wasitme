@@ -41,7 +41,7 @@ export interface Shard {
 }
 
 const EVENT_FIELDS: readonly (keyof ChangeEvent)[] = [
-  "id", "t", "day", "agent", "kind", "side", "strength", "provenance", "from", "to", "evidence", "userInitiated", "note",
+  "id", "t", "day", "agent", "kind", "side", "strength", "provenance", "from", "to", "evidence", "userInitiated", "note", "session",
 ];
 const STATS_FIELDS: readonly (keyof ParseStats)[] = ["files", "filesFailed", "badLines", "truncatedTail", "unknownTypes", "duplicates", "badTimestamps", "futureMin"];
 

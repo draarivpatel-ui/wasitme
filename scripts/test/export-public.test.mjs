@@ -184,7 +184,9 @@ test("--owner replaces the OWNER placeholder in every file that has one; without
     // checks placeholders first and the changelog second, so a refusal that names the changelog got past the placeholders.
     const rel = spawnSync("sh", [join(out, "scripts", "release.sh"), "--strict", "--out", join(base, "release-out")], { cwd: out, env: ENV, encoding: "utf8" });
     assert.doesNotMatch(rel.stderr + rel.stdout, /OWNER placeholders are still in public files|PLACEHOLDER: /, "no OWNER placeholder is left for release.sh --strict to refuse");
-    assert.match(rel.stderr, /CHANGELOG\.md has no notes/, `release.sh --strict stopped at the changelog gate, after the placeholder gate:\n${rel.stderr}`);
+    // On a release commit the changelog already has the version's notes, so the refusal comes from the next gate (the
+    // build needs the locked TypeScript, which this scratch tree never installs): past the placeholders either way.
+    assert.match(rel.stderr, /CHANGELOG\.md has no notes|TypeScript is not installed/, `release.sh --strict stopped at a gate after the placeholder gate:\n${rel.stderr}`);
     // The rewrite keeps modes, and the checkout is still one commit with the files committed as rewritten.
     assert.equal(git(out, "status", "--porcelain"), "");
     assert.equal(git(out, "rev-list", "--all", "--count"), "1");
@@ -310,6 +312,39 @@ test("a configured private phrase in a public file fails the export; it is match
     const ok = sh(["--no-checks", join(base, "ok")], { script: miniScript(repo), env: { WASITME_FORBIDDEN_PHRASES: "another synthetic phrase, yet another one" } });
     assert.equal(ok.status, 0, ok.stderr);
     assert.doesNotMatch(ok.stderr, /no forbidden phrase/);
+  } finally {
+    gone(repo, base);
+  }
+});
+
+test("a configured private phrase in a file or folder NAME, or inside a binary file, fails the export too, and is still never printed", () => {
+  // Path names are part of the public tree, and binary metadata (PNG text chunks, media tags) is where a name hides.
+  const cases = [
+    ["a file name", { "docs/notes.md": "harmless\n", [`docs/${PHRASE}-notes.md`]: "harmless\n" }],
+    ["a folder name", { [`testdata/${PHRASE.toUpperCase()}/a.txt`]: "harmless\n" }],
+    ["a binary file", { "img/shot.png": `\u0089PNG\r\n\0\0tEXtComment\0${PHRASE}\0\0` }],
+    ["a binary file, upper case", { "img/shot.bin": `\0\0${PHRASE.toUpperCase()}\0` }],
+  ];
+  for (const [name, files] of cases) {
+    const repo = miniRepo(files, ".gitattributes export-ignore\n");
+    const base = scratch();
+    const out = join(base, "public");
+    try {
+      const r = sh(["--no-checks", out], { script: miniScript(repo), env: { WASITME_FORBIDDEN_PHRASES: `another synthetic phrase\n${PHRASE}` } });
+      assert.equal(r.status, 1, `${name}: ${r.stderr}`);
+      assert.match(r.stderr, /forbidden phrase 2 of 2 \(in WASITME_FORBIDDEN_PHRASES\) found in/, name);
+      assert.ok(!`${r.stdout}${r.stderr}`.toLowerCase().includes(PHRASE), `${name}: the phrase itself is never printed, not even inside a path`);
+      assert.equal(existsSync(out), false, name);
+    } finally {
+      gone(repo, base);
+    }
+  }
+  // A phrase in the temporary folder the export is built in is not a hit: only names inside the tree count.
+  const repo = miniRepo({ "docs/notes.md": "harmless\n" }, ".gitattributes export-ignore\n");
+  const base = mkdtempSync(join(tmpdir(), `wasitme-export-test-${PHRASE}-`));
+  try {
+    const ok = sh(["--no-checks", join(base, "public")], { script: miniScript(repo), env: { WASITME_FORBIDDEN_PHRASES: PHRASE } });
+    assert.equal(ok.status, 0, ok.stderr);
   } finally {
     gone(repo, base);
   }

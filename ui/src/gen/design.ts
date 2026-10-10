@@ -98,6 +98,7 @@ export const CHART = {
     "denseAbove": 25,
     "denseTickHeight": 1,
     "denseTickGap": 1,
+    "maxTicks": 60,
     "columnWidth": 14,
     "lowNThreshold": 100
   },

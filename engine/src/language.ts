@@ -5,7 +5,9 @@
  *
  * Rule, in order:
  *  1. Code and noise are removed first: fenced and inline code, URLs, and tokens that look like paths or
- *     identifiers (contain `/ \ _ . = { } < >` or a digit).
+ *     identifiers (contain `/ \ _ . = { } < >` or a digit). Sentence punctuation at the end of a token, and quotes or
+ *     brackets around it, are ignored for this test, so "Continue." and '"Continue."' are words while "parser.ts." and
+ *     "foo()." are still identifiers.
  *  2. Fewer than 2 letters left → `undefined` (unknown: an image-only prompt, a pasted number, an emoji).
  *  3. Mostly non-Latin letters (Latin < 50% of all letters: CJK, Cyrillic, Greek, Arabic, …) → 0.
  *  4. Words are counted against two short lists: common English function / instruction words, and the most
@@ -16,7 +18,7 @@
  *     up ≥ 3% of the letters → 0, else 1. Short ASCII instructions are overwhelmingly English for the users this
  *     tool sees; the cost of a wrong guess is only that pushback (a support metric, never a vote, D30) stays on.
  *
- * Measured on nothing real: the unit tests (engine/test/store/language.test.ts) pin the examples it must get right.
+ * Measured on nothing real: the unit tests (engine/test/store/readers-wp12.test.ts) pin the examples it must get right.
  */
 
 const ENGLISH = new Set([
@@ -56,6 +58,9 @@ const FENCE = /```[\s\S]*?(```|$)/g;
 const INLINE = /`[^`\n]*`/g;
 const URL = /\b[a-z][a-z0-9+.-]*:\/\/\S+/gi;
 const CODEY = /[/\\_.={}<>\[\]()0-9#$%^*|~@]/;
+// Quotes and brackets around a word, and sentence punctuation at its end, are not code: '"Continue."', "(Thanks.)".
+const OPENING_WRAP = /^["'“‘«(\[]+/;
+const TRAILING_PUNCT = /[.!?,;:"'”’»)\]]+$/;
 
 /** 1 = English, 0 = not English, undefined = cannot tell (too few letters). */
 export function promptEnglish(text: string): 0 | 1 | undefined {
@@ -64,7 +69,9 @@ export function promptEnglish(text: string): 0 | 1 | undefined {
   const words: string[] = [];
   let letters = 0, latin = 0, accented = 0;
   for (const raw of cleaned.split(/\s+/)) {
-    if (!raw || CODEY.test(raw)) continue;
+    // Sentence punctuation at the end of a word ("Continue.", "Thanks.") is not code, nor are quotes or brackets around
+    // it ('"Continue."', "(Thanks.)"); "parser.ts.", '"parser.ts"' and "foo()." still are.
+    if (!raw || CODEY.test(raw.replace(OPENING_WRAP, "").replace(TRAILING_PUNCT, ""))) continue;
     for (const ch of raw) {
       if (!/\p{L}/u.test(ch)) continue;
       letters++;

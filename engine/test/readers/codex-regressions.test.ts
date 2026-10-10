@@ -9,7 +9,8 @@ import assert from "node:assert/strict";
 import { classify } from "../../src/readers/codex/text.js";
 import { fromResponseCall } from "../../src/readers/codex/tools.js";
 import type { Exchange } from "../../src/types.js";
-import { Rollout, testCtx, uuid, writeTree } from "../fixtures/codex/build.js";
+import { FUTURE_SLACK_MS } from "../../src/util.js";
+import { NOW, Rollout, testCtx, uuid, writeTree } from "../fixtures/codex/build.js";
 import { scan, sum } from "../fixtures/codex/harness.js";
 
 const text = (t: string) => [{ type: "text", text: t }];
@@ -297,6 +298,44 @@ test("model_provider: a switch between interactive sessions is one you·strong e
   assert.ok(!JSON.stringify(a.events).includes("synthetic-"), "provider names never leave the reader");
   const b = await scan(root, files.map((f) => f.id));
   assert.deepEqual(b.events.map((e) => e.id), a.events.map((e) => e.id), "stable across rescans");
+});
+
+test("model_provider: a session_meta dated in the future never dates a switch there nor hides the real ones", async () => {
+  const mk = (n: number, metaAt: string, at: string, provider: string) => {
+    const id = uuid(1170 + n);
+    const t = uuid(11700 + n);
+    const r = new Rollout(metaAt).meta({ id, source: "cli", originator: "codex-tui", provider })
+      .at(at).started(t).ctx(t).user(t, "synthetic").usage(t, `u${n}`, { input: 1, output: 1 }).complete(t);
+    return { id, stamp: at.replace(/:/g, "-").slice(0, 19), date: at.slice(0, 10).replace(/-/g, "/"), content: r.text() };
+  };
+  const limit = NOW.getTime() + FUTURE_SLACK_MS;
+  const provEvents = (s: Awaited<ReturnType<typeof scan>>) => s.events.filter((e) => e.note === "model_provider changed");
+  const h = (v: string) => testCtx().hash(v, "h:").slice(0, 10);
+
+  // A: the whole middle session was written with the clock years ahead (every record is rejected and deferred). It
+  // must not put a "you · strong" switch in 2031, and the sessions around it (both openai) are not a switch.
+  const a = [
+    mk(1, "2026-10-01T10:00:00Z", "2026-10-01T10:00:01Z", "openai"),
+    mk(2, "2031-10-02T10:00:00Z", "2031-10-02T10:00:01Z", "synthetic-gateway"),
+    mk(3, "2026-10-03T10:00:00Z", "2026-10-03T10:00:01Z", "openai"),
+  ];
+  const sa = await scan(writeTree(a).root, a.map((f) => f.id));
+  assert.ok(sa.events.every((e) => Date.parse(e.t) <= limit), "no event later than now + 1 day");
+  assert.deepEqual(provEvents(sa), []);
+
+  // B: only the session_meta carries the future time; the session itself ran on Oct 2. Both real switches are found,
+  // dated by the session's first sane leading record.
+  const b = [
+    mk(1, "2026-10-01T10:00:00Z", "2026-10-01T10:00:01Z", "openai"),
+    mk(2, "2031-10-02T10:00:00Z", "2026-10-02T10:00:01Z", "synthetic-gateway"),
+    mk(3, "2026-10-03T10:00:00Z", "2026-10-03T10:00:01Z", "openai"),
+  ];
+  const sb = await scan(writeTree(b).root, b.map((f) => f.id));
+  assert.ok(sb.events.every((e) => Date.parse(e.t) <= limit), "no event later than now + 1 day");
+  assert.deepEqual(provEvents(sb).map((e) => [e.t, e.from, e.to]), [
+    ["2026-10-02T10:00:01.000Z", h("openai"), h("synthetic-gateway")],
+    ["2026-10-03T10:00:00.000Z", h("synthetic-gateway"), h("openai")],
+  ]);
 });
 
 test("null-prototype safety: log keys like __proto__, constructor and toString are plain data everywhere", async () => {

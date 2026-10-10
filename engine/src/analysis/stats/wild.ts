@@ -10,7 +10,7 @@
  *     G_w/(G_w − 1) over the window's top-level units g (sessions or session-days; parents when two-level):
  *        V_w = G_w/(G_w − 1) · Σ_g E_g² / D_w²,   E_g = Σ_{k∈g} (n_k − R_w d_k),
  *     floored at the same Poisson/binomial floor as the bootstrap, carried to the rate scale:
- *        V_w ≥ (N_w + c)·(1 − r_w if binomial)/D_w².
+ *        V_w ≥ (N_w + c)·(1 − r_w if binomial, never below c/(D_w + c))/D_w².
  *     t = (R_r − R_b)/√(V_r + V_b). This is the log-ratio t linearised at the pooled (null) rate — the canonical
  *     linear-regression setting of the WCR (rates regressed on a window dummy), with no log of a bootstrap total
  *     that could be ≤ 0.
@@ -29,7 +29,7 @@
  *
  * Deterministic: the replicate stream is seeded from the windows' totals and sizes.
  */
-import { prepare, DEFAULT_RESAMPLES, type BootstrapOptions, type Prepared } from "./bootstrap.js";
+import { binomialShare, prepare, DEFAULT_RESAMPLES, type BootstrapOptions, type Prepared } from "./bootstrap.js";
 import { analyticRatio } from "./analytic.js";
 import { normalQuantile, studentTQuantile } from "./distributions.js";
 import { PSEUDO_COUNT } from "./ratio.js";
@@ -67,8 +67,7 @@ function unitsOf(w: Prepared, twoLevel: boolean): Units {
 /** Rate-scale variance floor (see the file header, step 1). */
 function rateFloor(binomial: boolean, N: number, D: number, pseudo: number): number {
   const n = Math.max(0, N);
-  const r = D > 0 ? Math.min(1, n / D) : 0;
-  return ((n + pseudo) * (binomial ? 1 - r : 1)) / (D * D);
+  return ((n + pseudo) * (binomial ? binomialShare(n, D, pseudo) : 1)) / (D * D);
 }
 
 /** CR1 variance of a window's rate for unit numerators `n` (the rate re-estimated from them), floored. */

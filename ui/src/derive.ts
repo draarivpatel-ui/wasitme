@@ -160,6 +160,9 @@ export function lineUpEvent(a: Agent): TEvent | null {
   return (side ? evs.find((e) => e.side === side) : null) ?? (evs.length === 1 ? evs[0]! : null);
 }
 
+/** The most days a strip shows: the snapshot schema's cap on `strip.days` (six weeks). */
+export const MAX_STRIP_DAYS = 42;
+
 export interface StripView { days: string[]; rows: StripDay[] | null; recentStart: number; baseShown: number }
 /** A strip day; `out` marks a day outside the engine's strip (not covered: no claim, drawn blank, never "–"). */
 export interface StripDay extends Day { out?: boolean }
@@ -169,7 +172,10 @@ export interface StripDay extends Day { out?: boolean }
  * drawn as –). With no comparison window, the strip's own day range (or, for events-only, the 42 days up to the
  * snapshot's day).
  */
-export function stripDays(a: Agent, show: number, rows: Day[] | null, fallbackEnd: string | null): StripView {
+export function stripDays(a: Agent, wanted: number, rows: Day[] | null, fallbackEnd: string | null): StripView {
+  // `wanted` can come from a snapshot (the recent window's length), and a snapshot is hostile input: the engine's strip
+  // is at most 42 days (snapshot schema maxItems), so never build more days than that, whatever the field says.
+  const show = Math.max(1, Math.min(Number.isFinite(wanted) ? Math.floor(wanted) : 1, MAX_STRIP_DAYS));
   let end: string | null = a.windows?.recent.to ?? null;
   if (!end && rows && rows.length) end = rows[rows.length - 1]!.d;
   if (!end) end = fallbackEnd ?? (a.timeline.length ? a.timeline[a.timeline.length - 1]!.day : null);

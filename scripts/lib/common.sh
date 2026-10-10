@@ -312,7 +312,9 @@ manifest_lines() {  # manifest_lines KIND: prints the matching lines in file ord
 TXN_STACK=""
 txn_begin()  { TXN_STACK="$1$NL$TXN_STACK"; }
 txn_commit() { TXN_STACK=${TXN_STACK#*"$NL"}; }
-txn_abort()  { ta_fn=${TXN_STACK%%"$NL"*}; TXN_STACK=${TXN_STACK#*"$NL"}; "$ta_fn" || true; }
+# Under --dry-run nothing real was done (run/write_file only print, yet they set the same "done" flags a real run
+# does), so there is nothing to undo, and an undo function would act on the person's real files. Pop and skip.
+txn_abort()  { ta_fn=${TXN_STACK%%"$NL"*}; TXN_STACK=${TXN_STACK#*"$NL"}; [ "$DRY" = 1 ] || "$ta_fn" || true; }
 
 # A component (app, plugins, ...) may open several transactions; on failure it unwinds back to its mark.
 COMP_MARK=""
@@ -547,3 +549,17 @@ app_is_ours() { [ -f "$1/Contents/Info.plist" ] && grep -q "$WASITME_BUNDLE_ID" 
 
 # node helper for JSON work (settings.json, package.json, marketplace.json). Node is guaranteed by preflight.
 jsonutil() { "$NODE" "$LIB_DIR/jsonutil.mjs" "$@"; }
+
+# statusline_state_of SETTINGS SHIM: jsonutil's statusline-state for the status-line shim, matching either spelling of its
+# command. The installer writes it shell-quoted (quote_arg: a path with a space or ~ gets quotes, and Claude Code runs the
+# command through a shell), while `wasitme statusline install` writes the raw path. Both are wasitme's, so "ours" wins if
+# either matches; a failure of the first call (no node, unreadable file) is returned as-is.
+statusline_state_of() {
+  sso_q=$(quote_arg "$2")
+  sso_st=$(jsonutil statusline-state "$1" "$sso_q" 2>/dev/null) || return 1
+  if [ "$sso_st" = present ] && [ "$sso_q" != "$2" ]; then
+    sso_raw=$(jsonutil statusline-state "$1" "$2" 2>/dev/null) || sso_raw=""
+    [ "$sso_raw" != ours ] || sso_st=ours
+  fi
+  printf '%s\n' "$sso_st"
+}

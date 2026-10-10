@@ -95,11 +95,12 @@ test("outputs satisfy the frozen contract (schema, semantic rules, copy lint, si
     assert.ok(s.agents.every((a: any) => a.calibrated === true && a.metrics.length === 8));
     assert.ok(r.attributions && r.attributions.length === 2 && r.attributions.every((x) => x.evaluation.tiers.length === 3));
     assert.equal(s.health.sandbox, false);
-    // Families whose numbers differ by agent are reported per agent (D62/D63 moved Claude's exchanges, context and
-    // events; research moved in both readers).
+    // Families whose numbers differ by agent are reported per agent (D62b moved Claude's exchanges; context moved in
+    // both readers, Claude once more for replayed-response copies). Research and events moved in both readers to the
+    // same numbers (Claude events: the D81 session id; Codex events: its provider-switch time fix, kept equal to Claude's).
     assert.deepEqual(Object.keys(s.health.parserVersions).sort(), [
-      "claudeCodeContext", "claudeCodeEvents", "claudeCodeExchanges", "codexContext", "codexEvents", "codexExchanges",
-      "friction", "interactive", "labels", "research", "toolErrors",
+      "claudeCodeContext", "claudeCodeExchanges", "codexContext", "codexExchanges",
+      "events", "friction", "interactive", "labels", "research", "toolErrors",
     ]);
 
     // The uncalibrated path (an artifact that passed no agent, through the test seam): row 1, "Timeline only". The words

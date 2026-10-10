@@ -7,7 +7,7 @@
  */
 import { closeSync, openSync, readSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { obj } from "../../util.js";
+import { FUTURE_SLACK_MS, obj } from "../../util.js";
 import { stamp, walkFiles } from "../fs.js";
 import { emitsEvents } from "./events.js";
 import { providerOf, sessionFlags } from "./session.js";
@@ -97,8 +97,12 @@ export interface ThreadMeta {
  * switch between sessions, which no Exchange label carries (events.ts).
  */
 export interface SessionHead {
-  /** session_meta time (envelope timestamp, else payload timestamp), epoch ms. */
-  ts?: number;
+  /**
+   * Candidate session start times, epoch ms, best first: the session_meta's envelope timestamp, its payload timestamp,
+   * then the timestamps of the leading lines after it. Not bounded by `now` here (the cache outlives a clock change);
+   * providerSwitches takes the first one no later than now + FUTURE_SLACK_MS, like cleanTime.
+   */
+  times: number[];
   /** Raw `model_provider` (memory only; hashed when an event is emitted). */
   provider?: string;
   /** `session_meta.source` entrypoint enum (session.ts). */
@@ -110,14 +114,12 @@ export interface SessionHead {
 const metaCache = new Map<string, { mtimeMs: number; size: number; meta: ThreadMeta; head?: SessionHead }>();
 
 const MIN_TIME = Date.parse("2020-01-01T00:00:00Z");
-function timeOf(...vs: unknown[]): number | undefined {
-  for (const v of vs) {
-    if (typeof v !== "string") continue;
-    const ms = Date.parse(v);
-    if (Number.isFinite(ms) && ms >= MIN_TIME) return ms;
-  }
-  return undefined;
+function timeOf(v: unknown): number | undefined {
+  if (typeof v !== "string") return undefined;
+  const ms = Date.parse(v);
+  return Number.isFinite(ms) && ms >= MIN_TIME ? ms : undefined;
 }
+const pushTime = (out: number[], v: unknown): void => { const ms = timeOf(v); if (ms !== undefined) out.push(ms); };
 
 /**
  * Ids and head of a rollout's leading session_meta (cached by path + mtime + size). The first of the leading lines
@@ -131,19 +133,29 @@ function leadingMeta(path: string): { meta: ThreadMeta; head?: SessionHead } {
   if (hit && hit.mtimeMs === st.mtimeMs && hit.size === st.size) return hit;
   let meta: ThreadMeta = {};
   let head: SessionHead | undefined;
+  let decided = false;
   for (const line of readLeadingLines(path, LEAD_LINES)) {
     let d: Record<string, unknown> | undefined;
     try { d = obj(JSON.parse(line)); } catch { continue; }
     if (!d) continue;
+    if (decided) {
+      // Later leading lines only add fallback times: a session_meta stamped while the clock was ahead (then corrected)
+      // is still placed among the other sessions by the records written right after it.
+      if (head) pushTime(head.times, d.timestamp);
+      continue;
+    }
+    decided = true;
     const p = obj(d.payload);
     if (d.type === "session_meta" && p) {
       const id = typeof p.id === "string" ? p.id : typeof p.session_id === "string" ? p.session_id : undefined;
       meta = { threadId: id || undefined, parentThreadId: typeof p.parent_thread_id === "string" && p.parent_thread_id ? p.parent_thread_id : undefined };
       if (typeof p.forked_from_id === "string" && p.forked_from_id && p.forked_from_id !== id) meta.forkedFrom = p.forked_from_id;
       const f = sessionFlags(p);
-      head = { ts: timeOf(d.timestamp, p.timestamp), provider: providerOf(p), entrypoint: f.entrypoint, main: emitsEvents(f) };
-    }
-    break;
+      const times: number[] = [];
+      pushTime(times, d.timestamp);
+      pushTime(times, p.timestamp);
+      head = { times, provider: providerOf(p), entrypoint: f.entrypoint, main: emitsEvents(f) };
+    } else break;
   }
   const entry = { mtimeMs: st.mtimeMs, size: st.size, meta, head };
   metaCache.set(path, entry);
@@ -179,13 +191,24 @@ export interface ThreadIndex {
 
 const push = (m: Map<string, string[]>, k: string, v: string) => { const l = m.get(k); if (l) l.push(v); else m.set(k, [v]); };
 
-function providerSwitches(heads: { path: string; head: SessionHead }[]): Map<string, { from: string; to: string; ts: number }> {
+/**
+ * A session's start time for ordering and dating a provider switch: its first candidate time no later than
+ * now + FUTURE_SLACK_MS (util.ts cleanTime's bound). A session_meta stamped while the clock was set ahead would
+ * otherwise date a "you · strong" switch in the future, and, sorted last, hide the real switches around it.
+ */
+function headTime(head: SessionHead, now: Date): number | undefined {
+  const limit = now.getTime() + FUTURE_SLACK_MS;
+  return head.times.find((t) => t <= limit);
+}
+
+function providerSwitches(heads: { path: string; head: SessionHead }[], now: Date): Map<string, { from: string; to: string; ts: number }> {
   const out = new Map<string, { from: string; to: string; ts: number }>();
   const byEntry = new Map<string, { path: string; ts: number; provider: string; order: number }[]>();
   heads.forEach(({ path, head }, order) => {
-    if (!head.main || head.provider === undefined || head.ts === undefined) return;
+    const ts = headTime(head, now);
+    if (!head.main || head.provider === undefined || ts === undefined) return;
     const l = byEntry.get(head.entrypoint);
-    const row = { path, ts: head.ts, provider: head.provider, order };
+    const row = { path, ts, provider: head.provider, order };
     if (l) l.push(row); else byEntry.set(head.entrypoint, [row]);
   });
   for (const rows of byEntry.values()) {
@@ -198,7 +221,8 @@ function providerSwitches(heads: { path: string; head: SessionHead }[]): Map<str
   return out;
 }
 
-export function threadIndex(root: string): ThreadIndex {
+/** `now` bounds session start times (headTime); a scan passes its own clock. */
+export function threadIndex(root: string, now: Date = new Date()): ThreadIndex {
   const pages = new Map<string, string[]>();
   const children = new Map<string, string[]>();
   const meta = new Map<string, ThreadMeta>();
@@ -210,14 +234,16 @@ export function threadIndex(root: string): ThreadIndex {
     if (m.threadId) push(pages, m.threadId, path);
     if (m.parentThreadId && m.parentThreadId !== m.threadId) push(children, m.parentThreadId, path);
   }
-  return { pages, children, meta, providerSwitch: providerSwitches(heads) };
+  return { pages, children, meta, providerSwitch: providerSwitches(heads, now) };
 }
 
 /**
  * One ThreadIndex per scan. A scan is one `list()` followed by `parse()` calls: `reset()` at list time,
  * `get()` builds lazily on the first parse and every later parse in that scan sees the same index.
  * Deliberately no TTL / mtime invalidation: the exactly-once rule in link.ts needs a single snapshot
- * per scan (building per parse also made a scan O(files²): 2,000 files took 11 s).
+ * per scan (building per parse also made a scan O(files²): 2,000 files took 11 s). The same holds for `now`: the
+ * first get() of a scan builds the index with its clock (depKeys passes the wall clock, parse() the scan's ctx.now,
+ * normally the same moment) and every later get() of that scan reuses it.
  */
 export class ScanIndex {
   /** Number of index builds (tests assert one per scan). */
@@ -226,10 +252,10 @@ export class ScanIndex {
 
   reset(): void { this.byRoot.clear(); }
 
-  get(root: string): ThreadIndex {
+  get(root: string, now: Date = new Date()): ThreadIndex {
     let index = this.byRoot.get(root);
     if (!index) {
-      index = threadIndex(root);
+      index = threadIndex(root, now);
       this.builds++;
       this.byRoot.set(root, index);
     }

@@ -141,6 +141,7 @@ body { background: var(--surface-page); color: var(--ink-primary); font: var(--t
 .sec-head .right b { color: var(--ink-primary); }
 svg.chart { display: block; overflow: visible; }
 .c-tick { fill: var(--chart-mark); }
+.c-tick-over { stroke: var(--chart-mark); stroke-width: 1.5; fill: none; stroke-linejoin: miter; }
 .c-tick-low { fill: none; stroke: var(--chart-mark); stroke-width: 1; }
 .c-zero { fill: var(--chart-mark); }
 .c-axis { stroke: var(--chart-axis); stroke-width: 2; }

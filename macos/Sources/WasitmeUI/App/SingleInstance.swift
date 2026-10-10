@@ -5,11 +5,12 @@ import WasitmeCore
 /// would otherwise show two status items.
 ///
 /// Two checks, because each misses a case the other catches:
-///  - `NSRunningApplication` by bundle id (the obvious check) sees any other bundled copy, but an unbundled dev
-///    binary has no bundle id;
+///  - `NSRunningApplication` by bundle id (the obvious check) sees another running copy of this same bundle (same
+///    bundle id and same location on disk), but an unbundled dev binary has no bundle id. A different bundle that
+///    merely shares the id (a `dist/` build run with a temp `--home` beside the installed app) is left to the lock;
 ///  - an exclusive `flock` on a per-user lock file keyed by bundle id + home directory is race-free (two
 ///    launches in the same instant) and works unbundled. Keying by home lets a temp-home test instance run
-///    beside the real one.
+///    beside the real one, bundled or not.
 /// A second launch hands off to the first (a distributed notification: "open your popover") and exits.
 public enum SingleInstance {
     public enum Decision: Equatable, Sendable { case proceed, handOff }
@@ -29,12 +30,26 @@ public enum SingleInstance {
         return tempDirectory.appendingPathComponent("wasitme-\(String(hash, radix: 16)).lock", isDirectory: false)
     }
 
-    /// Other running copies with our bundle id (none for an unbundled binary).
+    /// Other running copies of this same bundle: our bundle id AND our bundle's location (none for an unbundled
+    /// binary). A different bundle with the same id is not "the same app": the per-home lock decides for it.
     @MainActor
-    public static func otherInstances(bundleID: String?, selfPID: pid_t = getpid()) -> [pid_t] {
+    public static func otherInstances(bundleID: String?, bundleURL: URL? = Bundle.main.bundleURL,
+                                      selfPID: pid_t = getpid()) -> [pid_t] {
         guard let bundleID else { return [] }
-        return NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
-            .map(\.processIdentifier).filter { $0 != selfPID && $0 > 0 }
+        let running = NSRunningApplication.runningApplications(withBundleIdentifier: bundleID)
+            .map { (pid: $0.processIdentifier, bundleURL: $0.bundleURL) }
+        return sameBundle(running, as: bundleURL, selfPID: selfPID)
+    }
+
+    /// The pids in `running` (pid, bundle location) that are not this process and run the bundle at `bundleURL`.
+    /// An unknown location on either side is not a match (the lock still covers a second launch of the same home).
+    public static func sameBundle(_ running: [(pid: pid_t, bundleURL: URL?)], as bundleURL: URL?, selfPID: pid_t) -> [pid_t] {
+        guard let mine = bundleURL?.resolvingSymlinksInPath().standardizedFileURL else { return [] }
+        return running.compactMap { r in
+            guard r.pid != selfPID, r.pid > 0, let theirs = r.bundleURL?.resolvingSymlinksInPath().standardizedFileURL,
+                  theirs == mine else { return nil }
+            return r.pid
+        }
     }
 
     public static func postHandOff() {

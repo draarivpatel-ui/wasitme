@@ -35,6 +35,9 @@ export interface MaterialOptions {
 
 export const DEFAULT_MIN_RELATIVE_CHANGE = 0.2;
 
+/** Relative floating-point tolerance on the relative-change threshold (see `classifyChange`). */
+const REL_TOLERANCE = 1e-9;
+
 export type NotMaterialReason = "no-data" | "interval-includes-1" | "below-relative-threshold" | "below-absolute-floor";
 
 export interface ChangeCall {
@@ -73,8 +76,11 @@ export function classifyChange(ev: ChangeEvidence, opts: MaterialOptions = {}): 
 
   const reasons: NotMaterialReason[] = [];
   if (!significant) reasons.push("interval-includes-1");
-  // Effect size is judged on the point estimate, in the interval's direction.
-  const bigEnough = direction === "up" ? ratio >= 1 + minRel : direction === "down" ? ratio <= 1 - minRel : false;
+  // Effect size is judged on the point estimate, in the interval's direction. The threshold carries a 1e-9 relative
+  // tolerance (like the absolute floor in d23Call): a ratio computed as exp(ln a − ln b) can land one ULP short of an
+  // exact ×1.25 or ×0.75 move (1.2499999999999998), which is still a 25% move.
+  const bigEnough = direction === "up" ? ratio >= (1 + minRel) * (1 - REL_TOLERANCE)
+    : direction === "down" ? ratio <= (1 - minRel) * (1 + REL_TOLERANCE) : false;
   if (!bigEnough) reasons.push("below-relative-threshold");
   if (floor > 0 && (absoluteChange === null || Math.abs(absoluteChange) < floor)) reasons.push("below-absolute-floor");
   return { direction, significant, material: reasons.length === 0, relativeChange, absoluteChange, reasons };

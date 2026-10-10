@@ -73,7 +73,7 @@ engine_undo() {
   fi
   if [ "$E_MOVED" = 1 ]; then rm_tree "$E_FINAL"; fi
   if [ "$E_PARKED" = 1 ]; then mv "$E_PARK" "$E_FINAL" 2>/dev/null || true; fi
-  rm_tree "$E_STAGE"
+  if [ "$E_LOCKED" = 1 ]; then rm_tree "$E_STAGE"; fi
   release_lock   # the lock lives inside STATE_DIR, so it must go before STATE_DIR can be removed
   rollback_dirs
 }
@@ -324,7 +324,7 @@ engine_install() {
   E_PARK="$VERSIONS_DIR/.parked"
   E_FINAL="$VERSIONS_DIR/$VERSION"
   E_PREV_LINK=""
-  E_PARKED=0; E_MOVED=0; E_LINKED=0; E_SHIM_DONE=0; E_SL_SHIM_DONE=0; E_JSON_DONE=0; E_ENV_DONE=0
+  E_PARKED=0; E_MOVED=0; E_LINKED=0; E_SHIM_DONE=0; E_SL_SHIM_DONE=0; E_JSON_DONE=0; E_ENV_DONE=0; E_LOCKED=0
   PAYLOAD_SAME=0
   ENGINE_CLI="$CURRENT_LINK/engine/$CLI_REL"
   engine_active_state
@@ -334,6 +334,7 @@ engine_install() {
   mkdir_track "$VERSIONS_DIR" || die "could not create $VERSIONS_DIR"
   mkdir_track "$BIN_DIR" || die "could not create $BIN_DIR"
   acquire_lock
+  E_LOCKED=1   # only from here is versions/.stage ours; a run that gave up waiting must not delete the holder's
 
   # 1. Stage next to the final location (same filesystem, so the renames below are atomic), then verify it.
   stage_payload

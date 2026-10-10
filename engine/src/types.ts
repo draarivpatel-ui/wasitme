@@ -176,6 +176,12 @@ export interface ChangeEvent {
   /** True if a user command (/model, /effort, settings edit) explains it. */
   userInitiated?: boolean;
   note?: string;
+  /**
+   * Salted id of the session the change was logged in (the same `s-…` hash as `Exchange.session`), when a reader knows
+   * it. Added after the contract freeze (D81, optional): the re-pick rule (attribution/labels.ts) looks for the
+   * command's exchange in this session only. Never shown in the snapshot or glance.
+   */
+  session?: string;
 }
 
 /** Per-reader parse statistics — surfaced so silent format drift is visible. */

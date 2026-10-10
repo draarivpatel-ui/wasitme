@@ -27,10 +27,14 @@ export const CLAUDE_PARSER_VERSIONS = Object.freeze({
   toolErrors: 1,
   // 2 (D62a): attributed subagent work fills subReads / subEdits / subBlindEdits (counted by the research metrics).
   research: 2,
-  friction: 1,
+  // 2 (0.1.1 bug-hunt): promptEnglish ignores sentence punctuation at the end of a word, so a one-word prompt like
+  // "Continue." is English instead of unknown. Stored shards re-derive the family from the logs that still exist.
+  friction: 2,
   // 2 (D62a): a subagent transcript's copies of main-thread records (fork-mode context) are no longer counted as
   // subagent work (subToolCalls / subTokens); orphaned subagent folders of a moved session are attached to it.
-  context: 2,
+  // 3 (0.1.1 bug hunt): after a resume, a re-stamped copy of a REPLAYED response (new uuid, same requestId) in a fork
+  // subagent or an aside is a duplicate too, never subTokens.
+  context: 3,
   // 2 (WP-12 review): model ids accept only a Vertex date / @latest / @default suffix (Codex: id-shaped labels,
   // effort and approval-policy enums, semver-like versions); event from/to carry the same labels. Stored shards
   // re-derive both families from the logs that still exist.
@@ -41,7 +45,9 @@ export const CLAUDE_PARSER_VERSIONS = Object.freeze({
   // value (a between-session move: attribution/labels.ts derives it and ties it to the recorded command wherever it
   // was typed) — no in-session `unknown` event — unless a command in this file or at the end of the replay explains it;
   // such a command is a change even when it re-picks the replayed value (from "unknown").
-  events: 3,
+  // 4 (D81): every event carries the salted id of the session it was logged in (`ChangeEvent.session`), so the D65
+  // re-pick rule looks for the command's exchange in that session only. Stored shards re-derive it.
+  events: 4,
 });
 
 export type ClaudeParserFamily = keyof typeof CLAUDE_PARSER_VERSIONS;

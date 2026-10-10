@@ -263,7 +263,9 @@ Several of these checks are tripwires, not proofs. The next section says where t
 ## Known limitations
 
 - The no-network check is a **tripwire, not a sandbox**: it catches accidents and shortcuts, not a contributor who is
-  determined to hide a call. Code review and zero dependencies are the real defence.
+  determined to hide a call. Code review and zero dependencies are the real defence. One accidental route it cannot see
+  in Swift: a remote URL built from a variable (or `URLComponents`) and passed to `Data(contentsOf:)`, because the app
+  reads local files the same way.
 - Labels are filtered by character set, not by value (see above).
 - Ids are 48-bit pseudonyms (see above).
 - Symbolic links are never followed inside the agent log directories. The configuration reader does follow a link to a regular file

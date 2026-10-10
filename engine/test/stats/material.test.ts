@@ -60,3 +60,16 @@ test("agreement: changed needs ≥k material the same way and none opposite", ()
   assert.equal(agreement([m("a", "up", true)], 0).verdict, "changed", "k is at least 1");
   assert.equal(agreement([]).verdict, "none");
 });
+
+test("the relative threshold tolerates floating-point error at the exact boundary (×1.2 and ×0.8 by default)", () => {
+  // (11.5/25)/(11.5/20) is exactly ×0.8 but computes as 0.8000000000000002 through logs; its inverse as 1.2499999999999998.
+  const down = Math.exp(Math.log(11.5 / 25) - Math.log(11.5 / 20));
+  assert.ok(down > 0.8);
+  assert.deepEqual(classifyChange({ ratio: down, lo: 0.6, hi: 0.95 }).reasons, []);
+  const up = Math.exp(Math.log(11.5 / 20) - Math.log(11.5 / 25));
+  assert.ok(up < 1.25);
+  assert.deepEqual(classifyChange({ ratio: up, lo: 1.05, hi: 1.5 }, { minRelativeChange: 0.25 }).reasons, []);
+  // A real shortfall is still too small.
+  assert.deepEqual(classifyChange({ ratio: 1.2499, lo: 1.05, hi: 1.5 }, { minRelativeChange: 0.25 }).reasons, ["below-relative-threshold"]);
+  assert.deepEqual(classifyChange({ ratio: 0.8001, lo: 0.6, hi: 0.95 }).reasons, ["below-relative-threshold"]);
+});

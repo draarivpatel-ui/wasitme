@@ -15,7 +15,7 @@ import { claudeReader } from "../../src/readers/claude.js";
 import { folderFor, originalFolder } from "../../src/readers/claude/project.js";
 import type { Exchange } from "../../src/types.js";
 import {
-  ctx, hash, makeRoot, projectPath, scan, SessionBuilder, text, toolUseBlock, withRoot, writeJsonl, writeSession, type Rec,
+  ctx, hash, makeRoot, projectPath, replayInto, scan, SessionBuilder, text, toolUseBlock, withRoot, writeJsonl, writeSession, type Rec,
 } from "../fixtures/claude/builder.js";
 import { readJson, scanIn, tempEnv } from "../store/helpers.js";
 
@@ -101,6 +101,41 @@ test("fork-mode copies of main-thread records inside a subagent transcript are n
   assert.deepEqual(sub(x), [0, 1, 0], "the inherited Read is not the subagent's read, but its file is known");
   assert.deepEqual(r.exchanges.map((e) => [e.reads, e.edits]), [[1, 0], [0, 0]], "main-thread counts untouched");
   assert.ok(r.stats.duplicates >= 2, "the two copies are counted as duplicates");
+});
+
+test("after a resume, a re-stamped copy of a REPLAYED response (fork subagent or aside) adds no tokens: usage is deduplicated by requestId", async () => {
+  const BIG = { input_tokens: 50_000, output_tokens: 1000 };
+  for (const where of ["fork", "aside", "replayed aside"] as const) {
+    const root = makeRoot();
+    const a = new SessionBuilder("sess-ra", { start: "2026-09-01T10:00:00.000Z" });
+    a.prompt("first");
+    if (where === "replayed aside") a.response([text("main")]);
+    a.response([text("big")], { requestId: "req-a-1", msgId: "msg-a-1", usage: BIG, extra: where === "replayed aside" ? side : {} });
+    const copied = a.records[a.records.length - 1]!;
+    writeSession(root, P, a);
+    await new Promise((r) => setTimeout(r, 20));
+    const b = new SessionBuilder("sess-rb", { start: "2026-09-02T10:00:00.000Z" });
+    replayInto(b, a.records); // the resume: A's records again, same uuids
+    b.prompt("resumed");
+    if (where === "fork") {
+      b.response([toolUseBlock("ag-r", "Agent", {})]);
+      b.toolResult("ag-r", { toolUseResult: { agentId: "forkr", status: "completed" } });
+    } else {
+      b.response([text("ok")]);
+      b.push({ ...copied, sessionId: b.id, uuid: "side-copy", isSidechain: true }); // the aside re-logs history, new uuid
+    }
+    writeSession(root, P, b);
+    if (where === "fork") {
+      const f = new SessionBuilder("forkr", { start: "2026-09-02T10:01:00.000Z" });
+      f.push({ ...copied, uuid: "forkr-copy", isSidechain: true }); // forked context, re-stamped
+      f.response([text("own")], { extra: side });
+      writeJsonl(join(projectPath(root, P), "sess-rb", "subagents", "agent-forkr.jsonl"), f.records);
+    }
+    const all = await scan(root);
+    const xs = all.get(`${P}/sess-rb.jsonl`)!.result.exchanges;
+    assert.equal(xs.length, 1, where);
+    assert.equal(xs[0]!.subTokens, where === "fork" ? PER_RESPONSE : 0, `${where}: only the subagent's own response`);
+  }
 });
 
 test("sidechain records inside the main transcript: their research work is delegated work of the open exchange", async () => {

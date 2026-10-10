@@ -69,6 +69,16 @@ export function recordPermissionFlag(path: string, opts: { probe?: () => Permiss
   for (const [k, v] of Object.entries(doc)) if (k !== "permissionFlag" && k !== "permissionNode") out[k] = v;
   out.permissionFlag = flag;
   out.permissionNode = node;
-  writeAtomic(path, `${JSON.stringify(out, null, 2)}\n`);
+  writeAtomic(path, oneKeyPerLine(out));
   return { flag, how: "probed" };
+}
+
+/**
+ * The installer's layout (scripts/lib/engine.sh engine_json_write): one top-level key per line, each value compact on
+ * that line. `JSON.stringify(out, null, 2)` would spread `"agents": [...]` over several lines, and the installer's sed
+ * (install_main.sh agents_from_install) would then no longer find the agents the user chose.
+ */
+function oneKeyPerLine(o: Record<string, unknown>): string {
+  const lines = Object.entries(o).map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v) ?? "null"}`);
+  return lines.length === 0 ? "{}\n" : `{\n${lines.join(",\n")}\n}\n`;
 }

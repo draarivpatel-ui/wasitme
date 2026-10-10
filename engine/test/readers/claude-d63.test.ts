@@ -44,6 +44,10 @@ test("D63(i): /model and /effort typed before the session's first response are y
     ["effort", "you", "strong", "command", "unknown", "low", true],
   ]);
   for (const e of r.events) assert.equal(e.day, "2026-09-05");
+  // Each event names the session it was logged in (the exchanges' salted id), for the D65 re-pick rule (D81).
+  const sessions = new Set(r.exchanges.map((x) => x.session));
+  assert.equal(sessions.size, 1);
+  for (const e of r.events) assert.equal(e.session, [...sessions][0]);
 });
 
 test("D63(i): without a command the first value is only a baseline; a command that changed nothing is not an event", async () => {

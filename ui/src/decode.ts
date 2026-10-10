@@ -286,6 +286,9 @@ function agentOf(x: unknown, idx: number): Agent | null {
   let timeline: TEvent[];
   if (Array.isArray(own(x, "timeline"))) timeline = arr(x, "timeline").map(eventOf).filter((e): e is TEvent => e !== null);
   else timeline = arr(x, "events").map(eventOf).filter((e): e is TEvent => e !== null).reverse();
+  // A prompt-hash change is evidence for the engine only: every other surface (glance, CLI, Markdown report, mod) drops it
+  // from the list and from the numbering (engine visibleEvent), and so does the canvas, or its letters would drift.
+  timeline = timeline.filter((e) => e.kind !== "system-prompt");
   timeline.sort((a, b) => (a.day < b.day ? -1 : a.day > b.day ? 1 : a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
   assignMarkers(timeline);
 

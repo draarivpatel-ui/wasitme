@@ -79,6 +79,11 @@ class MainThread {
   private readonly steps = new StepMerger<ExchangeAcc>();
   /** Sidechain responses in the main transcript; their tokens go to the exchange's sideTokens. */
   private readonly sideSteps = new StepMerger<TokenSink>();
+  /**
+   * Merge keys (requestId / message id) of replayed responses: counted in the session they came from, so a re-stamped
+   * copy (new uuid, same response) in a fork subagent or an aside is a duplicate, never new tokens (AGENTS.md rule 6).
+   */
+  private readonly replayedSteps = new Set<string>();
   private readonly exchanges: ExchangeAcc[] = [];
   private readonly recent = new RecentTools();
   private readonly toolOwner = new Map<string, ExchangeAcc>();
@@ -127,7 +132,7 @@ class MainThread {
   ) {
     this.session = ctx.hash(basename(file.path, ".jsonl"), "s-");
     this.folder = basename(dirname(file.path));
-    this.tracker = new ChangeTracker(ctx);
+    this.tracker = new ChangeTracker(ctx, this.session);
   }
 
   async read(): Promise<void> {
@@ -139,7 +144,7 @@ class MainThread {
     return {
       hasRecord: (uuid) => this.seen.has(this.priors.id(uuid)),
       hasToolUse: (id) => this.seenToolUse.has(id),
-      hasStep: (key) => this.steps.has(key) || this.sideSteps.has(key),
+      hasStep: (key) => this.steps.has(key) || this.sideSteps.has(key) || this.replayedSteps.has(key),
     };
   }
 
@@ -212,8 +217,11 @@ class MainThread {
   private replayed(d: Rec, type: string | undefined): void {
     const msg = obj(d.message);
     if (d.isSidechain === true) {
-      // An aside's model/effort is not the session's setup; only its tool ids are history.
-      if (type === "assistant") for (const b of blocks(msg?.content)) if (b.type === "tool_use") this.markToolUse(toolUse(b));
+      // An aside's model/effort is not the session's setup; only its tool ids and response key are history.
+      if (type === "assistant" && msg) {
+        if (d.isApiErrorMessage !== true && msg.model !== "<synthetic>") this.replayedSteps.add(stepKey(d, msg));
+        for (const b of blocks(msg.content)) if (b.type === "tool_use") this.markToolUse(toolUse(b));
+      }
       return;
     }
     if (type === "user") {
@@ -232,6 +240,7 @@ class MainThread {
       this.tracker.observe("effort", known(effortOf(d)), undefined, { silent: true, replayed: true });
       this.tracker.responded();
       this.responsesSeen++;
+      this.replayedSteps.add(stepKey(d, msg));
       for (const b of blocks(msg.content)) {
         if (b.type !== "tool_use") continue;
         const t = toolUse(b);
@@ -289,8 +298,8 @@ class MainThread {
     if (!msg || d.isApiErrorMessage === true || msg.model === "<synthetic>") return;
     const key = stepKey(d, msg);
     const x = this.cur;
-    if (this.steps.has(key)) {
-      this.stats.duplicates++; // a main-thread response re-logged inside the aside
+    if (this.steps.has(key) || this.replayedSteps.has(key)) {
+      this.stats.duplicates++; // a main-thread (or replayed) response re-logged inside the aside
     } else if (x && !this.sideSteps.observe(key, msg.usage, x.sideTokens)) {
       this.stats.duplicates++; // a later line of a streamed aside response
     }

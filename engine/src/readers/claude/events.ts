@@ -78,7 +78,8 @@ export class ChangeTracker {
   /** CLI version in effect at the last system-prompt observation. */
   private spVersion: string | undefined;
 
-  constructor(private readonly ctx: ParseContext) {}
+  /** `session`: the salted session id stamped on every event (`ChangeEvent.session`), when the caller knows it. */
+  constructor(private readonly ctx: ParseContext, private readonly session?: string) {}
 
   value(kind: TrackedKind): string | undefined {
     return this.current.get(kind);
@@ -141,6 +142,7 @@ export class ChangeTracker {
     };
     if (userInitiated) ev.userInitiated = true;
     if (opts.note) ev.note = opts.note;
+    if (this.session !== undefined) ev.session = this.session;
     this.events.push(ev);
   }
 }

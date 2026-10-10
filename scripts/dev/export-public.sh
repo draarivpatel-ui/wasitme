@@ -32,11 +32,12 @@
 #      internal files: STATUS, MERGE, PLAN, PREPUBLISH, private notes, the maintainer's tooling, spike code and scratch
 #      work).
 #   2. Asserts the result: none of the internal paths below exist, the public files exist, and none of the configured
-#      private phrases appears in any text file (case-insensitively). A path below that .gitattributes does not leave
-#      out is a failure. The phrases are never written in a tracked file, so this guard does not publish what it
+#      private phrases appears in any file's contents (text or binary: media metadata is a place a name hides) or in
+#      any file or folder name (case-insensitively; a phrase stored as UTF-16 or inside compressed data is not seen).
+#      A path below that .gitattributes does not leave out is a failure. The phrases are never written in a tracked file, so this guard does not publish what it
 #      guards: they come from WASITME_FORBIDDEN_PHRASES or the gitignored .ci-local.env (see .ci-local.env.example),
 #      comma separated, at least 5 characters each. A hit names the phrase by its position in that list, never by its
-#      text. With none configured the scan is skipped with a warning (an error with --require-email-config).
+#      text (a path that holds it is printed with the phrase replaced by [phrase]). With none configured the scan is skipped with a warning (an error with --require-email-config).
 #   3. `git init`, then one commit authored and committed with the placeholder (or given) noreply identity, dated in
 #      UTC (+0000) so it does not carry this machine's time zone. The new repository ignores your global git config
 #      (name, email, hooks, signing), has no remote, and keeps that identity as its local one, so a later commit there
@@ -428,15 +429,25 @@ done
 # Private notes under any directory, and local secrets or caches, wherever they sit.
 stray=$(find "$TREE" \( -name CLAUDE.local.md -o -name .ci-local.env -o -name '*.cache.jsonl' -o -name .DS_Store \) -print 2>/dev/null | head -n 5)
 if [ -n "$stray" ]; then echo "export-public: FAIL: local files in the export:" >&2; echo "$stray" | sed "s|^$TREE/|  |" >&2; bad=1; fi
-# The configured private phrases, case-insensitively, in every text file. Like the forbidden emails, a phrase is never
-# printed: the message names its position in the configured list.
+# The configured private phrases, case-insensitively, in the contents of every file (binary files too: without -I,
+# grep -l reads them and still prints only the file name) and in every file and folder name under the tree. Like the
+# forbidden emails, a phrase is never printed: the message names its position in the configured list, and a path that
+# holds it is shown with the phrase replaced by [phrase] (a path the mask cannot place prints as [path]).
+mask_phrase() {  # mask_phrase PHRASE: paths on stdin, each shown indented, with the phrase masked wherever it is in one
+  PH=$1 awk 'BEGIN { p = tolower(ENVIRON["PH"]) }
+    { out = ""; rest = $0
+      while ((i = index(tolower(rest), p)) > 0) { out = out substr(rest, 1, i - 1) "[phrase]"; rest = substr(rest, i + length(p)) }
+      print "  " out rest }'
+}
 n=0
 for ph in $PHRASES; do
   n=$((n + 1))
-  hits=$(grep -rIl -i -F -e "$ph" "$TREE" 2>/dev/null | head -n 5)
-  if [ -n "$hits" ]; then
+  hits=$(grep -rl -i -F -e "$ph" "$TREE" 2>/dev/null | sed "s|^$TREE/||" | head -n 5)
+  names=$(cd "$TREE" && find . -mindepth 1 -print 2>/dev/null | sed 's|^\./||' | grep -i -F -e "$ph" | head -n 5)
+  if [ -n "$hits" ] || [ -n "$names" ]; then
     echo "export-public: FAIL: forbidden phrase $n of $PHRASE_COUNT (in $PHRASE_SRC) found in:" >&2
-    echo "$hits" | sed "s|^$TREE/|  |" >&2
+    if [ -n "$hits" ]; then echo "$hits" | mask_phrase "$ph" >&2; fi
+    if [ -n "$names" ]; then echo "  (a file or folder name:)" >&2; echo "$names" | mask_phrase "$ph" >&2; fi
     bad=1
   fi
 done

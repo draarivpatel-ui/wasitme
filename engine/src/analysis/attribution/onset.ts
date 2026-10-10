@@ -22,7 +22,7 @@
  * cannot reorder the profile.
  */
 import type { AnalysisMethod } from "../gates/d23.js";
-import type { VarianceFloor } from "../stats/bootstrap.js";
+import { floorVariance, type VarianceFloor } from "../stats/bootstrap.js";
 import { dayIndex, dayString, PSEUDO_COUNT } from "../stats/ratio.js";
 import { countCorrection, cr2Correction } from "../stats/smallsample.js";
 import type { Cell, ClusterScheme } from "../stats/types.js";
@@ -140,7 +140,7 @@ function logRateVariance(units: readonly { n: number; d: number }[], N: number, 
   if (!Number.isFinite(corr.factor)) return null;
   let s = 0;
   if (N > 0) for (const u of withDen) s += (u.n / N - u.d / D) ** 2;
-  const fl = floor === "none" ? 0 : floor === "poisson" ? 1 / (N + PSEUDO_COUNT) : (1 - Math.min(1, N / D)) / (N + PSEUDO_COUNT);
+  const fl = floorVariance(floor, N, D, PSEUDO_COUNT);
   return Math.max(s * corr.factor, fl);
 }
 

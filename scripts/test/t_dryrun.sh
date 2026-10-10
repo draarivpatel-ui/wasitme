@@ -114,4 +114,23 @@ assert_rc 0 "dry run with --url succeeds"
 assert_contains "$(out)" "[dry-run] download https://example.test/wasitme.tar.gz" "download is planned, not performed"
 assert_eq "0" "$(count_lines "$SHIM_LOG")" "the fake curl was never called"
 
+t_section "a dry run never undoes anything (the plan is symbolic)"
+# A dry run that "fails" part-way (here: the menu bar agent's plist exists without our marker, so agent_install refuses
+# it) unwinds its transactions. Those undo steps used to run for real, deleting the installed app (A_MOVED is set by
+# the printed, never executed, mv). Nothing real may be touched.
+if [ "$T_OS" = Darwin ]; then
+  sb_new
+  make_fixture "$SB_SRC" 0.1.0 macos-fake
+  H=$SB_HOME
+  mkdir -p "$H/Applications/wasitme.app/Contents/MacOS" "$H/Library/LaunchAgents"
+  printf '<plist><dict><key>CFBundleIdentifier</key><string>dev.wasitme.app</string></dict></plist>\n' >"$H/Applications/wasitme.app/Contents/Info.plist"
+  printf 'old executable\n' >"$H/Applications/wasitme.app/Contents/MacOS/WasitmeApp"
+  printf '<plist version="1.0"><dict/></plist>\n' >"$H/Library/LaunchAgents/$LABEL_APP.plist"   # no marker comment
+  BEFORE=$(fs_snapshot "$H")
+  inst_from --dry-run --yes --app --no-scan-agent --no-claude-plugin --no-codex-plugin --no-statusline
+  assert_contains "$(err)$(out)" "was not created by this installer" "the dry run does hit the plist refusal (the failure path under test)"
+  assert_file "$H/Applications/wasitme.app/Contents/MacOS/WasitmeApp" "a failing dry run left the installed app in place"
+  assert_eq "$BEFORE" "$(fs_snapshot "$H")" "a failing dry run changed nothing in the home"
+fi
+
 t_done

@@ -71,13 +71,19 @@ test("the shipped prose never says 'founder'", () => {
 const forbiddenPhrases = (() => { try { return loadForbiddenPhrases(ROOT); } catch (e) { return { phrases: [], error: e.message }; } })();
 const phraseSkip = forbiddenPhrases.phrases.length || forbiddenPhrases.error ? false
   : "no forbidden phrase configured (set WASITME_FORBIDDEN_PHRASES or add it to .ci-local.env)";
-test("no shipped file contains a configured private phrase", { skip: phraseSkip }, () => {
+test("no shipped file contains a configured private phrase, in its contents (binary files too) or its path", { skip: phraseSkip }, () => {
   assert.equal(forbiddenPhrases.error, undefined, "the forbidden-phrase configuration could not be read");
   const phrases = forbiddenPhrases.phrases.map((p) => p.toLowerCase());
   const bad = [];
-  for (const f of shippedTextFiles()) {
-    const text = read(f).toLowerCase();
-    phrases.forEach((p, i) => { if (text.includes(p)) bad.push(`${f}: forbidden phrase ${i + 1} of ${phrases.length} (in ${forbiddenPhrases.source})`); });
+  for (const f of shippedTextFiles({ binary: true })) {
+    // The report names the file by its position in the list, never the phrase; a path holding it is not printed at all.
+    const pathHit = (p) => f.toLowerCase().includes(p);
+    const text = readFileSync(join(ROOT, f)).toString("latin1").toLowerCase();
+    phrases.forEach((p, i) => {
+      const tail = `forbidden phrase ${i + 1} of ${phrases.length} (in ${forbiddenPhrases.source})`;
+      if (pathHit(p)) bad.push(`a shipped path: ${tail}`);
+      else if (text.includes(Buffer.from(p, "utf8").toString("latin1"))) bad.push(`${f}: ${tail}`);
+    });
   }
   assert.deepEqual(bad, []);
 });
@@ -87,8 +93,9 @@ test("no shipped file contains a configured private phrase", { skip: phraseSkip 
 // operating rows, so a citation of any of them points nowhere in the public tree; the owner is "the maintainer".
 
 /** Every text file that ships: tracked and untracked-but-not-ignored files minus the export-ignore paths, or a plain
- *  walk when this is not a git checkout (a source tarball). Binary files (a NUL byte in the first 8 KB) are skipped. */
-function shippedTextFiles() {
+ *  walk when this is not a git checkout (a source tarball). Binary files (a NUL byte in the first 8 KB) are skipped
+ *  unless `binary` is set (the private-phrase check reads them too). */
+function shippedTextFiles({ binary = false } = {}) {
   const internal = existsSync(join(ROOT, ".gitattributes")) ? internalPaths(ROOT) : [];
   let files;
   if (inRepo) {
@@ -106,7 +113,7 @@ function shippedTextFiles() {
     walk("");
   }
   return [...new Set(files)].filter((f) => has(f) && !internal.some((d) => f === d || f.startsWith(`${d}/`))).sort()
-    .filter((f) => { const b = readFileSync(join(ROOT, f)); return !b.subarray(0, 8192).includes(0); });
+    .filter((f) => { if (binary) return true; const b = readFileSync(join(ROOT, f)); return !b.subarray(0, 8192).includes(0); });
 }
 
 /** Rows DECISIONS.md withdraws from the public record (read from the file, so a later withdrawal is covered too). */

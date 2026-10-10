@@ -106,10 +106,13 @@ run the step (checked on 2.1.289 with a throwaway config).
 `~/.wasitme/engine.json` (a regular file owned by you, not writable by group or others), else the installed engine
 behind `~/.wasitme/current`, else the engine bundled with the plugin (`scripts/wasitme.mjs`, a release step) with
 `--read-only`. Every file it would run must pass the same ownership check; node is the recorded one, or
-`/opt/homebrew/bin/node`, `/usr/local/bin/node`, or an absolute entry of your PATH outside the session's folder, and
-must be 22 or newer. It runs only `report` or `status`, from `/`, and drops `WASITME_HOME` before the engine starts (a
-project's settings can set environment variables for a session; `report` scans and writes its results into the engine's
-data folder, which stays the install's `~/.wasitme`). With the bundled engine only `report` gets `--read-only`; `status`
+`/opt/homebrew/bin/node`, `/usr/local/bin/node`, or an absolute entry of your PATH outside the session's folder (a session started in your home folder or above it may
+use one under it), and
+must be 22 or newer. It runs only `report` or `status`, from `/`, and drops `WASITME_HOME`, `WASITME_CLAUDE_DIR` and
+`WASITME_CODEX_DIR` before the engine starts (a project's settings can set environment variables for a session; `report`
+scans log folders and writes its results into the engine's data folder, which stays the install's `~/.wasitme`). The log
+folders it scans are the ones `engine.json` records (`claudeDir`, `codexDir`), whatever `CLAUDE_CONFIG_DIR` or
+`CODEX_HOME` say in the session. With the bundled engine only `report` gets `--read-only`; `status`
 reads what is there. When something is missing it prints one plain line and exits 0, because a failed skill step makes
 Claude Code print the plugin's absolute path into the conversation.
 

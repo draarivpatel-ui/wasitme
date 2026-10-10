@@ -109,7 +109,10 @@ engine_cli_path() {  # the installed engine's cli from engine.json (one key per 
 remove_wrapped_statusline() {
   [ -f "$CLAUDE_SETTINGS" ] || return 0
   [ -n "$NODE" ] || return 0
-  rw_state=$(jsonutil statusline-state "$CLAUDE_SETTINGS" "$(quote_arg "$SL_SHIM")" 2>/dev/null) || return 0
+  # A dry run that plans to restore settings.json from the manifest (the real run does it first, after which the line is no
+  # longer ours and the engine is never called) must not plan the engine call as well.
+  if [ "$DRY" = 1 ] && [ "$DO_STATUS" = 1 ] && has_kind statusline; then return 0; fi
+  rw_state=$(statusline_state_of "$CLAUDE_SETTINGS" "$SL_SHIM") || return 0
   [ "$rw_state" = ours ] || return 0
   rw_cli=$(engine_cli_path)
   if [ ! -f "$rw_cli" ]; then
@@ -469,7 +472,7 @@ engine_state_null() {  # engine_state_null KEY...
 statusline_ours() {
   has_kind statusline && return 0
   [ -f "$CLAUDE_SETTINGS" ] && [ -n "$NODE" ] || return 1
-  [ "$(jsonutil statusline-state "$CLAUDE_SETTINGS" "$(quote_arg "$SL_SHIM")" 2>/dev/null)" = ours ]
+  [ "$(statusline_state_of "$CLAUDE_SETTINGS" "$SL_SHIM")" = ours ]
 }
 
 # The app quits itself after it starts an uninstall (--from-app); give it a moment before its bundle goes, so it is not
@@ -494,15 +497,20 @@ wait_app_quit() {
 only_prune_dirs() {
   op_agents=0
   if has_kind launchagent; then op_agents=1; fi
-  manifest_lines createddir | awk -F '\t' '{ a[NR] = $2 } END { for (i = NR; i >= 1; i--) print a[i] }' >"$WORK_DIR/created" || return 0
+  # The list is held in a variable, not a file in WORK_DIR: a dry run creates no work folder, so a file there cannot be written.
+  op_list=$(manifest_lines createddir | awk -F '\t' '{ a[NR] = $2 } END { for (i = NR; i >= 1; i--) print a[i] }') || return 0
   while IFS= read -r op_d; do
     [ -n "$op_d" ] && [ -d "$op_d" ] && [ ! -L "$op_d" ] || continue
     safe_rmdir_path "$op_d" || continue
     if [ "$op_d" = "$LOG_DIR" ] && [ "$op_agents" = 1 ]; then continue; fi
+    # A dry run removed nothing, so the folder is still full of what the parts would have taken out: plan the rmdir
+    # (it only ever removes an empty folder), as the full uninstall's plan does, instead of testing for empty.
+    if [ "$DRY" = 1 ]; then printf '[dry-run] rmdir %s (only if empty)\n' "$(quote_arg "$op_d")"; continue; fi
     [ -z "$(ls -A "$op_d" 2>/dev/null)" ] || continue
-    if [ "$DRY" = 1 ]; then printf '[dry-run] rmdir %s (empty now)\n' "$(quote_arg "$op_d")"; continue; fi
     if rmdir "$op_d" 2>/dev/null; then manifest_drop createddir "$op_d" || true; fi
-  done <"$WORK_DIR/created"
+  done <<EOF
+$op_list
+EOF
 }
 
 # --only PARTS: remove exactly those parts, the way the full uninstall removes them, and keep the manifest, engine.json and

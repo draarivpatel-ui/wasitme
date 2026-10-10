@@ -1,6 +1,6 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "wasitme",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The wasitme evidence report for Codex (was it me, or the agent?), built on this machine from your own session logs. Skills only; needs the full wasitme install. No network code. Independent; not affiliated with or endorsed by OpenAI or Anthropic."
 }

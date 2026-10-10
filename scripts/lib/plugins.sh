@@ -383,7 +383,7 @@ statusline_wrap_hint() {
 statusline_detect() {
   SL_CMD=$(quote_arg "$SL_SHIM")
   SL_OLD_CMD=""
-  SL_STATE=$(jsonutil statusline-state "$CLAUDE_SETTINGS" "$SL_CMD" 2>/dev/null) || SL_STATE=invalid
+  SL_STATE=$(statusline_state_of "$CLAUDE_SETTINGS" "$SL_SHIM" 2>/dev/null) || SL_STATE=invalid   # either spelling of our command
   if [ "$SL_STATE" = present ]; then
     sd_old=$(manifest_field statusline "$CLAUDE_SETTINGS" 5)
     if [ -n "$sd_old" ] && [ "$sd_old" != "$SL_CMD" ]; then

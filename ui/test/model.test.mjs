@@ -4,6 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import vm from "node:vm";
 import { spawnSync } from "node:child_process"; // wasitme:allow-child_process -- test-only: runs repo scripts with a fixed argv
 import { join } from "node:path";
 import { cases, crowdedChanges, denseUpdates, PAGE_IDS, ROOT, UI } from "./fixtures.mjs";
@@ -1365,4 +1366,219 @@ test("every number stays reachable (UX-V2 §12, §14.4): counts, ratios, ranges 
     });
   }
   assert.ok(agents >= 4, `${agents} agents checked`);
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// 0.1.1 bug-hunt fixes (group "ui")
+// ---------------------------------------------------------------------------------------------------------------
+
+test("Sources: a paused indicator is named by its label and its agent by name, never by id", () => {
+  const c = byName.get("snapshot-empty");
+  const doc = structuredClone(c.doc);
+  doc.health.paused = [{ agent: "claude-code", metric: "readsPerEdit", why: "parser_changed" }, { agent: "codex", metric: "toolErrorsNonCmd", why: "unknown_records_over_2pct" },
+    { agent: "future-agent", metric: "fooBarBaz", why: "parser_changed" }];
+  const { tree } = renderDoc(doc, c.now, "sources");
+  const items = find(tree, (n) => n.tag === "li" && n.kids.some((k) => typeof k !== "string" && k.tag === "strong")).map(textOf);
+  assert.deepEqual(items.slice(0, 2), ["Reads per edit Claude Code: the reader changed; re-reading", "Tool errors (excl. commands) Codex: more than 2 in 100 records unknown"]);
+  assert.ok(items[2].startsWith("Foo bar baz "), items[2]);
+  const text = textOf(tree);
+  for (const id of ["readsPerEdit", "toolErrorsNonCmd", "fooBarBaz", "claude-code"]) assert.ok(!text.includes(id), `${id} is never printed`);
+});
+
+test("Report: the daily strip is at most 42 days whatever recent.days says (a snapshot is hostile input)", () => {
+  const c = byName.get("snapshot-you-and-codex");
+  for (const [days, consistentFrom] of [[1e9, false], [1e9, true], [20000, true], [380000, false], [43, true]]) {
+    const doc = structuredClone(c.doc);
+    const w = doc.agents[0].windows.recent;
+    w.days = days;
+    if (consistentFrom) w.from = "2026-09-20";
+    const { tree } = renderDoc(doc, c.now, "report");
+    const daily = find(tree, (n) => n.tag === "table" && cls(n).includes("r-daily"))[0];
+    assert.ok(daily, `${days}: the daily table is drawn`);
+    const cols = find(daily, (n) => n.tag === "th" && n.attrs.scope === "col").length - 1;
+    assert.ok(cols >= 1 && cols <= 42, `${days}/${consistentFrom}: ${cols} day columns`);
+    assert.ok(nodes(tree).length < 5000, `${days}: ${nodes(tree).length} nodes`);
+  }
+});
+
+test("a stale snapshot with no agents says it is out of date, never 'Loading'", () => {
+  const c = byName.get("snapshot-empty");
+  const gen = Date.parse(c.doc.generatedAt);
+  const F = tokens.copy.canvas.finding;
+  const cases = [
+    ["3 hours later", gen + 3 * 3600_000, undefined, "Last updated 3 h ago."],
+    ["a clock in the past", gen - 24 * 3600_000, undefined, F.staleFuture],
+    ["stale by native's say-so", gen + 3 * 3600_000, "stale", "Last updated 3 h ago."],
+  ];
+  for (const [kind, nowMs, viewDocument, why] of cases) {
+    const d = decodeSnapshot(c.doc, { nowMs, ...(viewDocument ? { viewDocument } : {}) });
+    assert.equal(d.display, "stale", kind);
+    assert.equal(d.agents.length, 0, kind);
+    for (const page of PAGE_IDS.filter((p) => p !== "sources" && p !== "settings")) {
+      const tree = renderApp(d, { page, agent: 0, chrome: "full", nowMs, timeZone: "UTC" });
+      const text = textOf(tree);
+      assert.equal(h1(tree), "Out of date.", `${kind}/${page}`);
+      assert.ok(!/Loading|Reading wasitme/.test(text), `${kind}/${page}: not the loading message`);
+      assert.ok(text.includes(why), `${kind}/${page}: says why (${why})`);
+      assert.ok(text.includes("has no results for any agent yet"), `${kind}/${page}: still says there is nothing to show`);
+      assert.equal(find(tree, (n) => cls(n).includes("chip") && textOf(n) === "Out of date").length, 1, `${kind}/${page}: the stale chip`);
+    }
+  }
+  // fresh: unchanged
+  const fresh = decodeSnapshot(c.doc, { nowMs: gen + 60_000 });
+  assert.equal(h1(renderApp(fresh, { page: "verdict", agent: 0, chrome: "full", nowMs: gen + 60_000, timeZone: "UTC" })), "No agents yet.");
+});
+
+test("decode: a prompt-hash ('system-prompt') event is neither shown nor lettered, as in the CLI, report and mod", () => {
+  const c = byName.get("snapshot-you-and-codex");
+  const base = decode(c).agents[0];
+  const doc = structuredClone(c.doc);
+  const tl = doc.agents[0].timeline;
+  tl.push({ id: "e-sp1", t: "2026-09-15T15:00:00Z", day: "2026-09-15", kind: "system-prompt", side: "agent", strength: "routine", provenance: "log_field", label: "Claude Code system prompt changed", from: "", to: "", new: false },
+    { id: "e-sp2", t: "2026-09-16T15:00:00Z", day: "2026-09-16", kind: "system-prompt", side: "you", strength: "weak", provenance: "log_field", label: "System prompt changed", from: "", to: "", new: false },
+    { id: "e-sp3", t: "2026-09-17T15:00:00Z", day: "2026-09-17", kind: "system-prompt", side: "unknown", strength: "weak", provenance: "log_field", label: "System prompt changed", from: "", to: "", new: false });
+  const d = decodeSnapshot(doc, { nowMs: Date.parse(c.now) });
+  const a = d.agents[0];
+  assert.ok(!a.timeline.some((e) => e.kind === "system-prompt"), "no prompt-hash event in the timeline");
+  assert.deepEqual(a.timeline.map((e) => [e.id, e.marker]), base.timeline.map((e) => [e.id, e.marker]), "every other change keeps its number or letter");
+  for (const page of PAGE_IDS) {
+    const text = textOf(openAll(d, { page, agent: 0, chrome: "full", nowMs: Date.parse(c.now), timeZone: "UTC" }));
+    assert.ok(!/system-prompt|system prompt changed/i.test(text), `${page}: no prompt-hash row or badge`);
+  }
+});
+
+test("strip: a column is at most chart.strip.maxTicks tall, ends in an open arrowhead past it, and the exact count stays in the text", () => {
+  const MAX = tokens.chart.strip.maxTicks;
+  assert.ok(Number.isInteger(MAX) && MAX >= 40 && MAX % 5 === 0, `maxTicks ${MAX}`);
+  const days = Array.from({ length: 14 }, (_, i) => `2026-09-${String(i + 1).padStart(2, "0")}`);
+  const draw = (peak, extra = {}) => {
+    const rows = days.map((d, i) => ({ d, k: i === 6 ? peak : 10, n: 200 }));
+    const [svg, desc] = strip({ days, rows, events: [], hits: new Set(), recentStart: 0, baseDays: null, recentDays: 14, brackets: true, agentName: "Claude Code", kLabel: "errors", nLabel: "tool calls", uid: "cap", ...extra });
+    return { svg, desc, ticks: find(svg, (n) => n.attrs.class === "c-tick"), over: find(svg, (n) => n.attrs.class === "c-tick-over"), height: Number(svg.attrs.height), count: nodes(svg).length };
+  };
+  const atCap = draw(MAX), above = draw(MAX + 1), huge = draw(20000);
+  // exactly the cap: all ticks drawn, nothing clipped
+  assert.equal(atCap.ticks.length, MAX + 13 * 10);
+  assert.equal(atCap.over.length, 0, "a column at the cap is not clipped");
+  // one past the cap, and far past it: the same drawing, one arrowhead on the clipped column
+  for (const d of [above, huge]) {
+    assert.equal(d.ticks.length, MAX + 13 * 10, "no more than the cap's ticks in a column");
+    assert.equal(d.over.length, 1, "one open arrowhead, on the clipped column");
+    assert.equal(d.height, atCap.height, "the strip is no taller than at the cap");
+    assert.ok(d.count < 1000, `${d.count} nodes`);
+  }
+  assert.equal(huge.count, above.count);
+  // nothing is hidden: the exact count is in the description and the hover tip of that day
+  assert.ok(textOf(huge.desc).includes("20,000 errors"), textOf(huge.desc).slice(0, 200));
+  assert.ok(find(huge.svg, (n) => n.tag === "title" && textOf(n).includes("20,000 errors")).length === 1);
+  // a low-n day's clipped column keeps its half width cue
+  const low = strip({ days, rows: days.map((d, i) => ({ d, k: i === 6 ? 500 : 3, n: i === 6 ? 40 : 200 })), events: [], hits: new Set(), recentStart: 0, baseDays: null, recentDays: 14, brackets: false, agentName: "Claude Code", kLabel: "errors", nLabel: "tool calls", uid: "cap2" })[0];
+  assert.equal(find(low, (n) => n.attrs.class === "c-tick" && Number(n.attrs.width) === 7).length, MAX);
+  // below the cap nothing changes: the strip is still sized to its tallest column, with no arrowhead
+  const small = draw(33);
+  assert.equal(small.over.length, 0);
+  assert.equal(small.ticks.length, 33 + 13 * 10);
+  assert.ok(small.height < atCap.height);
+});
+
+test("the Finding, Timeline and Compare pages stay a bounded size when one day's count is enormous", () => {
+  const c = byName.get("snapshot-you-and-codex");
+  for (const page of ["timeline", "verdict", "compare"]) {
+    const sizes = [];
+    for (const peak of [30, 20000]) {
+      const doc = structuredClone(c.doc);
+      const a = doc.agents[0];
+      a.strip.days[a.strip.days.length - 2].k = peak;
+      const tree = openAll(decodeSnapshot(doc, { nowMs: Date.parse(c.now) }), { page, agent: 0, chrome: "full", nowMs: Date.parse(c.now), timeZone: "UTC" });
+      const svgs = find(tree, (n) => n.tag === "svg" && cls(n).includes("chart--strip"));
+      assert.ok(svgs.length >= 1, `${page}: a strip`);
+      sizes.push(Math.max(...svgs.map((s) => Number(s.attrs.height))), nodes(tree).length);
+    }
+    assert.ok(sizes[2] <= 400, `${page}: strip height ${sizes[2]}`);
+    assert.ok(sizes[3] < sizes[1] + 400, `${page}: ${sizes[3]} nodes against ${sizes[1]}`);
+  }
+});
+
+// main.ts runs in a browser, so this loads the shipped bundle (ui/dist/app.js) into a vm context with a small fake DOM. The fake
+// keeps the one property that matters here: replaceChildren drops the old elements and a new element starts at scrollTop 0.
+function loadCanvas() {
+  const matches = (el, sel) => {
+    const attr = /^\[([a-z-]+)\]$/.exec(sel);
+    if (attr) return el.getAttribute(attr[1]) !== null;
+    const [tag, ...classes] = sel.split(".");
+    return (tag === "" || el.tagName === tag) && classes.every((k) => (el.getAttribute("class") ?? "").split(" ").includes(k));
+  };
+  class FakeNode {}
+  class FakeElement extends FakeNode {
+    constructor(tagName) { super(); this.tagName = tagName; this.attrs = {}; this.children = []; this.scrollTop = 0; this.dataset = {}; this.listeners = {}; }
+    setAttribute(k, v) { this.attrs[k] = String(v); }
+    getAttribute(k) { return Object.hasOwn(this.attrs, k) ? this.attrs[k] : null; }
+    appendChild(c) { this.children.push(c); return c; }
+    replaceChildren(...nodes) { this.children = nodes; }
+    addEventListener(type, fn) { (this.listeners[type] ??= []).push(fn); }
+    click() { for (const fn of this.listeners.click ?? []) fn({ preventDefault() {} }); }
+    focus(opts) { doc.activeElement = this; focusCalls.push(opts ?? null); }
+    all() { return this.children.flatMap((c) => (c instanceof FakeElement ? [c, ...c.all()] : [])); }
+    querySelector(sel) { return this.all().find((e) => matches(e, sel)) ?? null; }
+    querySelectorAll(sel) { return this.all().filter((e) => matches(e, sel)); }
+  }
+  const focusCalls = [];
+  const app = new FakeElement("div");
+  const doc = {
+    readyState: "complete", activeElement: null, title: "", documentElement: new FakeElement("html"),
+    getElementById: (id) => (id === "app" ? app : null), addEventListener() {},
+    createElement: (tag) => new FakeElement(tag), createElementNS: (_ns, tag) => new FakeElement(tag), createTextNode: (t) => ({ text: t }),
+  };
+  const sandbox = { document: doc, Element: FakeElement, HTMLElement: FakeElement, console };
+  sandbox.window = sandbox;
+  vm.runInNewContext(readFileSync(join(UI, "dist", "app.js"), "utf8"), sandbox);
+  const scrolled = () => app.querySelector("main.content");
+  return { app, doc, focusCalls, render: (snap, view) => sandbox.wasitme.render(snap, view), content: scrolled };
+}
+
+test("the canvas keeps the reader's scroll position across a repaint of the same page, and starts a new page at the top", () => {
+  const c = byName.get("snapshot-you-and-codex");
+  const view = (more = {}) => ({ chrome: "full", now: c.now, timeZone: "UTC", page: "verdict", ...more });
+  const cv = loadCanvas();
+  assert.equal(cv.render(c.doc, view()), "rendered");
+  // (b) native renders again with the same page (a scan, a poll, an appearance switch): the position stays
+  let before = cv.content();
+  before.scrollTop = 380;
+  assert.equal(cv.render(c.doc, view({ appearance: "dark" })), "rendered");
+  assert.notEqual(cv.content(), before, "the repaint swapped in a new main.content (that is what used to reset it)");
+  assert.equal(cv.content().scrollTop, 380, "same page, same agent: the position is kept");
+  // (a) a disclosure click on that page: the same
+  const toggle = cv.app.querySelectorAll("[data-act]").find((e) => e.getAttribute("data-act").startsWith("toggleSection:"));
+  assert.ok(toggle, "the Finding page has a disclosure");
+  const openBefore = toggle.getAttribute("aria-expanded");
+  cv.doc.activeElement = toggle;                       // a keyboard click: the control holds focus
+  cv.focusCalls.length = 0;
+  before = cv.content();
+  toggle.click();
+  assert.notEqual(cv.content(), before);
+  assert.equal(cv.content().scrollTop, 380, "a disclosure click keeps the position");
+  const again = cv.app.querySelectorAll("[data-act]").find((e) => e.getAttribute("data-act") === toggle.getAttribute("data-act"));
+  assert.notEqual(again.getAttribute("aria-expanded"), openBefore, "and the disclosure did toggle");
+  assert.equal(cv.doc.activeElement, again, "focus went back to the same control");
+  assert.deepEqual(JSON.parse(JSON.stringify(cv.focusCalls)), [{ preventScroll: true }], "focusing did not move the page");   // (a vm realm's objects have another prototype)
+  // a mouse click on WebKit focuses nothing: the position is still kept
+  cv.doc.activeElement = null;
+  cv.content().scrollTop = 150;
+  again.click();
+  assert.equal(cv.content().scrollTop, 150);
+  // a different page lands at the top, whether the reader or native chose it
+  cv.content().scrollTop = 220;
+  cv.app.querySelectorAll("[data-act]").find((e) => e.getAttribute("data-act").startsWith("showPage:setup")).click();
+  assert.equal(cv.content().scrollTop, 0, "the reader opened another page");
+  cv.content().scrollTop = 90;
+  assert.equal(cv.render(c.doc, view({ page: "report" })), "rendered");
+  assert.equal(cv.content().scrollTop, 0, "native showed another page");
+  // a different agent lands at the top too
+  cv.content().scrollTop = 70;
+  assert.equal(cv.render(c.doc, view({ page: "report", agent: "codex" })), "rendered");
+  assert.equal(cv.content().scrollTop, 0, "another agent's page");
+  // and the same agent again keeps it
+  cv.content().scrollTop = 60;
+  assert.equal(cv.render(c.doc, view({ page: "report", agent: "codex" })), "rendered");
+  assert.equal(cv.content().scrollTop, 60);
 });

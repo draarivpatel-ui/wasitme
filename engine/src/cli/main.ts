@@ -10,7 +10,7 @@
  *   wasitme exclude add|list|remove ...         keep days, projects or entry points out of the analysis
  *   wasitme history clear [--yes]               delete the saved history and results (keeps settings and the install)
  *   wasitme statusline [install|uninstall|show] the Claude Code status line
- *   wasitme scan [--until T] [--read-only] [--no-project-files] [--tz ZONE] [--json]
+ *   wasitme scan [--until T] [--read-only] [--no-project-files] [--tz ZONE] [--json]   (--until implies --read-only)
  *   wasitme hook session-start [--cwd ABS_PATH] [--session ID]
  *
  * Every command accepts a trailing `--json` (the Mac app's engine runner always adds it). Output never contains paths,
@@ -51,7 +51,8 @@ const USAGE = `usage:
   wasitme statusline [install [--wrap] | uninstall | show] [--script ABS_PATH] [--claude-dir ABS_PATH]
       the Claude Code status line (install never replaces yours unless you pass --wrap)
   wasitme scan [--until <RFC3339>] [--read-only] [--no-project-files] [--tz <zone>] [--json]
-      read the logs and update the results now
+      read the logs and update the results now; --until analyses as of a past time and, like --read-only,
+      writes nothing and prints the results instead
   wasitme hook session-start [--cwd <absolute path>] [--session <id>]
       used by the Claude Code plugin; prints nothing
   wasitme update
@@ -77,7 +78,9 @@ async function scan(ctx: CliContext, argv: readonly string[]): Promise<number> {
       throw new UsageError(e instanceof Error ? e.message : "--until is not valid");
     }
   }
-  const readOnly = has(a, "read-only");
+  // A time-travelled scan is always read-only (as for `wasitme` and `report`, source.ts): written, it would replace the
+  // live results with the cutoff's, stamped as current, and cut the saved decisions and progress back to that day.
+  const readOnly = has(a, "read-only") || until !== undefined;
   const r = await runScan({ timeZone: tz, ...(until !== undefined ? { until } : {}), readOnly, noProjectFiles: true });
   if (r.busy) {
     ctx.stdout.write("wasitme: another scan is running; skipped.\n");

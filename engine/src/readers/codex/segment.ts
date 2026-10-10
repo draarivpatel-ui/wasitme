@@ -18,6 +18,7 @@ import { isPushback } from "../../pushback.js";
 import { isNearDuplicate } from "../../similarity.js";
 import type { Exchange, HashFn } from "../../types.js";
 import { localDay, median, Tally } from "../../util.js";
+import { SpanClock } from "../claude/span.js";
 import type { Msg, ThreadParse, ToolEvent, Turn } from "./model.js";
 import { samePath } from "./tools.js";
 
@@ -117,6 +118,25 @@ function drafts(thread: ThreadParse): { list: Draft[]; duplicates: number } {
   return { list, duplicates };
 }
 
+/**
+ * Wall-clock span of an exchange: its turns' record times merged back into file order and run through the same
+ * SpanClock the Claude reader uses, so a clock reset (or a corrected excursion) inside the exchange adds nothing.
+ * A plain max-minus-min span counted the whole reset as work (AGENTS.md rule 5: never assume log order). Never negative.
+ */
+function spanMs(turns: Turn[]): number {
+  const times: number[] = [];
+  const order: number[] = [];
+  for (const t of turns) {
+    const ts = t.stamps ?? [], ord = t.stampOrder ?? [];
+    for (let i = 0; i < ts.length; i++) { times.push(ts[i]!); order.push(ord[i] ?? 0); }
+  }
+  const idx = times.map((_, i) => i);
+  if (turns.length > 1) idx.sort((a, b) => order[a]! - order[b]! || a - b);
+  const clock = new SpanClock();
+  for (const i of idx) clock.add(times[i]!);
+  return clock.ms;
+}
+
 function majority(lists: string[][], fallback: string | undefined): string {
   const t = new Tally();
   for (const l of lists) for (const v of l) t.add(v);
@@ -144,7 +164,7 @@ export function segment(thread: ThreadParse, ctx: SegmentContext): Segmented {
     if (start === undefined || !first) continue; // nothing datable
     lastT = start;
 
-    let lo = start, hi = start;
+    let hi = start; // the attribution span's end (link.ts); the duration is spanMs
     let steps = 0, toolCalls = 0, toolErrors = 0, toolErrorsCmd = 0, cmdCalls = 0, rejections = 0, reads = 0, edits = 0, blindEdits = 0;
     let outTok = 0, inTok = 0, cacheRead = 0, cacheWrite = 0, apiErrors = 0, apiRetries = 0, compactions = 0;
     let thinkBlocks = 0, thinkRedacted = 0, interrupted = false;
@@ -153,7 +173,6 @@ export function segment(thread: ThreadParse, ctx: SegmentContext): Segmented {
     const editsPerFile = new Map<string, number>();
 
     for (const t of turns) {
-      if (t.minTs !== undefined && t.minTs < lo) lo = t.minTs;
       if (t.maxTs !== undefined && t.maxTs > hi) hi = t.maxTs;
       steps += t.usage.length;
       for (const u of t.usage) { inTok += u.inTok; cacheRead += u.cacheRead; cacheWrite += u.cacheWrite; outTok += u.outTok; }
@@ -215,7 +234,7 @@ export function segment(thread: ThreadParse, ctx: SegmentContext): Segmented {
       outTok, inTok, cacheRead, cacheWrite, apiErrors, apiRetries, compactions,
       thinkBlocks, thinkRedacted, thinkSigMedian: median(sigs),
       subToolCalls: 0, subTokens: 0, subReads: 0, subEdits: 0, subBlindEdits: 0,
-      durationMs: Math.max(0, hi - lo),
+      durationMs: spanMs(turns),
     };
     for (const k of ["model", "effort", "mode", "version"] as const) if (ex[k] !== "unknown") last[k] = ex[k];
     compactionsBefore += compactions;

@@ -45,8 +45,13 @@ const list = (v: unknown, max: number): unknown[] => (Array.isArray(v) ? v.slice
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const day = (v: unknown): string => (typeof v === "string" && DAY.test(v) && Number.isFinite(Date.parse(`${v}T00:00:00Z`)) ? v : "");
 const dayOrNull = (v: unknown): string | null => day(v) || null;
-/** Identifier-shaped ids (metric ids, event ids): anything else becomes a fixed placeholder. */
-const idOf = (v: unknown, fallback: string): string => (typeof v === "string" && /^[A-Za-z][A-Za-z0-9_.:-]{0,39}$/.test(v) ? v : fallback);
+/**
+ * Identifier-shaped ids (metric ids, event ids): anything else becomes a fixed placeholder. So does a name every object
+ * inherits ("constructor", "toString"): the renderers look ids up in plain label tables, where such a name finds a
+ * function instead of nothing, and the report would crash or print the function's source.
+ */
+const idOf = (v: unknown, fallback: string): string =>
+  (typeof v === "string" && /^[A-Za-z][A-Za-z0-9_.:-]{0,39}$/.test(v) && !(v in Object.prototype) ? v : fallback);
 const kn = (v: unknown): { k: number; n: number } => (isObj(v) ? { k: count(v.k), n: count(v.n) } : { k: 0, n: 0 });
 function range(v: unknown): [number, number] | null {
   if (!Array.isArray(v) || v.length !== 2) return null;

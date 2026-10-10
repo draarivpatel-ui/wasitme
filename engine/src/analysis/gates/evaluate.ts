@@ -8,12 +8,13 @@
  * Per metric and tier:
  *  1. Eligibility: history met, the D23 gate passes in both windows, the metric's fields are present for
  *     every contributing exchange, and (pushback) ≥ 70% of ALL prompts in each window are English — a prompt
- *     without `promptEnglish` counts as not English. No reader emits `promptEnglish` yet (still wanted from
- *     WP-10/11), so until it lands pushback is off with reason "language_unknown" unless the caller passes a
+ *     without `promptEnglish` counts as not English. Both readers set `promptEnglish` (friction family);
+ *     pushback is off with reason "language_unknown" only when no prompt carries it and the caller passes no
  *     known `englishShare`.
  *  2. Range: stratified cluster bootstrap (stats `bootstrapRatio`) under the method's scheme; with
- *     `keepLargerSe` and ≥ 5 sessions in each window, also under the other scheme, keeping the larger SE
- *     (METHOD.md §6). Range = exp(θ ± t_{(1+level)/2}(df)·SE), computed here so the kept SE drives it.
+ *     `keepLargerSe` and ≥ 5 sessions in each window, also under the other scheme, keeping the larger SE and the
+ *     smaller df of the two (METHOD.md §6, D81). Range = exp(θ ± t_{(1+level)/2}(df)·SE), computed here so the kept
+ *     SE and df drive it.
  *  3. Material (D23): range excludes 1×, point estimate moved ≥ 25%, |Δrate| ≥ the metric's "1 pt".
  *  4. MDE (METHOD.md §6): exp((t_{1−α/2} + t_{.80})·SE·1.1) with α = 1 − level; sensitive = eligible and MDE ≤ 2×.
  *  5. Status: worse / better by the metric's "worse" direction; "shifted" for a material move of a metric
@@ -56,7 +57,7 @@ export const PUSHBACK_MIN_ENGLISH = 0.7;
 
 export type IneligibleReason =
   | "fields_missing"      // the reader does not emit a field this metric needs (or not for every exchange)
-  | "language_unknown"    // pushback: no prompt carries language information (readers don't emit `promptEnglish` yet)
+  | "language_unknown"    // pushback: no prompt carries language information and no `englishShare` was passed
   | "not_english"         // pushback: < 70% of a window's prompts are English (unknown counts as not English)
   | "history"             // the tier's history requirement is not met
   | "gate"                // a D23 gate criterion fails (see blocking)
@@ -80,6 +81,7 @@ export interface ComparisonView {
   logRatio: number;
   ratio: number;
   se: number;
+  /** The kept scheme's df, or the smaller of both schemes' df when both were computed (D81). */
   df: number;
   level: number;
   range: { lo: number; hi: number };
@@ -370,7 +372,8 @@ export interface Measurement {
 /**
  * The range estimator of every comparison in the engine (METHOD.md §6), on cells already cut to the two windows:
  * a stratified cluster bootstrap under the method's scheme; with `keepLargerSe` and ≥ 5 sessions (with a
- * denominator) in each window, also under the other scheme, keeping the larger SE. Range =
+ * denominator) in each window, also under the other scheme, keeping the larger SE and the smaller of the two df
+ * (D81: never a narrower range, lower MDE or higher df than the primary scheme alone). Range =
  * exp(θ ± t_{(1+level)/2}(df)·SE); D23 materiality; MDE. No gate is applied here (callers gate first).
  * Returns null when no interval can be computed (e.g. < 2 clusters in a window, or one session holds the
  * denominator). The confounder layer (WP-20b) calls this, so a standardised or leave-one-out range is computed
@@ -384,6 +387,7 @@ export function measureShift(def: MetricDef, rc: readonly Cell[], bc: readonly C
   const primary = boot(rc, bc, primaryScheme, m.twoLevel, def, ctx);
   let kept = primary, keptScheme = primaryScheme, keptTwoLevel = m.twoLevel;
   let other: ComparisonView["other"] = null;
+  let df = primary.df;
   if (m.keepLargerSe && rSessions >= 5 && bSessions >= 5) {
     const alt = otherScheme(m);
     const second = boot(rc, bc, alt, false, def, ctx);
@@ -397,17 +401,21 @@ export function measureShift(def: MetricDef, rc: readonly Cell[], bc: readonly C
     } else {
       other = { scheme: alt, se: second.se, df: second.df, ok: secondOk };
     }
+    // The larger SE comes with the SMALLER df of the two schemes (METHOD.md §6), so keeping the other scheme can only
+    // widen the range, raise the MDE and the p-value, and never lift a metric over the df floor (agreement.ts) on the
+    // other scheme's extra clusters. Taking that scheme's df too narrowed the range whenever its SE won by a hair.
+    df = primaryOk && secondOk && primary.df > 0 && second.df > 0 ? Math.min(primary.df, second.df) : kept.df;
   }
-  if (!kept.ok || !Number.isFinite(kept.se) || !(kept.df > 0)) return null;
+  if (!kept.ok || !Number.isFinite(kept.se) || !(df > 0)) return null;
 
-  const q = studentTQuantile(1 - (1 - m.level) / 2, kept.df);
+  const q = studentTQuantile(1 - (1 - m.level) / 2, df);
   const range = { lo: Math.exp(kept.logRatio - q * kept.se), hi: Math.exp(kept.logRatio + q * kept.se) };
   const comparison: ComparisonView = {
-    scheme: keptScheme, twoLevel: keptTwoLevel, logRatio: kept.logRatio, ratio: kept.ratio, se: kept.se, df: kept.df,
-    level: m.level, range, pValue: twoSidedP(kept.logRatio / kept.se, kept.df), other, resamples: kept.resamples, seed: kept.seed,
+    scheme: keptScheme, twoLevel: keptTwoLevel, logRatio: kept.logRatio, ratio: kept.ratio, se: kept.se, df,
+    level: m.level, range, pValue: twoSidedP(kept.logRatio / kept.se, df), other, resamples: kept.resamples, seed: kept.seed,
   };
   const call = d23Call(def, { ratio: kept.ratio, lo: range.lo, hi: range.hi, recentRate: kept.recent.rate, baselineRate: kept.baseline.rate });
-  const mdc = minimumDetectableChange(kept.se, { alpha: mdeAlphaOf(m), df: kept.df, power: MDE_POWER });
+  const mdc = minimumDetectableChange(kept.se, { alpha: mdeAlphaOf(m), df, power: MDE_POWER });
   return { comparison, call, mde: Math.exp(mdc.logDelta), mdeDown: Math.exp(-mdc.logDelta) };
 }
 

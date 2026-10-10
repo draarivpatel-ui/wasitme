@@ -19,6 +19,7 @@ import { DISCLAIMER } from "../../src/contract/check.js";
 import { chooseMode, type ColorMode } from "../../src/cli/design-tokens.js";
 import { coerceDoc, emptyDoc } from "../../src/output/doc.js";
 import { copyProblems, safeTerminalText } from "../../src/output/guard.js";
+import { renderHtml, renderMarkdown } from "../../src/output/report.js";
 import { renderTerminal, type TerminalOptions } from "../../src/output/terminal.js";
 import { cols } from "../../src/output/text.js";
 import { LEADS } from "../../src/contract/vocab.js";
@@ -273,6 +274,31 @@ test("terminal: the hostile glance fixture (escapes, bidi, HTML, long strings) p
   }
   // the engine's copy lint is not the gate for a hostile file; the document-level copy check names fields only
   assert.ok(Array.isArray(copyProblems(doc)));
+});
+
+test("terminal and report: ids named like built-in object keys (constructor, toString) never crash or print code", () => {
+  for (const key of ["constructor", "toString", "valueOf", "hasOwnProperty"]) {
+    for (const name of ["agent", "insufficient"]) {
+      const snap = structuredClone(outputsOf(name).snapshot) as any;
+      const a = snap.agents[0];
+      a.strip.metric = key;
+      a.metrics[0].id = key;
+      if (a.timeline.length > 0) { a.timeline[0].id = key; a.timeline[0].kind = key; }
+      a.progress = { tier: 1, etaDate: null, notAtCurrentPace: false, unlock: [{ metric: key, family: null, have: { events: 3, sessions: 1, sessionDays: 1 }, need: { events: 10, sessions: 2, sessionDays: 2 } }] };
+      const doc = coerceDoc(snap, NOW_MS);
+      assert.equal(doc.display, "ok", `${name}/${key}`);
+      const d = doc.agents[0]!;
+      assert.equal(d.strip?.metric, "other", "a prototype key is not an id");
+      assert.equal(d.metrics[0]!.id, "other");
+      assert.equal(d.progress?.unlock[0]?.metric, "other");
+      for (const [what, out] of [
+        ["terminal", renderTerminal(doc, opts("none"))], ["terminal-ascii", renderTerminal(doc, opts("none", { ascii: true, columns: 60 }))],
+        ["markdown", renderMarkdown(doc)], ["html", renderHtml(doc)],
+      ] as const) {
+        assert.doesNotMatch(out, /native code|function\b|=>/, `${name}/${key}/${what}`);
+      }
+    }
+  }
 });
 
 test("terminal: a document that is not an object, or is missing most fields, never throws", () => {

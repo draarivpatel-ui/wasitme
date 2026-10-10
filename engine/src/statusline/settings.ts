@@ -141,15 +141,26 @@ interface Backup {
   created: boolean;
 }
 
-/** The fragment written into settings.json for a script path. */
-export function ourFragment(command: string): string {
-  return JSON.stringify({ type: "command", command, padding: 0 });
+/**
+ * A script path spelled as one shell word, the way the installer writes it (scripts/lib/common.sh `quote_arg`): kept as
+ * is when every character is in [A-Za-z0-9_./:=@%+,-], else in single quotes with each ' written as '\''. Claude Code runs
+ * the status-line command through a shell, so a raw path with a space in it would not run.
+ */
+export function shellQuoted(path: string): string {
+  if (path === "") return "''";
+  return /[^A-Za-z0-9_./:=@%+,-]/.test(path) ? `'${path.replace(/'/g, "'\\''")}'` : path;
 }
 
+/** The fragment written into settings.json for a script path (shell-quoted, the installer's spelling). */
+export function ourFragment(command: string): string {
+  return JSON.stringify({ type: "command", command: shellQuoted(command), padding: 0 });
+}
+
+/** wasitme's line in either spelling: the shell-quoted one (installer, and this file since 0.1.1) or the raw path (0.1.0). */
 function isOurs(valueText: string, command: string): boolean {
   try {
     const v = JSON.parse(valueText) as { type?: unknown; command?: unknown };
-    return v !== null && typeof v === "object" && v.type === "command" && v.command === command;
+    return v !== null && typeof v === "object" && v.type === "command" && (v.command === command || v.command === shellQuoted(command));
   } catch {
     return false;
   }

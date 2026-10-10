@@ -50,6 +50,13 @@ export interface Turn {
   firstTs?: number;
   minTs?: number;
   maxTs?: number;
+  /**
+   * The turn's valid record times in file order, and each one's position among all records of the file (so the turns
+   * of one exchange can be merged back into file order). The exchange's wall-clock span is measured over them with the
+   * Claude reader's SpanClock, never as max minus min: clocks get reset mid-exchange. Absent: no times known.
+   */
+  stamps?: number[];
+  stampOrder?: number[];
   versions: string[];
   models: string[];
   efforts: string[];

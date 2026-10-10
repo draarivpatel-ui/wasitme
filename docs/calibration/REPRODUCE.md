@@ -30,5 +30,7 @@ The committed artifact was produced with `WASITME_CAL_MAX_WORKERS=4` (four worke
 code: `runtime.sequencesFromCache` is 4,060 of 7,280. Each sequence has its own fixed seed, so the worker count is meant to change only the
 time; compare the numbers below rather than expecting a byte-identical file.
 
-Then compare `gNullSeq` (the null rates) and `power` / `effectRows` (the planted runs) with the committed file. The artifact's own `resume`
+Then compare `gNullSeq` (the null rates) and `power` / `effectRows` (the planted runs) with the committed file.
+[`2026-10-09-rerun.json`](2026-10-09-rerun.json) is such a repeat, from scratch with one worker, on the 0.1.1 decider
+([D81](../DECISIONS.md)): its false-alarm and power counts equal this file's. The artifact's own `resume`
 field holds the exact command it was produced with.

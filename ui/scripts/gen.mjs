@@ -57,7 +57,7 @@ if (!canvasCopy || typeof canvasCopy !== "object") throw new Error("tokens.json 
 const chart = {
   strip: {
     tickHeight: t.chart.strip.tickHeight, tickGap: t.chart.strip.tickGap, denseAbove: t.chart.strip.denseAbove,
-    denseTickHeight: t.chart.strip.denseTickHeight, denseTickGap: t.chart.strip.denseTickGap,
+    denseTickHeight: t.chart.strip.denseTickHeight, denseTickGap: t.chart.strip.denseTickGap, maxTicks: t.chart.strip.maxTicks,
     columnWidth: t.chart.strip.columnWidth, lowNThreshold: t.chart.strip.lowNThreshold,
   },
   ratio: { domain: t.chart.ratio.domain, ticks: t.chart.ratio.ticks },

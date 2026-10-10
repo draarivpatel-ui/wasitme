@@ -28,7 +28,8 @@
  *     change in cluster counts. Anchor choice per tier and scheme: that tier's own measurement, else the
  *     largest measured tier (same scheme first, then the other scheme). Without any anchor the model is used
  *     as is (λ = ρ = 1). The projected variance never goes below the counting floor. With `keepLargerSe`
- *     both cluster schemes are projected and the larger SE is kept, mirroring the range (METHOD.md §6). A
+ *     both cluster schemes are projected and the larger SE is kept with the smaller df, mirroring the range
+ *     (METHOD.md §6, D81). A
  *     two-level measurement is reported under the "session-day" scheme, so it calibrates the session-day model
  *     (whose clusters grow faster than sessions do); the session scheme's projection is the check on that.
  *     df_model: each window K_w − 1, combined Welch–Satterthwaite.
@@ -42,7 +43,7 @@
  *     consecutive projected-ready days, today's measured readiness counting as day 0.
  * Whether a projected date is SHOWN is D64(b)'s product rule (eta.ts), not this module's.
  */
-import type { VarianceFloor } from "../stats/bootstrap.js";
+import { floorVariance as countFloor, type VarianceFloor } from "../stats/bootstrap.js";
 import { dayIndex, PSEUDO_COUNT } from "../stats/ratio.js";
 import { minimumDetectableChange } from "../stats/mdc.js";
 import type { Cell, ClusterScheme } from "../stats/types.js";
@@ -184,12 +185,9 @@ export interface EtaResult {
 
 const DAY_SEP = "\u001f";
 
+/** The bootstrap's own counting floor (stats/bootstrap.ts `floorVariance`, the 0.5 pseudo-count) on projected counts. */
 function floorVariance(kind: VarianceFloor, events: number, den: number): number {
-  if (kind === "none") return 0;
-  const base = 1 / (events + PSEUDO_COUNT);
-  if (kind === "poisson") return base;
-  const r = den > 0 ? Math.min(1, events / den) : 0;
-  return (1 - r) * base;
+  return countFloor(kind, events, den, PSEUDO_COUNT);
 }
 
 /** Projected counts of one window [a, b] for an evaluation on todayIdx + d. */
@@ -293,7 +291,7 @@ export function projectMetric(input: ProjectionInput, m: ProjectionMetric, tier:
     x.denominator >= m.minDenominator && x.denominator > 0 && x.maxSessionShare < gate.maxSessionShareBelow;
   const gatePass = ok(recent) && ok(baseline);
 
-  let se = -1, df = 0;
+  let se = -1, df = 0, minDf = Infinity;
   let scheme: ClusterScheme | null = null;
   let calibration: Calibration | null = null;
   for (const s of input.schemes) {
@@ -302,13 +300,17 @@ export function projectMetric(input: ProjectionInput, m: ProjectionMetric, tier:
     const cal = calibrationFor(input, m, tier.tier, s);
     const v = Math.max((cal?.varianceRatio ?? 1) * model.v, model.floor);
     const seS = Math.sqrt(v);
+    const dfS = (cal?.dfRatio ?? 1) * model.df;
+    if (dfS > 0) minDf = Math.min(minDf, dfS);
     if (seS > se) {
       se = seS;
-      df = (cal?.dfRatio ?? 1) * model.df;
+      df = dfS;
       scheme = s;
       calibration = cal;
     }
   }
+  // Like the range (D81): the larger SE, with the smaller valid df of the schemes computed.
+  if (df > 0 && minDf < df) df = minDf;
   if (scheme === null) {
     return { id: m.id, family: m.family, tier: tier.tier, recent, baseline, gatePass, se: Infinity, df: 0, scheme: null, calibration: null, mde: Infinity, sensitive: false };
   }

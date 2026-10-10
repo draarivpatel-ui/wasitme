@@ -1,6 +1,6 @@
 {
   "name": "wasitme",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Was it me, or the model? Reads your own Claude Code and Codex logs and tells you whether your setup changed or the agent did. Local-only.",
   "keywords": [
     "claude-code",

@@ -36,7 +36,7 @@ export const MDE_POWER = 0.8;
 /**
  * An interval method. `level` sets both the range (θ ± t(level, df)·SE) and the MDE's α = 1 − level.
  * `keepLargerSe` (METHOD.md §6): when both windows have ≥ 5 sessions, also compute the other cluster scheme's SE
- * and keep the larger.
+ * and keep the larger, with the smaller of the two schemes' df (D81).
  */
 export interface AnalysisMethod {
   id: string;

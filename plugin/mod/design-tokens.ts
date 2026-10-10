@@ -504,6 +504,7 @@ export const tokens = {
       "denseAbove": 25,
       "denseTickHeight": 1,
       "denseTickGap": 1,
+      "maxTicks": 60,
       "columnWidth": 14,
       "columnGap": 6,
       "compactColumnWidth": 6,

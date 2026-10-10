@@ -168,7 +168,9 @@ struct StripLayout: Equatable {
         let pitch = (x1 - x0) / CGFloat(rows.count)
         let colW = min(Tokens.Chart.Strip.columnWidth, pitch - 4)
         let maxK = max(rows.map(\.k).max() ?? 0, 10)
-        let top = CGFloat(Int((Double(maxK) / 5).rounded(.up)) * 5)
+        // Rounded up to a multiple of 5 in floating point: the Int product trapped for a count near Int.max (a file
+        // outside the schema's 1e9 bound; GlanceDisplay now bounds it too, this keeps the layout total on its own).
+        let top = CGFloat((Double(maxK) / 5).rounded(.up) * 5)
         let yTop: CGFloat = 24 + 16
         let yA = yTop + compactHeight
         let cu = compactHeight / top

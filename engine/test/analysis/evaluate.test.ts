@@ -1,8 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { D29_CANDIDATES } from "../../src/analysis/gates/d23.js";
-import { evaluateAgent, G0_FALLBACK_ERRORS_VOTE, type AgentEvaluation, type EvaluateOptions, type MetricEvaluation } from "../../src/analysis/gates/evaluate.js";
-import type { MetricExchange } from "../../src/analysis/metrics/defs.js";
+import { evaluateAgent, G0_FALLBACK_ERRORS_VOTE, measureShift, type AgentEvaluation, type EvaluateOptions, type MetricEvaluation } from "../../src/analysis/gates/evaluate.js";
+import { metricDef, type MetricExchange } from "../../src/analysis/metrics/defs.js";
+import type { Cell } from "../../src/analysis/stats/types.js";
 import { studentTQuantile } from "../../src/analysis/stats/distributions.js";
 import { addDays, close, ex, shuffled } from "./helpers.js";
 
@@ -233,4 +234,40 @@ test("method candidates run end to end; levels other than 95/99 are refused", ()
     assert.equal(te.status, "worse");
   }
   assert.throws(() => evaluateAgent([], { agent: "claude-code", now: NOW, timeZone: "UTC", errorsVote: "toolErrors", method: { ...D29_CANDIDATES["d23-literal"]!, level: 0.9 as 0.95 } }));
+});
+
+test("keep-larger-SE never narrows the range: the kept comparison takes the smaller of the two schemes' df", () => {
+  // Synthetic, 5 sessions × 4 days per window, one larger session. Under session clusters the comparison has df ≈ 3.4
+  // (below the df floor of 4); session-day clusters give an SE only ~2.5% larger but df ≈ 10. Keeping that whole
+  // comparison used to narrow the range (and the MDE) and lift the metric over the df floor.
+  const cells = (p: string, rows: number[][]): Cell[] =>
+    rows.map(([s, d, num, den]) => ({ session: `${p}${s}`, day: `2026-09-${String(d).padStart(2, "0")}`, num: num!, den: den! }));
+  const rc = cells("r", [[0, 15, 1, 29], [0, 16, 2, 27], [0, 17, 6, 23], [0, 18, 1, 10], [1, 16, 0, 5], [1, 17, 0, 5], [1, 18, 0, 4], [1, 19, 0, 4], [2, 17, 1, 8], [2, 18, 3, 10], [2, 19, 3, 9], [2, 20, 1, 7], [3, 18, 0, 8], [3, 19, 0, 5], [3, 20, 1, 10], [3, 21, 0, 5], [4, 19, 0, 9], [4, 20, 2, 4], [4, 21, 0, 7], [4, 22, 0, 9]]);
+  const bc = cells("b", [[0, 1, 2, 22], [0, 2, 3, 27], [0, 3, 1, 20], [0, 4, 4, 21], [1, 2, 0, 7], [1, 3, 1, 5], [1, 4, 1, 9], [1, 5, 0, 4], [2, 3, 1, 10], [2, 4, 0, 12], [2, 5, 0, 5], [2, 6, 0, 5], [3, 4, 2, 5], [3, 5, 3, 6], [3, 6, 0, 6], [3, 7, 0, 6], [4, 5, 1, 6], [4, 6, 1, 9], [4, 7, 1, 4], [4, 8, 0, 6]]);
+  const def = metricDef("toolErrorsNonCmd");
+  for (const estimator of ["analytic", "bootstrap"] as const) {
+    const method = { ...D29_CANDIDATES["session-t95-cr2"]!, estimator };
+    const both = measureShift(def, rc, bc, { method, resamples: 2000 })!;
+    const alone = measureShift(def, rc, bc, { method: { ...method, keepLargerSe: false }, resamples: 2000 })!;
+    const c = both.comparison, p = alone.comparison;
+    const label = `${estimator}: kept ${c.scheme} se ${c.se} df ${c.df}; session alone se ${p.se} df ${p.df}; other ${JSON.stringify(c.other)}`;
+    assert.ok(c.other !== null && c.other.ok, label);
+    if (estimator === "analytic") {
+      // Deterministic: the session-day SE is the larger one and is kept; the df is the session scheme's (the smaller).
+      assert.equal(c.scheme, "session-day", label);
+      assert.deepEqual([c.other.scheme, c.other.se, c.other.df], ["session", p.se, p.df], label);
+      assert.ok(c.se > p.se, label);
+      assert.equal(c.df, p.df, label);
+    }
+    // Whichever scheme won: the larger SE, the smaller df, never less conservative than the primary scheme alone.
+    assert.ok(c.se >= p.se && c.se >= c.other.se, label);
+    assert.ok(c.df <= p.df && c.df <= c.other.df, label);
+    assert.ok(c.df < 4, `the df floor reads the session scheme's df here — ${label}`);
+    assert.ok(Math.log(c.range.hi / c.range.lo) >= Math.log(p.range.hi / p.range.lo) * (1 - 1e-12), label);
+    assert.ok(both.mde >= alone.mde * (1 - 1e-12) && both.mdeDown <= alone.mdeDown * (1 + 1e-12), label);
+    assert.ok(c.pValue >= p.pValue * (1 - 1e-12), label);
+    // The range is still the plain formula on the reported SE and df.
+    const q = studentTQuantile(0.975, c.df);
+    assert.ok(close(c.range.lo, Math.exp(c.logRatio - q * c.se)) && close(c.range.hi, Math.exp(c.logRatio + q * c.se)), label);
+  }
 });

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { countWindow, D23_GATE, D23_LITERAL, D29_CANDIDATES, evaluateD23Gate, type WindowCounts } from "../../src/analysis/gates/d23.js";
 import { d23Call, statusOf } from "../../src/analysis/gates/evaluate.js";
 import { metricDef } from "../../src/analysis/metrics/defs.js";
+import { logRate } from "../../src/analysis/stats/ratio.js";
 import type { Cell } from "../../src/analysis/stats/types.js";
 
 test("D23 constants are the decided numbers (not the stats branch defaults)", () => {
@@ -114,6 +115,13 @@ test("materiality (D23): range excludes 1×, ≥25% move, ≥1 pt absolute — h
   assert.equal(d23Call(te, { ratio: 0.75, lo: 0.6, hi: 0.95, recentRate: 0.06, baselineRate: 0.08 }).material, true);
   assert.equal(d23Call(te, { ratio: 1.24, lo: 1.01, hi: 1.6, recentRate: 0.1, baselineRate: 0.08 }).material, false);
   assert.equal(d23Call(te, { ratio: 0.76, lo: 0.6, hi: 0.95, recentRate: 0.06, baselineRate: 0.08 }).material, false);
+  // The same boundaries reached through computed log rates, as measureShift produces them: (11.5/20)/(11.5/25) is
+  // exactly ×1.25 but exp(logRate − logRate) comes out 1.2499999999999998; (5.5/16)/(5.5/12) is exactly ×0.75 but
+  // computes as 0.7500000000000001. Both are still a 25% move.
+  const up = Math.exp(logRate(11, 20) - logRate(11, 25)), down = Math.exp(logRate(5, 16) - logRate(5, 12));
+  assert.ok(up < 1.25 && down > 0.75, "the fixture must sit one ULP on the wrong side of the boundary");
+  assert.deepEqual(d23Call(te, { ratio: up, lo: 1.01, hi: 1.6, recentRate: 0.55, baselineRate: 0.44 }).reasons, []);
+  assert.deepEqual(d23Call(te, { ratio: down, lo: 0.6, hi: 0.95, recentRate: 0.3125, baselineRate: 0.4167 }).reasons, []);
   // Exactly one point is one point, despite floating point (0.04 − 0.03 = 0.00999…).
   assert.equal(d23Call(te, { ratio: 0.75, lo: 0.6, hi: 0.95, recentRate: 0.03, baselineRate: 0.04 }).material, true);
   // Range includes 1 → not material whatever the size.

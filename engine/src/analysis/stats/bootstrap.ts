@@ -217,12 +217,23 @@ export function quantileSorted(sorted: ArrayLike<number>, p: number): number {
   return sorted[lo]! + (h - lo) * (sorted[hi]! - sorted[lo]!);
 }
 
+/**
+ * Variance floor of a window's log rate (METHOD.md §6): Poisson 1/(num + pseudo); binomial (1 − r)/(num + pseudo).
+ * The binomial share of non-events never drops below pseudo/(den + pseudo): at r = 1 (every unit at 100%) the
+ * bootstrap sees no noise, just as with zero events, so the same pseudo-count keeps the floor open. For integer counts
+ * that bound only binds when num = den.
+ */
 export function floorVariance(kind: VarianceFloor, num: number, den: number, pseudo: number): number {
   if (kind === "none") return 0;
   const base = 1 / (num + pseudo);
   if (kind === "poisson") return base;
-  const r = den > 0 ? Math.min(1, num / den) : 0;
-  return (1 - r) * base;
+  return binomialShare(num, den, pseudo) * base;
+}
+
+/** 1 − r for the binomial floor, never below pseudo/(den + pseudo) (see `floorVariance`); 1 with no denominator. */
+export function binomialShare(num: number, den: number, pseudo: number): number {
+  if (!(den > 0)) return 1;
+  return Math.max(1 - Math.min(1, num / den), pseudo / (den + pseudo));
 }
 
 const UNINFORMATIVE: Interval = { lo: 0, hi: Infinity };

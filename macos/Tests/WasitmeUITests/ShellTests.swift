@@ -35,6 +35,20 @@ import Testing
         _ = first
     }
 
+    /// Only another copy of THIS bundle (same location) counts as "already running". A different bundle that shares the
+    /// bundle id (a dist build with a temp --home next to the installed app) must not hand off to, or make the real app
+    /// exit for, a test instance: the per-home lock decides for it.
+    @Test func onlyACopyOfTheSameBundleCounts() {
+        let real = URL(fileURLWithPath: "/Applications/wasitme.app", isDirectory: true)
+        let dist = URL(fileURLWithPath: "/work/macos/dist/WasitmeApp.app", isDirectory: true)
+        let running: [(pid: pid_t, bundleURL: URL?)] = [(100, real), (200, dist), (300, nil), (400, real), (0, real)]
+        #expect(SingleInstance.sameBundle(running, as: real, selfPID: 400) == [100], "the dist copy and the unknown one are ignored")
+        #expect(SingleInstance.sameBundle(running, as: dist, selfPID: 999) == [200])
+        #expect(SingleInstance.sameBundle(running, as: nil, selfPID: 999).isEmpty)
+        let sameButSpelledOddly = URL(fileURLWithPath: "/Applications/./wasitme.app/", isDirectory: true)
+        #expect(SingleInstance.sameBundle([(100, sameButSpelledOddly)], as: real, selfPID: 1) == [100])
+    }
+
     @Test @MainActor func anUnbundledBinaryHasNoOtherInstancesByBundleID() {
         #expect(SingleInstance.otherInstances(bundleID: nil).isEmpty)
     }

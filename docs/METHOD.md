@@ -128,10 +128,13 @@ answer ([`bootstrap.ts`](../engine/src/analysis/stats/bootstrap.ts)). Each windo
   its leverage on the ratio, with Satterthwaite degrees of freedom; it reduces to `count` when units are equal and inflates
   more when one session dominates; [`smallsample.ts`](../engine/src/analysis/stats/smallsample.ts));
 - floored at the Poisson or binomial variance of the window's event count, because a bootstrap cannot see noise inside clusters that
-  happened to have zero events.
+  happened to have zero events. The binomial floor counts at least the same 0.5 pseudo-count of non-events, so a window where every
+  unit is at 100% is floored too.
 
 The two windows' degrees of freedom are combined Welch–Satterthwaite style. When both windows have at least 5 sessions, the engine also
-computes the standard error under the other cluster scheme and **keeps the larger** ([`evaluate.ts`](../engine/src/analysis/gates/evaluate.ts)).
+computes the standard error under the other cluster scheme and **keeps the larger**, together with the **smaller** of the two schemes'
+degrees of freedom, so the second scheme can only widen the range and raise the smallest detectable change, never narrow them or lift a
+metric over the degrees-of-freedom floor (D81; [`evaluate.ts`](../engine/src/analysis/gates/evaluate.ts)).
 In the calibration harness a closed-form (sandwich) version of the same standard error stands in for the bootstrap so thousands
 of sequences stay cheap; the 2026-10-04 artifact checks the two against each other: median |ln(SE ratio)| of 0.012 to 0.021 across five configurations
 against a limit of 0.05 ([`2026-10-04.json`](calibration/2026-10-04.json), `seCheck`).
@@ -361,21 +364,24 @@ Anything else is *Timeline only*.
 | [`2026-10-05-screen-interim.json`](calibration/2026-10-05-screen-interim.json) | partial | Weak screen of all six candidates under an interim decider with 20 to 30 null sequences each. Removes nobody; `session-t95-cr2` and `two-level-t95-cr2` led on pilot power |
 | [`2026-10-05-eta.json`](calibration/2026-10-05-eta.json), [`-eta-d64.json`](calibration/2026-10-05-eta-d64.json) | complete (probes only) | The G-ETA studies behind [section 13](#13-progress-and-why-there-are-no-dates) |
 | [`2026-10-05.json`](calibration/2026-10-05.json) | complete; **the artifact the shipped engine reads** | `session-t95-cr2` with the full decider: 1,000 null sequences per profile in 7 profiles (7,000), plus 40 planted doublings per profile (280). 4,060 of the 7,280 sequences were resumed from the cache of an earlier run of the same code ([`REPRODUCE.md`](calibration/REPRODUCE.md)) |
+| [`2026-10-09-rerun.json`](calibration/2026-10-09-rerun.json) | complete; a repeat, not read by the engine | The same configuration from scratch (one worker, no cache) on the 0.1.1 decider, after [D81](DECISIONS.md) made keep-larger-SE keep the smaller df. Every false-alarm count, every power count and G-onset are identical to 2026-10-05, so the engine's calibration flags are unchanged. Only the share of days shown as *Too early to tell* moved, by up to 2 points (the table below uses this run) |
 
-From the 2026-10-05 run (`session-t95-cr2`, `toolErrorsNonCmd` voting, UTC days, 90 daily evaluations per sequence):
+From the 2026-10-05 run (`session-t95-cr2`, `toolErrorsNonCmd` voting, UTC days, 90 daily evaluations per sequence), repeated on
+2026-10-09 with the 0.1.1 decider (identical counts unless a line says otherwise):
 
 - **False alarms: none observed.** 0 false "changed", 0 false "agent" and 0 false "you" in each profile's 1,000 null sequences, for both
   Claude Code (six profiles, 6,000 sequences) and Codex (one profile, 1,000). The Clopper–Pearson 95% upper bound is 0.368% per profile
   (`0.00368`), inside the 6% and 2% limits.
-- **What a user whose setup and agent did not change in effect sees,** as days out of every 100 daily evaluations:
+- **What a user whose setup and agent did not change in effect sees,** as days out of every 100 daily evaluations (the 2026-10-09
+  repeat; 2026-10-05 had 71 and 29 for few long sessions and 19 and 81 for multi-project, the rest the same):
 
   | Profile | Too early to tell | No detectable change |
   |---|---|---|
-  | few long sessions | 71 | 29 |
+  | few long sessions | 73 | 27 |
   | few long sessions, high dispersion | 98 | 2 |
   | many short sessions | 20 | 80 |
   | single project | 21 | 79 |
-  | multi-project | 19 | 81 |
+  | multi-project | 20 | 80 |
   | sparse failures | 96 | 4 |
   | Codex | over 99 | under 1 |
 
@@ -396,7 +402,7 @@ From the 2026-10-05 run (`session-t95-cr2`, `toolErrorsNonCmd` voting, UTC days,
 
   A single user with a few very long sessions has little power, and that is a property of the data, not a setting to turn up.
 - **Attribution in the planted runs.** Row 5 (a change of unknown origin in the onset window) fired in 3 of the 280 planted runs when
-  counted raw and in none once persistence was applied, and in none of them because of a derived (between-session) event. In an earlier,
+  counted raw (2 in the 2026-10-09 repeat) and in none once persistence was applied, and in none of them because of a derived (between-session) event. In an earlier,
   partial run of the same decider (since superseded by this one), "you" was claimed in 5 of 280 planted agent-side cases, an upper
   bound of about 4% and inside the 5% limit ([D64](DECISIONS.md)). G-attr itself was not run on the final decider.
 

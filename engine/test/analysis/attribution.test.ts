@@ -659,6 +659,32 @@ test("re-pick (D65), a real switch still counts: a first-prompt /model to a mode
   assertTrace(a.decision);
 });
 
+test("re-pick (D65), parallel sessions: the command's exchange is looked for in the event's own session", () => {
+  // The real switch above (m1 → m2 at ONSET_DAY; s0 opens with "/model m2", exchange 10:00, first response 10:00:30),
+  // plus a parallel session sA already on m2 whose prompt lands inside s0's prompt-to-response window (10:00:10).
+  const D = ONSET_DAY, s0 = `s0-${D}`;
+  const xs = scenario({ ...SHIFT, label: (after) => ({ model: after ? "m2" : "m1", servedModel: after ? "m2" : "m1" }) });
+  const sA = (t: string, seq: number) => ex({ session: "s-A", day: D, t: `${D}T${t}.000Z`, seq, model: "m2", servedModel: "m2", toolCalls: 50, edits: 20, reads: 40, blindEdits: 2, toolErrors: 2, toolErrorsEdit: 2, cmdCalls: 0, toolErrorsCmd: 0, steps: 4 });
+  const parallel = [...xs, sA("09:30:00", 0), sA("10:00:10", 1)];
+  const cmd = { ...firstPromptCommand("e-switch", "model", "m2", D, "10:00:30"), session: s0 };
+  assert.equal(valueInEffect(cmd, "model", parallel, dayMajorities(parallel, "model"), "UTC"), "m1", "s0 has nothing earlier: the previous day's majority");
+  const a = run(parallel, [cmd]);
+  assert.deepEqual(a.repicks, [], "the real switch is kept");
+  assert.deepEqual([cand(a.decision, "model")?.event, a.decision.state, a.decision.row], ["e-switch", "you", 7]);
+  assertTrace(a.decision);
+
+  // The converse: s-r ran on m2 the day before and re-picks m2 after a resume (a true re-pick), while a parallel sC that
+  // just moved m1 → m2 has its m2 prompt inside s-r's window. The re-pick is still dropped.
+  const prev = addDays(D, -1);
+  const own = (session: string, day: string, t: string, seq: number, model: string) =>
+    ex({ session, day, t: `${day}T${t}.000Z`, seq, model, servedModel: model, toolCalls: 50, edits: 20, reads: 40, blindEdits: 2, toolErrors: 2, toolErrorsEdit: 2, cmdCalls: 0, toolErrorsCmd: 0, steps: 4 });
+  const flat = scenario({ ...SHIFT, label: () => ({ model: "m1", servedModel: "m1" }) });
+  const both = [...flat, own("s-r", prev, "20:00:00", 0, "m2"), own("s-r", D, "08:00:00", 1, "m2"), own("s-C", D, "07:30:00", 0, "m1"), own("s-C", D, "08:00:10", 1, "m2")];
+  const repick = { ...firstPromptCommand("e-resume", "model", "m2", D, "08:00:20"), session: "s-r" };
+  assert.equal(valueInEffect(repick, "model", both, dayMajorities(both, "model"), "UTC"), "m2");
+  assert.deepEqual(dropRepicks("claude-code", both, [repick], "UTC").dropped, ["e-resume"]);
+});
+
 test("dayMajorities / majorityChanges: the refactor keeps the day-majority changes exactly", () => {
   const day = (k: number) => addDays(TODAY, -k);
   const xs: MetricExchange[] = [];

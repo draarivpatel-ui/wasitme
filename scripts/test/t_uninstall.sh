@@ -464,4 +464,65 @@ pkill -U $T_UID -f $H/Applications/wasitme.app/Contents/MacOS/" "$(shimlog)" "bo
   assert_dir "$H/Applications/wasitme.app" "the app is still there"
 fi
 
+t_section "dry run of --only statusline plans exactly what the real run does"
+sb_new
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME   # no ~/.claude yet: the installer creates it for the status line and records that
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+assert_rc 0 "install creates ~/.claude and a status line"
+BEFORE=$(tree_of "$H")
+uninst --yes --only statusline --dry-run
+assert_rc 0 "--only statusline --dry-run"
+assert_eq "" "$(err)" "no shell error on stderr (the plan used to redirect into a temp folder that a dry run never creates)"
+assert_contains "$(out)" "statusline-restore" "the restore is planned"
+assert_not_contains "$(out)" "statusline uninstall" "the engine call is not planned: after the restore the real run never makes it"
+assert_contains "$(out)" "[dry-run] rmdir $H/.claude" "and the folder the installer made for it is planned for removal"
+assert_eq "$BEFORE" "$(tree_of "$H")" "and nothing changed"
+uninst --yes --only statusline
+assert_rc 0 "the real run"
+assert_missing "$H/.claude" "does remove that folder"
+sb_new
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+uninst --yes --dry-run
+assert_rc 0 "a full dry run"
+assert_not_contains "$(out)" "statusline uninstall" "plans no engine call for a status line the restore handles"
+
+t_section "a home with a space: the installer writes the quoted command, the engine writes the raw path, both are wasitme's"
+# The installer shell-quotes the status-line shim path in settings.json; `wasitme statusline install` writes it raw. Both
+# must be recognised as wasitme's by the installer and the uninstaller, or uninstall leaves a statusLine that points at the
+# deleted shim.
+sb_new "my home"
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME
+mkdir -p "$H/.claude"
+printf '{}\n' >"$H/.claude/settings.json"
+SLS="$H/.local/bin/wasitme-statusline"
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+assert_rc 0 "install with a status line under a home that has a space"
+assert_eq "'$SLS'" "$(json_get "$H/.claude/settings.json" 'd.statusLine.command')" "the installer wrote the shell-quoted path"
+# The engine's own edit (raw path), with the installer's record of it gone (as for a `wasitme statusline install`).
+node -e 'const fs=require("fs");const f=process.argv[1];const d=JSON.parse(fs.readFileSync(f,"utf8"));d.statusLine={type:"command",command:process.argv[2],padding:0};fs.writeFileSync(f,JSON.stringify(d)+"\n")' "$H/.claude/settings.json" "$SLS"
+grep -v "^statusline	" "$H/.wasitme/install-manifest" >"$SB/mf" && cat "$SB/mf" >"$H/.wasitme/install-manifest"
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+assert_rc 0 "an install that finds the engine's raw-path line"
+assert_not_contains "$(out)" "already have a status line" "is not told it is someone else's status line"
+assert_contains "$(out)" "already set in" "but that it is already installed"
+uninst --yes --only statusline
+assert_rc 0 "--only statusline"
+assert_not_contains "$(out)" "Nothing to remove" "finds the raw-path line as wasitme's"
+assert_contains "$(cat "$SHIM_ENGINE_LOG")" "engine statusline uninstall --script $SLS --claude-dir $H/.claude" "and hands it to the engine to undo"
+
+sb_new "my home"
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME
+mkdir -p "$H/.claude"
+printf '{}\n' >"$H/.claude/settings.json"
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --no-statusline --agents claude-code
+node -e 'const fs=require("fs");const f=process.argv[1];const d=JSON.parse(fs.readFileSync(f,"utf8"));d.statusLine={type:"command",command:process.argv[2],padding:0};fs.writeFileSync(f,JSON.stringify(d)+"\n")' "$H/.claude/settings.json" "$H/.local/bin/wasitme-statusline"
+uninst --yes
+assert_rc 0 "full uninstall with an engine-written raw-path status line and nothing in the manifest"
+assert_contains "$(cat "$SHIM_ENGINE_LOG")" "engine statusline uninstall --script $H/.local/bin/wasitme-statusline" "the engine is asked to take it out before the shim goes"
+
 t_done

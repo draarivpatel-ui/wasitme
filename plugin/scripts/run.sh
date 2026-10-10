@@ -16,7 +16,10 @@
 # bin/ on PATH, would reach the project's code); and only Node 22 or newer.
 # Like the hooks, it looks only under $HOME/.wasitme and drops WASITME_HOME before the engine starts: a project's own
 # settings can set environment variables for a session, and must not be able to point this at code of their choosing,
-# nor at a data folder of their choosing (`report` scans and writes its results into the engine's home).
+# nor at a data folder of their choosing (`report` scans and writes its results into the engine's home), nor at log
+# folders of their choosing (the scan reads them and keeps what it found as history). WASITME_CLAUDE_DIR and
+# WASITME_CODEX_DIR are dropped too, and when engine.json records the folders the install tracks (claudeDir, codexDir)
+# those are what the engine is given, taking the place of CLAUDE_CONFIG_DIR and CODEX_HOME for this run.
 #
 # What it never does: run a PATH-resolved `wasitme` (the skill runs in the session's folder, so a repo that ships its
 # own `wasitme` must never be reached), source a file, run anything but `report` or `status`, or print a path (the
@@ -42,10 +45,15 @@ unset NODE_OPTIONS NODE_PATH NODE_REPL_EXTERNAL_MODULE NODE_EXTRA_CA_CERTS NODE_
 unset OPENSSL_CONF OPENSSL_MODULES OPENSSL_ENGINES
 # The engine's data folder is the install's (~/.wasitme, the `home` the installer recorded), never one a session's
 # environment names: `report` scans and writes its results there, and a project must not be able to point that at a
-# folder of its own. CDPATH would make a relative `cd` print the folder it chose to stdout.
-unset WASITME_HOME CDPATH
+# folder of its own. The same goes for the log folders it reads (WASITME_CLAUDE_DIR / WASITME_CODEX_DIR here; the
+# recorded ones are put back below). CDPATH would make a relative `cd` print the folder it chose to stdout.
+unset WASITME_HOME WASITME_CLAUDE_DIR WASITME_CODEX_DIR CDPATH
 
 say() { printf '%s\n' "$1"; }
+
+# Where the command the hints name lives. `--prefix` puts it elsewhere and engine.json does not record where, so the
+# hint says what to run and where it is by default; it never claims one fixed path is the command.
+doctor_where="(the wasitme command the installer set up: ~/.local/bin/wasitme, or the --prefix folder's bin/ if you chose one)."
 
 case ${1:-} in
   report | status) ;;
@@ -114,6 +122,12 @@ node_ok() {
 }
 
 find_node() {
+  fn_guard=1
+  fn_home=$(cd -P -- "$home" 2>/dev/null && pwd -P) || fn_home=$home
+  if [ -n "$session_dir" ]; then
+    case $fn_home/ in "$session_dir"/*) fn_guard=0 ;; esac
+    case $home/ in "$session_dir"/*) fn_guard=0 ;; esac
+  fi
   for fn_candidate in /opt/homebrew/bin/node /usr/local/bin/node; do
     if node_ok "$fn_candidate"; then
       printf '%s\n' "$fn_candidate"
@@ -127,8 +141,10 @@ find_node() {
       /*) ;;
       *) continue ;;
     esac
-    # Never a node inside the session's folder, by either spelling of the entry.
-    if [ -n "$session_dir" ] && [ "$session_dir" != / ]; then
+    # Never a node inside the session's folder, by either spelling of the entry. A session started in HOME or in a folder
+    # above it has no project of its own to guard against (and every per-user node, nvm and the like, lives under HOME);
+    # from a folder inside HOME a node elsewhere under HOME is accepted anyway.
+    if [ -n "$session_dir" ] && [ "$session_dir" != / ] && [ "$fn_guard" = 1 ]; then
       fn_real=$(cd -P -- "$fn_dir" 2>/dev/null && pwd -P) || continue
       case $fn_dir/ in "$session_dir"/*) continue ;; esac
       case $fn_real/ in "$session_dir"/*) continue ;; esac
@@ -152,6 +168,17 @@ installed=0
 ej="$wh/engine.json"
 if trusted "$ej"; then
   installed=1
+  # The log folders this install tracks: what `report` scans, whatever the session's environment says.
+  ej_claude=$(json_key claudeDir "$ej")
+  ej_codex=$(json_key codexDir "$ej")
+  if absolute "$ej_claude"; then
+    WASITME_CLAUDE_DIR=$ej_claude
+    export WASITME_CLAUDE_DIR
+  fi
+  if absolute "$ej_codex"; then
+    WASITME_CODEX_DIR=$ej_codex
+    export WASITME_CODEX_DIR
+  fi
   ej_node=$(json_key node "$ej")
   ej_cli=$(json_key cli "$ej")
   if absolute "$ej_cli" && trusted "$ej_cli"; then
@@ -195,7 +222,7 @@ fi
 
 if [ -z "$cli" ]; then
   if [ "$installed" = 1 ]; then
-    say "wasitme's engine isn't where it was (Node may have moved). Run ~/.local/bin/wasitme doctor --repair."
+    say "wasitme's engine isn't where it was (Node may have moved). In a terminal, run: wasitme doctor --repair $doctor_where"
   else
     say "wasitme isn't set up on this machine, so there is no report to show. Install wasitme, then run this again."
   fi
@@ -217,9 +244,9 @@ if [ "$status" -ne 0 ]; then
   last=${out##*"
 "}
   case $last in
-    'wasitme: '*' failed ('*) say "wasitme: for details, run in a terminal: ~/.local/bin/wasitme doctor" ;;
+    'wasitme: '*' failed ('*) say "wasitme: for details, run in a terminal: wasitme doctor $doctor_where" ;;
     'wasitme: '?*) ;;
-    *) say "wasitme: the $1 command stopped with exit status $status. For details, run in a terminal: ~/.local/bin/wasitme doctor" ;;
+    *) say "wasitme: the $1 command stopped with exit status $status. For details, run in a terminal: wasitme doctor $doctor_where" ;;
   esac
 fi
 exit 0

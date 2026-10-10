@@ -36,6 +36,8 @@ let violations = 0;
 let lastDoc: Doc | null = null;
 let ui: Ui = { page: "timeline", agent: 0, chrome: "full", nowMs: Date.now(), open: [] };
 let userPage: Page | null = null;
+/** The page and agent of the last paint: a repaint of the same ones keeps the scroll position. */
+let lastPainted: { page: Page; agent: number } | null = null;
 
 /** The integration ids the bridge accepts (IntegrationID raw values). */
 const INTEGRATIONS = new Set(["app", "scan", "claude-plugin", "codex-plugin", "statusline"]);
@@ -102,12 +104,30 @@ function onAct(a: Act): void {
   }
 }
 
+/** The scroll container: renderApp builds a new `main.content` on every paint, and it is the element that scrolls. */
+function scroller(app: Element): HTMLElement | null {
+  const el = app.querySelector("main.content");
+  return el instanceof HTMLElement ? el : null;
+}
+
 function paint(keepFocus = false): void {
   const app = document.getElementById("app");
   if (!app || !lastDoc) return;
   const focused = keepFocus && document.activeElement instanceof Element ? document.activeElement.getAttribute("data-act") : null;
+  // Every paint swaps in a new `main.content`, which starts at the top. Someone reading the bottom of the Report or the
+  // Timeline must not be sent back to the top by a disclosure click or by native's re-render (each scan, each minute's
+  // poll, an appearance switch), so the position is kept while the page and the agent are the same ones. A different page
+  // or agent lands at the top, as it should. The browser clamps the value if the page is now shorter.
+  const prevTop = scroller(app)?.scrollTop ?? 0;
+  const samePage = lastPainted !== null && lastPainted.page === ui.page && lastPainted.agent === ui.agent;
   const tree = renderApp(lastDoc, ui);
   app.replaceChildren(materialize(tree, document, onAct));
+  let kept = false;
+  if (samePage && prevTop > 0) {
+    const next = scroller(app);
+    if (next) { next.scrollTop = prevTop; kept = true; }   // synchronously: no requestAnimationFrame (D48)
+  }
+  lastPainted = { page: ui.page, agent: ui.agent };
   const title = PAGES.find((p) => p.id === ui.page)?.title ?? "Finding";
   document.title = `wasitme · ${title}`;
   root.dataset["page"] = ui.page;
@@ -116,7 +136,8 @@ function paint(keepFocus = false): void {
   if (focused) {
     const target = Array.from(app.querySelectorAll("[data-act]")).find((e) => e.getAttribute("data-act") === focused)
       ?? Array.from(app.querySelectorAll("[data-act]")).find((e) => e.getAttribute("data-act") === actKey({ action: "showPage", page: ui.page }));
-    if (target instanceof HTMLElement) target.focus();
+    // when the reader's place was kept, focusing must not move it (focus() scrolls its target into view)
+    if (target instanceof HTMLElement) { if (kept) target.focus({ preventScroll: true }); else target.focus(); }
   }
 }
 

@@ -435,6 +435,10 @@ MDE. No per-day rate bands, no rolling lines, no interpolation.**
 - **Daily strip.**
   - Each event is one tick, 2 px tall with a 1 px gap. Above 25 events a day the ticks become 1 + 1 (dense),
     so they can still be counted.
+  - A column never holds more than `chart.strip.maxTicks` ticks (60), so one runaway day cannot make the strip
+    thousands of pixels tall. A day with more ends in an open arrowhead above its last tick, the same cue a forest
+    range uses when it runs past the axis. Nothing is lost: the hover text, the k row and the text description
+    keep the exact count.
   - A day with under 100 opportunities is drawn half width: a shape cue, not a colour.
   - A day with no sessions shows `–`.
   - Under every full strip: the **k row** (events) and the **n row** (opportunities), in mono.
