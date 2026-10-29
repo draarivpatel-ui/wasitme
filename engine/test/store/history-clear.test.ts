@@ -175,3 +175,22 @@ test("a running scan holds the lock: the clear waits, then gives up having delet
     env.cleanup();
   }
 });
+
+test("history status: reports saved history file count and bytes in text and --json without deleting", () => {
+  const env = scannedHome("hstatus");
+  try {
+    const resText = run(env, "history", "status");
+    assert.equal(resText.status, 0, resText.stderr);
+    assert.match(resText.stdout, /^Saved history: \d+ files?, \d+/);
+
+    const resJson = run(env, "history", "status", "--json");
+    assert.equal(resJson.status, 0, resJson.stderr);
+    const parsed = JSON.parse(resJson.stdout);
+    assert.equal(parsed.schema, "wasitme.history-status/1");
+    assert.equal(parsed.existed, true);
+    assert.ok(parsed.files > 0);
+    assert.ok(parsed.bytes > 0);
+  } finally {
+    env.cleanup();
+  }
+});

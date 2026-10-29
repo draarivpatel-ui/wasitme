@@ -3,11 +3,14 @@
  * exact list). Settings, exclusions, the salt and the install stay, so the next scan starts fresh from the logs the
  * agents still keep.
  *
+ * `wasitme history status [--json]`: show how many saved history files and bytes are currently stored without deleting
+ * anything.
+ *
  * It asks first on a terminal (Enter = no). Without a terminal to ask on (the Mac app, a script) it needs `--yes` and
  * otherwise refuses with exit 2, deleting nothing. A scan that holds the lock is waited for briefly; if it is still
  * running, exit 1 and nothing is deleted. Output names counts only, never a path.
  *
- * Exit codes: 0 cleared (or nothing to clear), 1 failed or a scan was running (nothing deleted), 2 usage / no --yes.
+ * Exit codes: 0 cleared/status (or nothing to clear), 1 failed or a scan was running (nothing deleted), 2 usage / no --yes.
  */
 import { clearHistory, clearPreview } from "../../store/clear.js";
 import { homePaths, wasitmeHome } from "../../store/home.js";
@@ -29,7 +32,23 @@ function files(n: number): string {
 
 export async function history(ctx: CliContext, argv: readonly string[]): Promise<number> {
   const [sub, ...rest] = argv;
-  if (sub !== "clear") throw new UsageError("usage: wasitme history clear [--yes]");
+  if (sub === "status") {
+    const a = parseArgs(rest, {});
+    const json = has(a, "json");
+    const p = homePaths(wasitmeHome(ctx.env));
+    const preview = clearPreview(p);
+    if (json) {
+      emitJson(ctx, { schema: "wasitme.history-status/1", existed: preview.existed, files: preview.files, bytes: preview.bytes });
+      return 0;
+    }
+    if (!preview.existed || preview.files === 0) {
+      emit(ctx, "No saved history files (0 bytes).\n");
+      return 0;
+    }
+    emit(ctx, `Saved history: ${files(preview.files)}, ${size(preview.bytes)}.\n`);
+    return 0;
+  }
+  if (sub !== "clear") throw new UsageError("usage: wasitme history clear [--yes] | wasitme history status [--json]");
   const a = parseArgs(rest, { bool: ["yes"] });
   const json = has(a, "json");
   const p = homePaths(wasitmeHome(ctx.env));
