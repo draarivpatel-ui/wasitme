@@ -53,7 +53,12 @@ else
 fi
 SDK=$(xcrun --sdk macosx --show-sdk-version)
 REC=$(otool -l "$APP/Contents/MacOS/WasitmeApp" | awk '/LC_BUILD_VERSION/ { f = 1 } f && $1 == "sdk" { print $2; exit }')
-assert_eq "$SDK" "$REC" "the binary is stamped with the real SDK version (macOS 26 look), not the 14.0 deployment target"
+# The runner can carry several Xcodes, so the build's SDK need not be xcrun's default ($SDK): require a macOS 26 or
+# newer SDK stamp (the macOS 26 look), never the 14.0 deployment target.
+case "$REC" in
+  2[6-9]*|[3-9][0-9]*) t_pass ;;
+  *) t_fail "the binary is stamped with a macOS 26+ SDK (macOS 26 look), not the 14.0 deployment target" "stamped: $REC, xcrun default: $SDK" ;;
+esac
 if /usr/bin/codesign --verify --deep --strict "$APP" 2>"$SB/codesign.err"; then t_pass; else t_fail "codesign --verify --deep --strict passes" "$(cat "$SB/codesign.err")"; fi
 # The app's headless self-check never reaches AppKit (no window, no status item). With `--engine doctor` it runs the
 # engine the way the app does (engine.json's absolute node + cli), so it proves the installed binary runs and finds
