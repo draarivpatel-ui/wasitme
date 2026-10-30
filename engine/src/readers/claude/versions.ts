@@ -47,7 +47,9 @@ export const CLAUDE_PARSER_VERSIONS = Object.freeze({
   // such a command is a change even when it re-picks the replayed value (from "unknown").
   // 4 (D81): every event carries the salted id of the session it was logged in (`ChangeEvent.session`), so the D65
   // re-pick rule looks for the command's exchange in that session only. Stored shards re-derive it.
-  events: 4,
+  // 5 (sol-loop S3): a token-shaped model id is "other" in an event's from/to too; re-derived from the logs that
+  // still exist. events maps to no snapshot metric, so the bump pauses nothing. Codex moves to 5 with it (same number).
+  events: 5,
 });
 
 export type ClaudeParserFamily = keyof typeof CLAUDE_PARSER_VERSIONS;

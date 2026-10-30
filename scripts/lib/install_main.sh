@@ -673,6 +673,18 @@ summary() {
       step "Not planned"
       print_results | grep -E '^  .{20} skipped '
     fi
+    # A part can already fail while it is being planned (a LaunchAgent plist this installer did not write, say). A real
+    # run would fail at the same step and roll that part back, so the summary names the part and does not call the plan
+    # exact. The exit status is 3, as for that real run.
+    if [ "$FAILED" = 1 ]; then
+      if print_results | grep -Eq '^  .{20} FAILED '; then
+        step "Would fail"
+        print_results | grep -E '^  .{20} FAILED '
+      fi
+      say ""
+      say "Dry run: nothing was changed. In a real run each part marked FAILED would fail the same way and be rolled back on its own; everything else would happen as the [dry-run] lines above show."
+      return 0
+    fi
     say ""
     say "Dry run: nothing was changed. The [dry-run] lines above are exactly what a real run would do."
     return 0

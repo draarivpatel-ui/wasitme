@@ -10,7 +10,7 @@
  */
 import type { MetricId } from "../analysis/metrics/defs.js";
 import type { Tripwire } from "../analysis/attribution/types.js";
-import { cleanLabel } from "../util.js";
+import { cleanLabel, looksSecret } from "../util.js";
 import { fit, len } from "./format.js";
 
 const HASH = /^h:[0-9a-f]{4,64}$/i;
@@ -19,7 +19,7 @@ const COUNT = /^\d{1,9}$/;
 /** A log-derived value that may appear in prose, or null. Hashes, counts and present/absent flags are not prose. */
 export function prose(v: unknown): string | null {
   const s = cleanLabel(v);
-  if (s === undefined || HASH.test(s) || COUNT.test(s)) return null;
+  if (s === undefined || HASH.test(s) || COUNT.test(s) || looksSecret(s)) return null;
   if (["unknown", "other", "unset", "present", "absent", "on", "off", "<synthetic>"].includes(s.toLowerCase())) return null;
   return s;
 }
@@ -27,7 +27,8 @@ export function prose(v: unknown): string | null {
 /** A value for the snapshot's `from`/`to` fields: a clean label, a short hash or a count; otherwise "other". */
 export function fieldValue(v: unknown): string {
   const s = cleanLabel(v);
-  return s === undefined ? "other" : s;
+  // A token-shaped value stored by an earlier reader is never echoed (sol-loop S3); short hashes stay.
+  return s === undefined || (!HASH.test(s) && looksSecret(s)) ? "other" : s;
 }
 
 const AGENT_NAMES: Readonly<Record<string, string>> = { "claude-code": "Claude Code", codex: "Codex" };

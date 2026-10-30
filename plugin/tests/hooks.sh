@@ -199,6 +199,8 @@ t("readProject", () => fs.readFileSync(cwd + "/CLAUDE.md"));
 t("readOutside", () => fs.readFileSync(home + "/secret/key.txt"));
 t("writeOutside", () => fs.writeFileSync(home + "/projects/app/x.txt", "x"));
 t("spawn", () => require("child_process").execFileSync("/bin/echo", ["x"]));
+// the real engine takes its data folder (salt, snapshot inbox) from WASITME_HOME when it is set: record what it would see
+r.push("WASITME_HOME=" + (process.env.WASITME_HOME ?? "unset"));
 fs.mkdirSync(home + "/.wasitme/state", { recursive: true });
 fs.writeFileSync(home + "/.wasitme/state/hook-result", a.join(" ") + "\n" + r.join(" ") + "\n");
 EOF
@@ -230,6 +232,18 @@ EOF
       *) fail "NODE_OPTIONS: the snapshot must still run, with the sandbox as narrow as before; got: $(cat "$h/.wasitme/state/hook-result" 2>/dev/null)" ;;
     esac
     [ -e "$h/projects/app/x.txt" ] && fail "NODE_OPTIONS=--allow-fs-write widened the sandbox: the stand-in wrote into the project"
+    # WASITME_HOME: a project can set it for its sessions too, and the engine would then take its salt from, and write the
+    # snapshot into, the folder it names (one the scan never reads, or one the sandbox refuses: no snapshot at all). The
+    # snapshot belongs in the install's ~/.wasitme, the folder whose engine.env the hook read and the sandbox lets it write.
+    rm -f "$h/.wasitme/state/hook-result"
+    PAYLOAD="{\"cwd\":\"$h/projects/app\",\"session_id\":\"real-home\"}"
+    cases=$((cases + 1))
+    got=$(run "WASITME_HOME" "$start" "$h" "WASITME_HOME=$h/projects/app/.wasitme")
+    [ -z "$got" ] || fail "WASITME_HOME: expected no output, got: $got"
+    case $(cat "$h/.wasitme/state/hook-result" 2>/dev/null) in
+      *"--session real-home"*"WASITME_HOME=unset"*) ;;
+      *) fail "WASITME_HOME: the session's WASITME_HOME must not reach the engine; got: $(cat "$h/.wasitme/state/hook-result" 2>/dev/null)" ;;
+    esac
     # OPENSSL_CONF: node's OpenSSL reads its configuration file from the environment at startup, before any JavaScript
     # and outside the permission sandbox. A configuration naming a provider module makes node load it as native code (here
     # the module does not exist, so node stops instead: an abort on Node 26.8). The control shows this node honours the

@@ -8,7 +8,7 @@
  * Claude Code values; a value outside them is "other" (a new legitimate value shows up as "other" until it is added
  * here, never as raw text).
  */
-import { cleanLabel } from "../../util.js";
+import { cleanLabel, looksSecret } from "../../util.js";
 
 /** The label a value outside its field's shape becomes. */
 export const OTHER = "other";
@@ -65,13 +65,14 @@ export function versionLabel(v: unknown): string | undefined {
 
 /**
  * Requested model. Identity ids may carry a context-size suffix ("…[1m]"), which is dropped first so the
- * identity attachment and the assistant records compare equal.
+ * identity attachment and the assistant records compare equal. A token-shaped id (a key pasted where a model goes) is
+ * "other", as in the Codex reader and the config collector.
  */
 export function modelLabel(v: unknown): string | undefined {
   const s = present(v)?.replace(/\[[^\]]*\]$/, "");
   if (s === undefined) return undefined;
   if (!s) return rejected();
-  return MODEL.test(s) ? s : rejected();
+  return MODEL.test(s) && !looksSecret(s) ? s : rejected();
 }
 
 export function effortLabel(v: unknown): string | undefined {

@@ -36,6 +36,10 @@ unset NODE_OPTIONS NODE_PATH NODE_REPL_EXTERNAL_MODULE NODE_EXTRA_CA_CERTS NODE_
 # names a provider module aborts node before any JavaScript runs, and a module that exists would be loaded as native
 # code, outside the permission sandbox). OPENSSL_MODULES and OPENSSL_ENGINES say where such modules come from.
 unset OPENSSL_CONF OPENSSL_MODULES OPENSSL_ENGINES CDPATH
+# The engine takes its data folder (the salt, the snapshot inbox) from WASITME_HOME when it is set, and a session's
+# environment is the project's to set. The snapshot belongs in the install's ~/.wasitme, the folder whose engine.env is
+# read below and the only one the sandbox lets the engine write, so the variable never reaches it (run.sh drops it too).
+unset WASITME_HOME
 trap 'exit 0' TERM INT HUP
 
 mode=start

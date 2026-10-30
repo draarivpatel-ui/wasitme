@@ -11,7 +11,8 @@
  * salt, so a new one would silently double every exchange, session and event. That case is an error for doctor.
  *
  * The salt never leaves this folder: it is never printed, logged, put on a command line or exported.
- * `--read-only` scans never touch it: they use an ephemeral random salt (ids cannot be linked across runs).
+ * `--read-only` scans never create, write or tighten it: their ids come from an ephemeral random salt (ids cannot be
+ * linked across runs). They read it (`create: false`) only to match the exclude list's project ids (scan.ts).
  */
 import { randomBytes } from "node:crypto";
 import { chmodSync, closeSync, constants, fsyncSync, linkSync, openSync, writeSync } from "node:fs";
@@ -52,8 +53,9 @@ export function loadSalt(path: string, opts: { create: boolean; refuseIf?: () =>
   for (let attempt = 0; attempt < 60; attempt++) {
     const r = readSalt(path);
     if (r.salt) {
-      if (r.mode !== undefined && (r.mode & 0o077) !== 0) {
-        // Ours but readable by others (an old install, a restore): tighten it rather than refuse to run.
+      if (opts.create && r.mode !== undefined && (r.mode & 0o077) !== 0) {
+        // Ours but readable by others (an old install, a restore): tighten it rather than refuse to run. Only a caller
+        // that may create the salt changes it; `create: false` (read-only scans, `wasitme exclude`) only reads.
         try { chmodSync(path, 0o600); } catch { /* reported by doctor */ }
       }
       return r.salt;

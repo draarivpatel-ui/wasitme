@@ -184,6 +184,50 @@ assert_rc 0 "uninstall succeeds"
 assert_contains "$(cat "$SHIM_ENGINE_LOG")" "engine statusline uninstall --script $H/.local/bin/wasitme-statusline --claude-dir $H/.claude" "the engine undid its own edit while it was still installed"
 assert_missing "$H/.local/bin/wasitme-statusline" "then the shim went"
 
+# The engine's --wrap edit, as `wasitme statusline install --wrap [--claude-dir]` leaves it: wasitme's line in SETTINGS,
+# the person's own (MINE) in the backup, bound to TARGET (the settings.json the engine edited).
+plant_wrap() {  # plant_wrap SETTINGS BACKUPS SHIM MINE TARGET
+  node -e 'const fs=require("fs");const [f,b,sl,cmd,t]=process.argv.slice(1);const d=fs.existsSync(f)?JSON.parse(fs.readFileSync(f,"utf8")):{};const mine={type:"command",command:cmd};const ours={type:"command",command:sl,padding:0};d.statusLine=ours;fs.writeFileSync(f,JSON.stringify(d)+"\n");fs.mkdirSync(b,{recursive:true});fs.writeFileSync(b+"/statusline.json",JSON.stringify({schema:"wasitme.statusline-backup/1",written:JSON.stringify(ours),replaced:JSON.stringify(mine),inserted:null,wrapped:true,created:false,target:t}));fs.writeFileSync(b+"/statusline.cmd",cmd+"\n")' "$@"
+}
+
+t_section "installed with the status line, replaced by the person, then wrapped by 'wasitme statusline install --wrap': the engine restores first"
+sb_new
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME
+mkdir -p "$H/.claude"
+printf '{"theme":"dark"}\n' >"$H/.claude/settings.json"
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+assert_rc 0 "install with the status line"
+# The person sets their own, then the engine wraps it: wasitme's line is back, and the engine's backup holds theirs.
+plant_wrap "$H/.claude/settings.json" "$H/.wasitme/backups" "$H/.local/bin/wasitme-statusline" my-own "$H/.claude/settings.json"
+uninst --yes --dry-run
+assert_rc 0 "the dry run"
+assert_contains "$(out)" "statusline uninstall --script $H/.local/bin/wasitme-statusline --claude-dir $H/.claude" "the engine call is planned"
+assert_eq "engine-first" "$(out | awk '/statusline uninstall --script/ && !e { e = NR } /statusline-restore/ && !r { r = NR } END { print (e && r && e < r) ? "engine-first" : "other" }')" "before the manifest restore"
+uninst --yes
+assert_rc 0 "uninstall succeeds"
+assert_contains "$(cat "$SHIM_ENGINE_LOG" 2>/dev/null)" "engine statusline uninstall --script $H/.local/bin/wasitme-statusline --claude-dir $H/.claude" "the engine was asked to put the person's newer status line back"
+
+t_section "the engine's backup is for another configuration (--claude-dir): the default one is restored from the manifest"
+sb_new
+make_fixture "$SB_SRC" 0.1.0
+H=$SB_HOME
+mkdir -p "$H/.claude" "$H/other-claude"
+printf '{"theme":"dark"}\n' >"$H/.claude/settings.json"
+cp "$H/.claude/settings.json" "$SB/settings.orig"
+inst_from --yes --no-app --no-scan-agent --no-claude-plugin --no-codex-plugin --statusline --agents claude-code
+assert_rc 0 "install with the status line"
+# `wasitme statusline install --wrap --claude-dir ~/other-claude`: that configuration's own line is in the backup.
+plant_wrap "$H/other-claude/settings.json" "$H/.wasitme/backups" "$H/.local/bin/wasitme-statusline" other-cmd "$H/other-claude/settings.json"
+uninst --yes --dry-run
+assert_rc 0 "the dry run"
+assert_not_contains "$(out)" "statusline uninstall --script" "no engine call is planned for the default configuration"
+uninst --yes
+assert_rc 0 "uninstall succeeds"
+assert_not_contains "$(cat "$SHIM_ENGINE_LOG" 2>/dev/null)" "statusline uninstall" "the engine was not asked to restore the other configuration's line here"
+assert_eq "$(cat "$SB/settings.orig")" "$(cat "$H/.claude/settings.json")" "the default settings.json is back as it was"
+assert_file "$H/.wasitme/backups/statusline.json" "the other configuration's backup is kept"
+
 t_section "uninstalling when claude and codex are gone does not dead-end"
 sb_new
 make_fixture "$SB_SRC" 0.1.0

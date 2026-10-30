@@ -21,7 +21,7 @@
  * The scanner below understands exactly the JSON that Claude Code writes (no comments, no trailing commas).
  */
 import { chmodSync, existsSync, lstatSync, mkdirSync } from "node:fs";
-import { dirname, isAbsolute, join } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { readOwnFile, removeQuietly, writeAtomic } from "../store/atomic.js";
 
 export class StatusLineError extends Error {
@@ -139,6 +139,12 @@ interface Backup {
   wrapped: boolean;
   /** settings.json did not exist and this install created it (uninstall deletes it again when it is back to `{}`). */
   created: boolean;
+  /**
+   * The settings.json this backup belongs to (absolute). One wasitme home can serve several Claude Code configurations
+   * (`--claude-dir`), and the uninstaller lets the engine restore first only for this one (sol-loop N2). Absent in
+   * backups written by earlier versions.
+   */
+  target?: string;
 }
 
 /**
@@ -241,7 +247,7 @@ export function installStatusLine(f: StatusLineFiles, command: string): InstallR
       if (v !== null && typeof v === "object" && v.type === "command" && typeof v.command === "string" && v.command !== "") wrappedCommand = v.command;
     } catch { /* not JSON we can read: replaced as is, restored as is */ }
     next = src.slice(0, cur.valueStart) + ours + src.slice(cur.valueEnd);
-    backup = { schema: BACKUP_SCHEMA, written: ours, replaced: old, inserted: null, wrapped: wrappedCommand !== null, created: false };
+    backup = { schema: BACKUP_SCHEMA, written: ours, replaced: old, inserted: null, wrapped: wrappedCommand !== null, created: false, target: resolve(f.settings) };
   } else {
     const { nl, indent } = layout(src, top);
     const last = top.members[top.members.length - 1];
@@ -256,7 +262,7 @@ export function installStatusLine(f: StatusLineFiles, command: string): InstallR
       inserted = indent !== null ? `,${nl}${indent}"statusLine": ${ours}` : `, "statusLine": ${ours}`;
     }
     next = src.slice(0, at) + inserted + src.slice(at);
-    backup = { schema: BACKUP_SCHEMA, written: ours, replaced: null, inserted, wrapped: false, created: existing === null };
+    backup = { schema: BACKUP_SCHEMA, written: ours, replaced: null, inserted, wrapped: false, created: existing === null, target: resolve(f.settings) };
   }
   verify(src, next, "statusLine", (v) => isOurs(JSON.stringify(v), command));
 

@@ -42,6 +42,7 @@ note_fail() { FAILURES=$((FAILURES + 1)); warn "$*"; }
 # Every question is asked BEFORE anything is removed, so running out of answers changes nothing.
 ASKING=0
 KEPT=""
+WRAPPED_DONE=0   # remove_wrapped_statusline already ran (before the manifest restore)
 has_kind() { manifest_lines "$1" | grep -q .; }
 ask_part() {  # ask_part VAR LABEL KINDS QUESTION: sets VAR=1 (remove) or 0 (keep: remembered in KEPT and KEEP_KINDS)
   eval "$1=1"
@@ -107,11 +108,13 @@ engine_cli_path() {  # the installed engine's cli from engine.json (one key per 
 }
 
 remove_wrapped_statusline() {
+  [ "$WRAPPED_DONE" = 0 ] || return 0
   [ -f "$CLAUDE_SETTINGS" ] || return 0
   [ -n "$NODE" ] || return 0
   # A dry run that plans to restore settings.json from the manifest (the real run does it first, after which the line is no
-  # longer ours and the engine is never called) must not plan the engine call as well.
-  if [ "$DRY" = 1 ] && [ "$DO_STATUS" = 1 ] && has_kind statusline; then return 0; fi
+  # longer ours and the engine is never called) must not plan the engine call as well. The early call (`first`, from
+  # remove_statusline_part) is the exception: there the real run calls the engine before the manifest restore.
+  if [ "${1:-}" != first ] && [ "$DRY" = 1 ] && [ "$DO_STATUS" = 1 ] && has_kind statusline; then return 0; fi
   rw_state=$(statusline_state_of "$CLAUDE_SETTINGS" "$SL_SHIM") || return 0
   [ "$rw_state" = ours ] || return 0
   rw_cli=$(engine_cli_path)
@@ -128,6 +131,30 @@ remove_wrapped_statusline() {
   else
     note_fail "could not take wasitme out of the status line in $CLAUDE_SETTINGS: $rw_out"
   fi
+}
+
+# Install with the status line, then the person sets their own, then `wasitme statusline install --wrap` puts wasitme's
+# back in front of it: the engine's backup holds their newer status line, while the manifest's restore would bring back
+# the file from before the install (or drop the key), losing it. So when the engine has a usable backup of a status line
+# it replaced and the line is still wasitme's, the engine restores first; the manifest restore then finds a line that is
+# not ours and leaves it alone. The backup must be for this settings.json: `--claude-dir` can wrap another configuration
+# from the same wasitme home, and its backup would put that configuration's command here (sol-loop N2). Otherwise (no
+# usable backup, another target, no engine, or the engine call fails) the manifest restore runs as before: without a
+# backup the engine would only remove the key.
+engine_restores_first() {
+  [ "$DO_STATUS" = 1 ] && has_kind statusline || return 1
+  [ -f "$CLAUDE_SETTINGS" ] && [ -n "$NODE" ] && [ -f "$(engine_cli_path)" ] || return 1
+  [ "$(jsonutil statusline-backup "$STATE_DIR/backups/statusline.json" "$CLAUDE_SETTINGS" 2>/dev/null)" = usable ] || return 1
+  erf_state=$(statusline_state_of "$CLAUDE_SETTINGS" "$SL_SHIM") || return 1
+  [ "$erf_state" = ours ]
+}
+
+remove_statusline_part() {
+  if engine_restores_first; then
+    remove_wrapped_statusline first
+    WRAPPED_DONE=1
+  fi
+  remove_statusline
 }
 
 valid_id() {  # plugin ids / marketplace names / launchd labels: boring characters, never option-like
@@ -552,7 +579,7 @@ only_main() {
     case $om_p in
       claude-plugin) DO_CLAUDE=1; remove_claude_plugin ;;
       codex-plugin) DO_CODEX=1; remove_codex_plugin ;;
-      statusline) DO_STATUS=1; remove_statusline; remove_wrapped_statusline ;;
+      statusline) DO_STATUS=1; remove_statusline_part; remove_wrapped_statusline ;;
       scan-agent) remove_agents "$WASITME_LABEL_SCAN" ;;
       app) wait_app_quit; remove_agents "$WASITME_LABEL_APP"; remove_apps ;;
     esac
@@ -696,7 +723,7 @@ main() {
   step "Removing what wasitme installed"
   if [ "$DO_BG" = 1 ]; then wait_app_quit; fi
   remove_claude_plugin
-  remove_statusline
+  remove_statusline_part
   remove_codex_plugin
   remove_background
   remove_rclines

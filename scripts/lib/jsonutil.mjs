@@ -12,6 +12,9 @@
 //        exit 0 replaced (prints sha=<hex>), 10 the statusLine is not ours any more, 12 invalid JSON
 //   statusline-restore <settings.json> <backup|-> <expected-sha> <command>
 //        prints restored | removed | left | absent
+//   statusline-backup <backups/statusline.json> <settings.json> -> usable | none   (the engine's own backup from
+//        `wasitme statusline install`: usable when it records a status line it replaced in THAT settings.json, so the
+//        engine can put that one back)
 //   sha256 <file>                               -> hex digest, or "-" if the file does not exist
 //   hooks-list <hooks.json>                     -> one sorted line per mod module and per command hook (growth check)
 //   validate-calls <file>                       -> the mod's calls from `claude plugin validate` output, one per line
@@ -201,6 +204,31 @@ function cmdStatuslineRestore([file, backup, expectedSha, command]) {
   return process.stdout.write("left\n");
 }
 
+// The engine's backup (engine/src/statusline/settings.ts readBackup: same schema and field checks). "usable" only when
+// it holds the status line the engine replaced; anything else (missing, unreadable, malformed, nothing replaced) is
+// "none", and the uninstaller keeps its usual order. The backup must name the settings.json being uninstalled as its
+// `target` (sol-loop N2): one wasitme home can wrap several Claude Code configurations (`--claude-dir`), and another
+// configuration's backup would put its command into this one. A backup with no target (from an earlier version) is "none".
+function sameFile(a, b) {
+  const real = (p) => { try { return path.join(fs.realpathSync(path.dirname(p)), path.basename(p)); } catch { return path.resolve(p); } };
+  return real(a) === real(b);
+}
+
+function cmdStatuslineBackup([file, settings]) {
+  let v;
+  try {
+    const st = fs.lstatSync(file);
+    if (!st.isFile() || st.size > 1 << 20) return process.stdout.write("none\n");
+    v = readJsonFile(file);
+  } catch {
+    return process.stdout.write("none\n");
+  }
+  const ok = isPlainObject(v) && v.schema === "wasitme.statusline-backup/1" && typeof v.written === "string" &&
+    typeof v.replaced === "string" && (v.inserted === null || v.inserted === undefined || typeof v.inserted === "string") &&
+    typeof settings === "string" && typeof v.target === "string" && path.isAbsolute(v.target) && sameFile(v.target, settings);
+  return process.stdout.write(ok ? "usable\n" : "none\n");
+}
+
 // ---- plugin growth check (README "Update and uninstall") -------------------------------------------------------------
 // Every mod module and every command hook as one line, sorted, so the shell can compare an installed plugin with a new
 // one by set difference. A line that is new in the update is growth.
@@ -361,6 +389,7 @@ const COMMANDS = {
   "statusline-add": cmdStatuslineAdd,
   "statusline-replace": cmdStatuslineReplace,
   "statusline-restore": cmdStatuslineRestore,
+  "statusline-backup": cmdStatuslineBackup,
   sha256: ([file]) => process.stdout.write(`${sha256(file)}\n`),
   "hooks-list": cmdHooksList,
   "validate-calls": cmdValidateCalls,
@@ -373,7 +402,7 @@ const COMMANDS = {
 const handler = COMMANDS[cmd];
 if (!handler) fail(2, `usage: jsonutil.mjs <${Object.keys(COMMANDS).join("|")}> ...`);
 const need = {
-  package: 1, marketplace: 1, "statusline-state": 2, "statusline-add": 3, "statusline-replace": 3, "statusline-restore": 4, sha256: 1,
+  package: 1, marketplace: 1, "statusline-state": 2, "statusline-add": 3, "statusline-replace": 3, "statusline-restore": 4, "statusline-backup": 1, sha256: 1,
   "hooks-list": 1, "validate-calls": 1, "codex-root": 2, "known-marketplace": 2, "toml-remove": 2, "rc-add": 3, "rc-remove": 4,
 }[cmd];
 if (args.length < need) fail(2, `jsonutil.mjs ${cmd}: expected ${need} argument(s)`);

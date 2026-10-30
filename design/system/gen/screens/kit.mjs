@@ -136,11 +136,23 @@ export function strip(c, { width = 984, show = 28, gutter = 104, kLabel = 'error
     if (compact) continue;
     s += `<line class="c-grid" x1="${x0}" y1="${y}" x2="${x1}" y2="${y}"/><text class="c-label" x="${x0 - 8}" y="${y + 4}" text-anchor="end">${v}</text>`;
   }
+  // past the cap (DESIGN.md §8): an open arrowhead 2 to 6 px above yTop, where a capped column ends (full and compact)
+  const overHead = (cx, low) => {
+    const mid = cx + colW / 2, hw = (low ? colW / 4 : colW / 2) - 1;
+    return `<path class="c-tick-over" d="M${(mid - hw).toFixed(1)} ${yTop - 2} L${mid.toFixed(1)} ${yTop - 6} L${(mid + hw).toFixed(1)} ${yTop - 2}"/>`;
+  };
   // ticks
   if (ticks) rows.forEach((r, i) => {
     const cx = x0 + i * pitch + (pitch - colW) / 2;
     if (r.n === 0) return;
-    if (compact && r.k > 0) { const h = Math.min(r.k, top) * cu, w = r.n < lowN ? colW / 2 : colW; s += `<rect class="c-tick" x="${(cx + (colW - w) / 2).toFixed(1)}" y="${(yA - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}"/>`; return; }
+    if (compact && r.k > 0) {
+      const h = Math.min(r.k, top) * cu, w = r.n < lowN ? colW / 2 : colW;
+      s += `<rect class="c-tick" x="${(cx + (colW - w) / 2).toFixed(1)}" y="${(yA - h).toFixed(1)}" width="${w}" height="${h.toFixed(1)}"/>`;
+      // A capped column ends in the same arrowhead. The compact strip's markers sit right on its top edge, so a marker on
+      // that day or the next (drawn later) can cover part of it; the k row (popover) and the description keep the count.
+      if (r.k > top) s += overHead(cx, r.n < lowN);
+      return;
+    }
     if (r.k === 0) { s += `<rect class="c-zero" x="${(cx + colW / 2 - 1).toFixed(1)}" y="${yA - 3}" width="2" height="2"/>`; return; }
     for (let j = 0; j < Math.min(r.k, top); j++) {
       const y = yA - (j + 1) * unit;
@@ -148,10 +160,7 @@ export function strip(c, { width = 984, show = 28, gutter = 104, kLabel = 'error
         ? `<rect class="c-tick" x="${(cx + colW / 4).toFixed(1)}" y="${y}" width="${colW / 2}" height="${th}"/>`
         : `<rect class="c-tick" x="${cx.toFixed(1)}" y="${y}" width="${colW}" height="${th}"/>`;
     }
-    if (r.k > top) { // past the cap: an open arrowhead above the last tick
-      const mid = cx + colW / 2, hw = (r.n < lowN ? colW / 4 : colW / 2) - 1;
-      s += `<path class="c-tick-over" d="M${(mid - hw).toFixed(1)} ${yTop - 2} L${mid.toFixed(1)} ${yTop - 6} L${(mid + hw).toFixed(1)} ${yTop - 2}"/>`;
-    }
+    if (r.k > top) s += overHead(cx, r.n < lowN); // past the cap: an open arrowhead above the last tick
   });
   // events in view
   const first = rows[0].d, last = rows[rows.length - 1].d;

@@ -42,7 +42,8 @@ export const CODEX_PARSER_VERSIONS = Object.freeze({
   // longer dates a you · strong switch in the future or hides the real switches around it.
   // 4 (0.1.1, same release): kept equal to the Claude reader's events version (4, D81) so the snapshot's
   // health.parserVersions reports one "events" key; it re-derives exactly what 3 would have.
-  events: 4,
+  // 5 (sol-loop S3): kept equal to the Claude events version; Codex output is unchanged.
+  events: 5,
 } as const);
 
 export type CodexParserFamily = keyof typeof CODEX_PARSER_VERSIONS;

@@ -346,6 +346,22 @@ await test('forest plots: the drawn range matches the printed range, or ends in 
   return errs;
 });
 
+// 13b. a strip column stops at chart.strip.maxTicks and says so with an open arrowhead (DESIGN.md §8), compact too
+await test('strips: a day over chart.strip.maxTicks ends in one open arrowhead, in the full strip and the compact one', async () => {
+  const { strip } = await import('./screens/kit.mjs');
+  const errs = [], max = t.chart.strip.maxTicks, base = DEMO.cases.agent, i = base.daily.recent.length - 3;
+  const over = { ...base, daily: { ...base.daily, recent: base.daily.recent.map((r, j) => (j === i ? { ...r, k: max + 40, n: Math.max(r.n, 1000) } : r)) } };
+  const heads = svg => (svg.match(/class="c-tick-over"/g) || []).length;
+  // the full strip, the popover's compact strip and the desktop panel's (glance.mjs)
+  for (const [name, opts] of [['full', {}], ['compact', { width: 320, show: 14, gutter: 0, compact: true, labels: false, nRow: false, compactHeight: 28 }],
+    ['compact, no k row', { width: 176, show: 14, gutter: 0, compact: true, labels: false, nRow: false, kRow: false }]]) {
+    if (heads(strip(base, opts)) !== 0) errs.push(`${name}: an arrowhead with no day over ${max}`);
+    const n = heads(strip(over, opts));
+    if (n !== 1) errs.push(`${name}: ${n} arrowheads for one day over ${max}, expected 1`);
+  }
+  return errs;
+});
+
 // 14. type: sizes only from the scale (static half; render.mjs checks the rendered DOM)
 await test('type: no literal font sizes outside the scale in components.css or screen CSS (host/terminal mocks exempt)', () => {
   const errs = [], sizes = new Set(Object.values(t.type.scale).map(s => s.size));

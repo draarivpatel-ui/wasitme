@@ -29,7 +29,7 @@
  *     largest measured tier (same scheme first, then the other scheme). Without any anchor the model is used
  *     as is (λ = ρ = 1). The projected variance never goes below the counting floor. With `keepLargerSe`
  *     both cluster schemes are projected and the larger SE is kept with the smaller df, mirroring the range
- *     (METHOD.md §6, D81). A
+ *     (METHOD.md §6, D81); as with the range, a kept scheme without a valid df gives no MDE. A
  *     two-level measurement is reported under the "session-day" scheme, so it calibrates the session-day model
  *     (whose clusters grow faster than sessions do); the session scheme's projection is the check on that.
  *     df_model: each window K_w − 1, combined Welch–Satterthwaite.
@@ -311,7 +311,10 @@ export function projectMetric(input: ProjectionInput, m: ProjectionMetric, tier:
   }
   // Like the range (D81): the larger SE, with the smaller valid df of the schemes computed.
   if (df > 0 && minDf < df) df = minDf;
-  if (scheme === null) {
+  // Also like the range: no MDE when the kept scheme's own df is not valid (measureShift returns no range then). An MDE
+  // from a NaN df would quietly use normal quantiles, as if df were infinite: the least cautious choice there is.
+  // perClusterVariance keeps c ≤ 2K, so the engine's own cells always give a finite df; this guards the rule.
+  if (scheme === null || !(df > 0)) {
     return { id: m.id, family: m.family, tier: tier.tier, recent, baseline, gatePass, se: Infinity, df: 0, scheme: null, calibration: null, mde: Infinity, sensitive: false };
   }
   const mdc = minimumDetectableChange(se, {

@@ -30,7 +30,7 @@ import {
   DEFAULT_STALE_AFTER_SEC, GLANCE_MAX_BYTES, GLANCE_SCHEMA_ID, SNAPSHOT_MAX_BYTES, SNAPSHOT_SCHEMA_ID,
   type Lead, type MetricFamily, type MetricStatus, type ScanError,
 } from "../contract/vocab.js";
-import { cleanLabel } from "../util.js";
+import { cleanLabel, looksSecret } from "../util.js";
 import { factsOf, safeEventId, type Facts, type MetricFact } from "./facts.js";
 import { lintAgentWords } from "./lint.js";
 import { fieldValue } from "./names.js";
@@ -135,7 +135,8 @@ function sanitiseSetup(setup: Readonly<Record<string, unknown>> | undefined): Re
     else if (typeof v === "number" && Number.isFinite(v)) out[k] = v;
     else if (typeof v === "string") {
       const s = cleanLabel(v);
-      if (s !== undefined && s.length <= 60) out[k] = s;
+      // A token-shaped model stored by an earlier reader is never echoed (sol-loop S3); the key is left out instead.
+      if (s !== undefined && s.length <= 60 && !looksSecret(s)) out[k] = s;
     }
   }
   return out;

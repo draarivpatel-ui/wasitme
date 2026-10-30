@@ -5,7 +5,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { appendFileSync, existsSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, utimesSync, writeFileSync } from "node:fs";
+import { appendFileSync, chmodSync, existsSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, utimesSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { checkGlance, checkSnapshot } from "../../src/contract/check.js";
 import { validate } from "../../src/contract/validate.js";
@@ -13,6 +13,7 @@ import { GLANCE_MAX_BYTES } from "../../src/contract/vocab.js";
 import { CLAUDE_PARSER_VERSIONS } from "../../src/readers/claude.js";
 import { CODEX_PARSER_VERSIONS } from "../../src/readers/codex.js";
 import type { ScanOptions } from "../../src/store/scan.js";
+import { ATTRIBUTION_VERSION } from "../../src/store/settings.js";
 import { copyCorpus, readJson, REPO, scanIn, T0, TEST_CALIBRATION, TEST_UNCALIBRATED, TESTDATA, tempEnv, treeDigest, type TempEnv } from "./helpers.js";
 
 const TINY = join(TESTDATA, "seed", "tiny-both");
@@ -306,6 +307,63 @@ test("a parser-version bump with the sources present re-derives only that family
   }
 });
 
+test("a token-shaped model stored by an earlier reader never reaches the snapshot's setup (sol-loop S3)", async () => {
+  // labels stays 2, so a shard written before the token guard keeps its model; the output boundary must drop it.
+  const env = tempEnv();
+  try {
+    copyCorpus(env, TINY);
+    await scan(env);
+    const token = "sk-ant-api03-synthetic0000000000";
+    const dir = join(env.wh, "history", "shards");
+    let planted = 0;
+    for (const n of readdirSync(dir)) {
+      const sh = readJson(join(dir, n));
+      if (sh.agent !== "claude-code" || sh.exchanges.length === 0) continue;
+      for (const x of sh.exchanges) x.model = token;
+      writeFileSync(join(dir, n), JSON.stringify(sh));
+      planted++;
+    }
+    assert.ok(planted > 0);
+    // Shards are not in the inputs digest, so clear the stored digest to make the next scan analyse again.
+    const index = join(env.wh, "history", "index.json");
+    writeFileSync(index, JSON.stringify({ ...readJson(index), inputs: "" }));
+    const r = await scan(env);
+    assert.equal(r.parsed, 0, "the logs did not change: the stored shards are used");
+    const text = readFileSync(join(env.wh, "snapshot.json"), "utf8");
+    const claude = JSON.parse(text).agents.find((a: any) => a.agent === "claude-code");
+    assert.ok(claude.setup.version !== undefined, "the rest of the setup is still there");
+    assert.equal(claude.setup.model, undefined, "the token-shaped model is left out");
+    assert.ok(!text.includes(token));
+    assert.ok(!readFileSync(join(env.wh, "glance.json"), "utf8").includes(token));
+  } finally {
+    env.cleanup();
+  }
+});
+
+test("decisions saved under attribution version 1 (before the six-file rule) are made again, not held (sol-loop S7)", async () => {
+  const env = tempEnv();
+  try {
+    copyCorpus(env, TINY);
+    await scan(env);
+    const path = join(env.wh, "state", "decisions.json");
+    const doc = readJson(path);
+    assert.equal(doc.version, ATTRIBUTION_VERSION);
+    // The same decisions as a 0.1.1 scan would have saved them; the digest of a version-1 analysis differs too.
+    writeFileSync(path, JSON.stringify({ ...doc, version: 1 }), { mode: 0o600 });
+    const index = join(env.wh, "history", "index.json");
+    writeFileSync(index, JSON.stringify({ ...readJson(index), inputs: "" }));
+    const r = await scan(env);
+    assert.ok(r.attributions && r.attributions.length === 2);
+    for (const a of r.attributions) {
+      assert.ok(["first", "bypass_calibration"].includes(a.decision.persistence.rule), a.decision.persistence.rule);
+    }
+    assert.equal(readJson(path).version, ATTRIBUTION_VERSION);
+    assert.ok(ATTRIBUTION_VERSION > 1, "the six-file rule moved the version past 1");
+  } finally {
+    env.cleanup();
+  }
+});
+
 test("a bump whose sources are gone cannot re-derive: history is kept and the affected metrics report parser_changed", async () => {
   const env = tempEnv();
   try {
@@ -412,6 +470,36 @@ test("exclude list: date ranges, project ids and entrypoints drop exchanges at r
     assert.equal(bad.excludeError, "malformed");
     assert.equal(bad.excluded, 0);
     assert.deepEqual(stateOf(readJson(join(env.wh, "snapshot.json"))), stateOf(base));
+  } finally {
+    env.cleanup();
+  }
+});
+
+test("--read-only and --until honour saved project exclusions: the stored salt is read only to match them, never changed", async () => {
+  const env = tempEnv();
+  try {
+    copyCorpus(env, TINY);
+    await scan(env);
+    // A project the user excluded (`wasitme exclude add` stores ids made with the stored salt).
+    const project = shardOf(env.wh, (s) => s.agent === "claude-code" && s.exchanges.length > 0).exchanges[0].project;
+    writeFileSync(join(env.wh, "state", "exclude.json"), JSON.stringify({ projects: [project] }));
+    const live = await scan(env);
+    assert.ok(live.excluded > 0, "the normal scan excludes it");
+    chmodSync(join(env.wh, "salt"), 0o640); // readable by the group: only a writing scan tightens it
+    const salt = statSync(join(env.wh, "salt"));
+    const before = treeDigest(env.wh);
+    const ro = await scan(env, { readOnly: true });
+    assert.equal(ro.excluded, live.excluded, "a read-only run excludes the same exchanges");
+    const cut = await scan(env, { readOnly: true, until: new Date("2026-07-07T23:59:00Z") });
+    assert.ok(cut.excluded > 0 && cut.excluded <= live.excluded, "and an --until run excludes it up to the cutoff");
+    const after = statSync(join(env.wh, "salt"));
+    assert.equal(after.mode & 0o777, 0o640, "the salt's mode is left alone");
+    assert.equal(after.mtimeMs, salt.mtimeMs);
+    assert.deepEqual(treeDigest(env.wh), before, "nothing in the home folder changed");
+    // The run's own ids stay ephemeral: the excluded project's stored id is not what a read-only run calls it.
+    const ids = (x: typeof ro) => x.snapshot!.agents.flatMap((a) => a.timeline.map((e) => e.id)).join();
+    const again = await scan(env, { readOnly: true });
+    if (ro.snapshot!.agents.some((a) => a.timeline.length > 0)) assert.notEqual(ids(ro), ids(again));
   } finally {
     env.cleanup();
   }

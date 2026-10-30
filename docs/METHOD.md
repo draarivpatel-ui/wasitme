@@ -245,8 +245,11 @@ Each event gets a **side**, a **strength** and a **provenance** ([`events.ts`](.
   On real logs these are frequent, so most "changed" results for a user who switches models in a picker will honestly be
   *unclear (unknown provenance)* ([D61](DECISIONS.md)).
 - **Fully observed days.** A day is fully observed when a global configuration snapshot was taken that day and every Claude Code session
-  active that day has a project snapshot from the SessionStart hook ([D63](DECISIONS.md)). A marathon session is fully observed only on
-  the days it starts or resumes; everything before install is partially observed; Codex has no hooks and is partially observed by design.
+  active that day has a project snapshot from the SessionStart hook ([D63](DECISIONS.md)) that saw each of the six project files
+  definitively: absent, or present and hashed. A file the hook could not read (a symlink, a denied or half-written file) or could only
+  size (too large) leaves that session's day partially observed, because a change in it would be invisible; the snapshot still counts
+  for the files it did read. A marathon session is fully observed only on the days it starts or resumes; everything before install is
+  partially observed; Codex has no hooks and is partially observed by design.
 - **Format drift.** Unknown record types are counted and the Sources page shows them. The data format reserves two pause reasons for
   them (unknown records inside an indicator's own feature family, or over 2% of a window's records), but this version raises neither:
   the one pause it raises is `parser_changed`, when a family's parser version moved and history parsed by the old version still falls

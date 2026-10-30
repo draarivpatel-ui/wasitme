@@ -10,6 +10,8 @@ import fs, { existsSync, mkdirSync, readdirSync, readFileSync, statSync, symlink
 import { syncBuiltinESMExports } from "node:module";
 import { join } from "node:path";
 import { checkCwd, parseHookPayload, sessionStartHook } from "../../src/hook/session-start.js";
+import { observedSessionsByDay, projectEvents, type ProjItems, type ProjRecord } from "../../src/store/projsnap.js";
+import { makeHash } from "../../src/util.js";
 import { SessionBuilder, text } from "../fixtures/claude/builder.js";
 import { readJson, REPO, scanIn, tempEnv, type TempEnv } from "./helpers.js";
 
@@ -254,6 +256,39 @@ test("fully observed day: a global snapshot that day AND a project snapshot for 
   } finally {
     env.cleanup();
   }
+});
+
+test("fully observed needs every project file seen definitively: an unreadable or too-large file leaves the day partial, but still diffs", () => {
+  // Every fixed file absent except the ones named (the hook's keys for a definite read).
+  const items = (over: Record<string, string | number | boolean | undefined>): ProjItems => {
+    const out: ProjItems = {};
+    for (const id of ["claudeMd", "claudeLocalMd", "dotClaudeMd", "settings", "settingsLocal", "mcpJson"]) out[`${id}.present`] = false;
+    for (const [k, v] of Object.entries(over)) if (v === undefined) delete out[k]; else out[k] = v;
+    return out;
+  };
+  const rec = (n: number, session: string, it: ProjItems): ProjRecord => ({
+    name: `2026-09-05T1${n}-00-00-000Z-${String(n).repeat(12)}.json`, t: `2026-09-05T1${n}:00:00.000Z`, session,
+    projects: ["p-111111111111"], observed: true, items: it,
+  });
+  const complete = "s-aaaaaaaaaaaa", symlinked = "s-bbbbbbbbbbbb", tooLarge = "s-cccccccccccc", mixed = "s-dddddddddddd";
+  const records = [
+    rec(0, complete, items({ "claudeMd.present": true, "claudeMd.hash": "h:aaaaaaaa", "claudeMd.bytes": 10, "claudeMd.lines": 1 })),
+    // CLAUDE.md is a symlink (no keys); .mcp.json appeared.
+    rec(1, symlinked, items({ "claudeMd.present": undefined, "mcpJson.present": true, "mcpJson.hash": "h:bbbbbbbb", "mcpJson.bytes": 20, "mcpJson.lines": 1 })),
+    // CLAUDE.local.md is too large to hash: present and sized only.
+    rec(2, tooLarge, items({ "claudeMd.present": true, "claudeMd.hash": "h:aaaaaaaa", "mcpJson.present": true, "mcpJson.hash": "h:bbbbbbbb", "claudeLocalMd.present": true, "claudeLocalMd.bytes": 3 << 20 })),
+    // One complete record and one with a denied file the same day.
+    rec(3, mixed, items({ "claudeMd.present": true, "claudeMd.hash": "h:aaaaaaaa", "mcpJson.present": true, "mcpJson.hash": "h:bbbbbbbb", "claudeLocalMd.present": true, "claudeLocalMd.bytes": 3 << 20 })),
+    rec(4, mixed, items({ "claudeMd.present": true, "claudeMd.hash": "h:aaaaaaaa", "mcpJson.present": true, "mcpJson.hash": "h:bbbbbbbb", "claudeLocalMd.present": true, "claudeLocalMd.bytes": 3 << 20, "settings.present": undefined })),
+  ];
+  const seen = observedSessionsByDay({ records }, "UTC");
+  assert.deepEqual([...(seen.get("2026-09-05") ?? [])].sort(), [complete], "only the session whose snapshots saw all six files");
+  // The partial snapshots still diff: .mcp.json appearing (symlinked CLAUDE.md beside it), CLAUDE.local.md appearing (too large).
+  const ev = projectEvents({ records }, makeHash("0".repeat(64)), "UTC");
+  assert.deepEqual(ev.map((e) => [e.t, e.kind, e.from, e.to]), [
+    ["2026-09-05T11:00:00.000Z", "mcp", "absent", "h:bbbbbbbb"],
+    ["2026-09-05T12:00:00.000Z", "instructions", "absent", "present"],
+  ]);
 });
 
 test("the CLI hook entry prints nothing and exits 0, even with garbage input", () => {

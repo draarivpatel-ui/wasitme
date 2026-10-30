@@ -74,6 +74,10 @@ test("per-field label shapes: version, model, effort, mode, entrypoint; anything
   for (const bad of ["claude-opus-5-5@", "claude@a@b", "Claude-Opus@20260101", "/synthetic/models/m", "~/m", "Claude-Opus", "claude opus", "a".repeat(65), "<synthetic>", "[1m]"]) {
     assert.equal(modelLabel(bad), OTHER, bad);
   }
+  // Token-shaped ids pass the model shape but are never kept (sol-loop S3; synthetic values).
+  for (const secretShaped of ["sk-synthetic-not-a-real-key-000", "ghp_synthetic", "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8"]) {
+    assert.equal(modelLabel(secretShaped), OTHER, secretShaped);
+  }
 
   for (const ok of ["low", "medium", "high", "max"]) assert.equal(effortLabel(ok), ok);
   for (const bad of ["ultra", "high<b>", "HIGH", "constructor"]) assert.equal(effortLabel(bad), OTHER, bad);

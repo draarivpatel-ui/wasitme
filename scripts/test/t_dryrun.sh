@@ -131,6 +131,15 @@ if [ "$T_OS" = Darwin ]; then
   assert_contains "$(err)$(out)" "was not created by this installer" "the dry run does hit the plist refusal (the failure path under test)"
   assert_file "$H/Applications/wasitme.app/Contents/MacOS/WasitmeApp" "a failing dry run left the installed app in place"
   assert_eq "$BEFORE" "$(fs_snapshot "$H")" "a failing dry run changed nothing in the home"
+
+  t_section "a dry run whose plan already fails says so in its summary"
+  # The same run: the refusal is found while planning, so a real run would fail at that step too and roll the app back.
+  # The summary used to list only the parts that were not planned and call the plan exact, while the run exited 3.
+  assert_rc 3 "a dry run whose plan fails exits 3, like the real run"
+  assert_contains "$(out)" "==> Would fail" "the summary has a 'Would fail' section"
+  assert_contains "$(out)" "$(printf '  %-20s %s' 'mac app' FAILED)" "the failing part is listed with its result"
+  assert_not_contains "$(out)" "exactly what a real run would do" "a plan that fails is not called exact"
+  assert_contains "$(out)" "Dry run: nothing was changed" "it still says that nothing was changed"
 fi
 
 t_done

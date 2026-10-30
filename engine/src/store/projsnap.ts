@@ -16,7 +16,10 @@
  *  - change events (agent claude-code, side you, provenance project_snapshot): a project instruction file
  *    (CLAUDE.md, CLAUDE.local.md, .claude/CLAUDE.md) or .mcp.json appearing, disappearing or changing → strong;
  *    .claude/settings(.local).json → weak (only its hash is known, not which setting moved);
- *  - which sessions were observed on which local day (the "fully observed" rule, D63).
+ *  - which sessions were observed on which local day (the "fully observed" rule, D63): only a record that read every
+ *    fixed file definitively counts (absent, or present and hashed). A file it could not read (symlinked, not a file,
+ *    denied, torn) or could only size (too large) leaves that session's day partially observed (sol-loop S7): a change
+ *    there would be invisible, so attribution by elimination must not rely on it. Such a partial record still diffs.
  */
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -188,15 +191,33 @@ export function projectEvents(h: ProjHistory, hash: HashFn, timeZone: string): C
   return out.sort((a, b) => (a.t < b.t ? -1 : a.t > b.t ? 1 : a.id < b.id ? -1 : 1));
 }
 
-/** Local day → sessions that had an observed project snapshot that day. */
+/** Whether a record saw every fixed project file definitively: absent, or present with its hash (see the header). */
+export function completeRecord(r: ProjRecord): boolean {
+  if (!r.observed) return false;
+  return PROJECT_FILES.every((f) => {
+    const present = r.items[`${f.id}.present`];
+    return present === false || (present === true && typeof r.items[`${f.id}.hash`] === "string");
+  });
+}
+
+/**
+ * Local day → sessions whose project snapshots that day all saw every fixed file definitively (completeRecord). One
+ * record that did not (another folder the session started in, a denied read) leaves the session out for that day.
+ */
 export function observedSessionsByDay(h: ProjHistory, timeZone: string): Map<string, Set<string>> {
   const out = new Map<string, Set<string>>();
+  const partial = new Map<string, Set<string>>();
   for (const r of h.records) {
-    if (!r.observed || r.session === null) continue;
+    if (r.session === null) continue;
     const d = localDay(r.t, timeZone);
-    let s = out.get(d);
-    if (!s) out.set(d, (s = new Set()));
+    const into = completeRecord(r) ? out : partial;
+    let s = into.get(d);
+    if (!s) into.set(d, (s = new Set()));
     s.add(r.session);
+  }
+  for (const [d, ss] of partial) {
+    const s = out.get(d);
+    if (s) for (const x of ss) s.delete(x);
   }
   return out;
 }

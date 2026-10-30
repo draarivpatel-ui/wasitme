@@ -77,8 +77,9 @@ variables node reads at startup (a project can set environment variables for its
 otherwise load the project's code into the hook's node or widen its sandbox), drops `OPENSSL_CONF`, `OPENSSL_MODULES`
 and `OPENSSL_ENGINES` (node's OpenSSL reads its configuration file from `OPENSSL_CONF` before any JavaScript runs and
 outside the permission sandbox; a configuration can name a provider module to load as native code, or simply stop node),
-and prints nothing (a SessionStart hook's stdout would reach the model's context). `scripts/run.sh`, the report skill's
-entry point, drops the same variables.
+drops `WASITME_HOME` (the engine would otherwise keep the snapshot in, and take its salt from, the folder it names
+instead of the install's `~/.wasitme`), and prints nothing (a SessionStart hook's stdout would reach the model's
+context). `scripts/run.sh`, the report skill's entry point, drops the same variables.
 - **SessionStart** (async, `startup|resume`; D32/D60):
   1. takes `cwd` and `session_id` from the hook payload on stdin (at most 256 KiB, bounded `sed` patterns). The cwd
      must be absolute and strictly under `$HOME` (its resolved path too), with no `..`, `*`, quote or escape;

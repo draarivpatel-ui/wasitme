@@ -88,9 +88,12 @@ shim_content() {
 # engine's `wasitme statusline install|show|uninstall` expect). It runs the shipped packaging/statusline.sh in this same
 # shell (sourced: one process, sh built-ins only, no node) through `current`, so an update moves it with everything else.
 # Because no node starts, NODE_OPTIONS and friends in Claude Code's environment have nothing to act on.
+# It names the install's own data folder: the script runs the wrapped command it finds in `<data>/backups`, and a
+# session's environment (a project's settings can set variables) must not pick that folder, by WASITME_HOME or by HOME.
 sl_shim_content() {
   printf '#!/bin/sh\n'
   printf '# wasitme status line: %s. Safe to delete (uninstall removes it).\n' "$WASITME_MARKER"
+  printf 'WASITME_HOME=%s\n' "$(quote_arg "$STATE_DIR")"
   printf 'wasitme_statusline=%s\n' "$(quote_arg "$CURRENT_LINK/$WASITME_STATUSLINE_SCRIPT")"
   printf '[ -f "$wasitme_statusline" ] && . "$wasitme_statusline"\n'
   printf 'exit 0\n'

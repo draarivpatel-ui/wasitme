@@ -3,7 +3,9 @@
  * dedupe → read-time filters → analysis → atomic outputs.
  *
  *  1. Lock and salt. The scan lock (single writer) and the salt (O_EXCL, 0600). `--read-only` takes neither: it uses
- *     an ephemeral salt, reads no history and writes nothing anywhere.
+ *     an ephemeral salt, reads no history and writes nothing anywhere. It reads the stored salt only when the exclude
+ *     list names projects, and only to match them: a project id the stored salt gives a log is translated, in memory,
+ *     to the id the ephemeral salt gives it (`readOnlyExclude`).
  *  2. Sources. Each reader lists its sources (stat only) and, where its parses read other files, fills `depKey`
  *     (D39). Every listed file is stat'ed once more for the fingerprint (inode, size, mtime, ctime + depKey).
  *  3. Re-parse. Fingerprint moved (appended, shrunk, rewritten, replaced, a dependency changed) → full re-parse;
@@ -27,7 +29,8 @@
  *       now/today   the evaluation time (the scan's clock, or the `--until` cutoff) in the scan's zone; persistence
  *                   measures time from the data fingerprints and re-anchors when the clock went backward,
  *       fully observed days (Claude Code only; Codex is partial by design): days before today on which the scan took
- *                   a config snapshot and every session with exchanges had a hook project snapshot;
+ *                   a config snapshot and every session with exchanges had hook project snapshots that saw every
+ *                   fixed project file definitively (projsnap.ts observedSessionsByDay);
  *     then the words layer's `buildOutputs` (WP-22) assembles glance and snapshot in the lead variant from engine.json
  *     (settings.ts). When it reports problems, nothing is written: the previous files stay, the glance is flagged
  *     scanOk:false / "internal" (failure path). One exception first: when persisted decisions were used, the analysis
@@ -51,7 +54,7 @@ import { GLANCE_SCHEMA_ID, SNAPSHOT_SCHEMA_ID, type Lead, type ScanError, type S
 import { buildOutputs, SNAPSHOT_METRICS, type BuiltOutputs } from "../words/build.js";
 import { claudeReader } from "../readers/claude.js";
 import { codexReader } from "../readers/codex.js";
-import type { AgentId, ChangeEvent, Exchange, ParseContext, ParseResult, Reader, Source } from "../types.js";
+import type { AgentId, ChangeEvent, Exchange, HashFn, ParseContext, ParseResult, Reader, Source } from "../types.js";
 import { bump, FUTURE_SLACK_MS, makeHash, typeKey } from "../util.js";
 import { ENGINE_VERSION } from "../version.js";
 import { appendOwnFile, readOwnJson, writeIfChanged } from "./atomic.js";
@@ -353,7 +356,8 @@ function setupOf(agent: AgentId, kept: readonly Exchange[], cfg: ConfigHistory):
 
 /**
  * Fully observed local days before `today` (D63, WP-12's rule): the scan took a config snapshot that day and every
- * session with exchanges that day had an observed project snapshot from the SessionStart hook. A config day with no
+ * session with exchanges that day had project snapshots from the SessionStart hook that saw every fixed file
+ * definitively (`observed`, from projsnap.ts observedSessionsByDay; sol-loop S7). A config day with no
  * sessions is fully observed (nothing ran that the hook could have missed). Claude Code only: Codex has no hooks.
  */
 export function fullyObservedDays(
@@ -448,6 +452,34 @@ export function writeFailureGlance(p: HomePaths, kind: ScanError, now: Date): vo
   } catch { /* logging is best effort */ }
 }
 
+/**
+ * A `--read-only` scan's exclude list (`--until` runs are read-only too). Its ids come from an ephemeral salt, while the
+ * list's project ids were made with the stored salt (`wasitme exclude add`), so they never match as they are. The stored
+ * salt is read without creating, writing or tightening anything, and used only here: the returned hash gives the run's
+ * ephemeral ids as before and, whenever it makes a project id ("p-") whose stored-salt form is excluded, adds the
+ * ephemeral id to the returned list's projects (filled while the readers parse, consulted after). No stored salt (or an
+ * unusable one): project exclusions cannot match, as before; dates and entry points apply either way.
+ */
+function readOnlyExclude(saltPath: string, ex: ExcludeList, hash: HashFn): { exclude: ExcludeList; hash: HashFn } {
+  const projects = new Set<string>();
+  const exclude: ExcludeList = { ...ex, projects };
+  if (ex.projects.size === 0) return { exclude, hash };
+  let stored: HashFn;
+  try {
+    stored = makeHash(loadSalt(saltPath, { create: false }));
+  } catch {
+    return { exclude, hash };
+  }
+  return {
+    exclude,
+    hash: (value, prefix) => {
+      const id = hash(value, prefix);
+      if (prefix === "p-" && !projects.has(id) && ex.projects.has(stored(value, prefix))) projects.add(id);
+      return id;
+    },
+  };
+}
+
 export async function runScan(o: ScanOptions = {}): Promise<ScanReport> {
   const t0 = performance.now();
   const now = o.now ?? new Date();
@@ -478,7 +510,9 @@ export async function runScan(o: ScanOptions = {}): Promise<ScanReport> {
   }
   try {
     const salt = ro ? ephemeralSalt() : loadSalt(p.salt, { create: true, refuseIf: () => historyExists(p) });
-    const hash = makeHash(salt);
+    const saved = loadExclude(p.exclude);
+    const scoped = ro ? readOnlyExclude(p.salt, saved, makeHash(salt)) : { exclude: saved, hash: makeHash(salt) };
+    const hash = scoped.hash;
     /** Main file path → source id, for the store-backed resume-dedupe cache (filled while listing, memory only). */
     const sidOfPath = new Map<string, string>();
     const ctx: ParseContext = { hash, now, timeZone: tz, ...(ro ? {} : { priorCache: storePriorCache(salt, p.priors, sidOfPath) }) };
@@ -638,7 +672,7 @@ export async function runScan(o: ScanOptions = {}): Promise<ScanReport> {
     }
 
     lap("snapshots");
-    const exclude = loadExclude(p.exclude);
+    const exclude = scoped.exclude;
     report.excludeError = exclude.error;
     const evalNow = evaluationNow(now, o.until);
     const today = dayOf(evalNow, tz);

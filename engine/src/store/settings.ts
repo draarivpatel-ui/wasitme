@@ -20,8 +20,12 @@ export const SCAN_ERRORS_VOTE: ToolErrorVariant = G0_FALLBACK_ERRORS_VOTE;
 /** D28, applied by D61: timeline-led. */
 export const DEFAULT_LEAD: Lead = "timeline";
 
-/** Version of the attribution method a persisted decision was made under (WP-21 as merged = 1). */
-export const ATTRIBUTION_VERSION = 1;
+/**
+ * Version of the attribution method a persisted decision was made under (WP-21 as merged = 1). 2 (sol-loop S7): a day
+ * is fully observed only when every project file was seen definitively, so a decision held under 1 (whose observation
+ * counts used the looser rule) is not reused.
+ */
+export const ATTRIBUTION_VERSION = 2;
 
 /** The lead variant from engine.json's `lead` key; a missing, foreign or malformed file means the default. */
 export function readLead(engineJson: string): Lead {

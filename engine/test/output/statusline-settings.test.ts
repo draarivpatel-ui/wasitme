@@ -6,7 +6,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { chmodSync, existsSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 import { installStatusLine, ourFragment, shellQuoted, statusLineFiles, statusLineState, StatusLineError, uninstallStatusLine } from "../../src/statusline/settings.js";
 import { ROOT } from "./cases.js";
@@ -100,6 +100,8 @@ test("status line settings: the user's command is saved verbatim for the wrapper
     assert.equal(installStatusLine(e.files, SCRIPT).wrapped, true);
     assert.equal(readFileSync(join(e.files.backups, "statusline.cmd"), "utf8"), `${USER_CMD.command}\n`);
     assert.equal(lstatSync(join(e.files.backups, "statusline.cmd")).mode & 0o777, 0o600);
+    // Bound to the settings.json it was made for, so the uninstaller never restores it into another one (sol-loop N2).
+    assert.equal(JSON.parse(readFileSync(join(e.files.backups, "statusline.json"), "utf8")).target, resolve(e.settings));
     uninstallStatusLine(e.files, SCRIPT);
     writeFileSync(e.settings, `${JSON.stringify({ a: 1 }, null, 2)}\n`);
     assert.equal(installStatusLine(e.files, SCRIPT).wrapped, false);

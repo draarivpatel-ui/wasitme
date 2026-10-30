@@ -190,7 +190,8 @@ Before editing a file of yours, the installer makes a byte copy next to it, name
 Code `settings.json` when it adds a status line, and your shell profile if you let it add a `PATH` line. The uninstaller uses
 the copy to restore the file, but only if the file still matches what wasitme wrote. **These copies hold whatever the original held**,
 including any secret in it. They, and the previous status-line command that `wasitme statusline install --wrap` keeps in
-`~/.wasitme/backups`, are the only places wasitme duplicates something of yours. Delete the copies once you are sure you
+`~/.wasitme/backups` (with the path of the `settings.json` it came from), are the only places wasitme duplicates
+something of yours. Delete the copies once you are sure you
 do not need them. The installer never edits a shell profile without asking.
 
 Codex is different. Adding the Codex skill makes the Codex CLI itself rewrite its own `config.toml`; that is Codex's behaviour,
@@ -215,7 +216,7 @@ puts the original back if the edit does not check out).
 3. **Remove the backup copies** the installer left next to `settings.json` and your shell profile (`*.wasitme-bak-*`), if any.
 4. Your Claude Code and Codex logs are never modified by wasitme, install or uninstall.
 
-To keep some of your work out of the analysis without uninstalling, `wasitme exclude` filters days, projects or entry points at read time. Excluded sessions are still scanned and their derived numbers are still stored; they are only left out of the comparisons ([`exclude.ts`](../engine/src/store/exclude.ts)). Changes to your setup still show on the timeline.
+To keep some of your work out of the analysis without uninstalling, `wasitme exclude` filters days, projects or entry points at read time. Excluded sessions are still scanned and their derived numbers are still stored; they are only left out of the comparisons ([`exclude.ts`](../engine/src/store/exclude.ts)). Changes to your setup still show on the timeline. Read-only and `--until` reports apply the same exclusions: their ids come from a throwaway salt, and they read your stored salt (never creating or changing it) only to recognise the projects you excluded.
 
 ## Known limits
 

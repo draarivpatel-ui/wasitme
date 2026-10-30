@@ -238,6 +238,13 @@ chmod 600 "$W/glance.json"
 assert_eq "wasitme: no detectable change" "$(printf '{}' | env -i PATH=/usr/bin:/bin HOME="$H" WASITME_STATUSLINE_NOW=1791201700 "$(json_get "$H/.claude/settings.json" 'd.statusLine.command')")" "the installed status-line command prints the glance's segment"
 rm -f "$W/glance.json"
 assert_eq "" "$(printf '{}' | env -i PATH=/usr/bin:/bin HOME="$H" "$SLS"; echo "rc=$?" | grep -v 'rc=0')" "with no glance it prints nothing and exits 0"
+# A session's environment (a project's settings can set variables) cannot point the shim at another data folder and
+# so at a wrapped command of its choosing: the shim names the install's own folder.
+mkdir -p "$SB/elsewhere/.wasitme/backups"
+printf 'echo elsewhere-ran\n' >"$SB/elsewhere/.wasitme/backups/statusline.cmd"
+chmod 600 "$SB/elsewhere/.wasitme/backups/statusline.cmd"
+assert_eq "" "$(printf '{}' | env -i PATH=/usr/bin:/bin HOME="$SB/elsewhere" WASITME_HOME="$SB/elsewhere/.wasitme" "$SLS")" "WASITME_HOME and HOME from the session do not choose the folder the status line reads"
+rm -rf "$SB/elsewhere"
 # Speed (budget: the status line's own part is <= 10 ms). An absolute bound would flake on a busy machine (these
 # tests run at background priority), so the check is relative: the installed command must beat a bare `node -e ''`,
 # which no node-based status line can.

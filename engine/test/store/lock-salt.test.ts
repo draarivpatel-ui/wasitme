@@ -155,7 +155,7 @@ test("salt: a malformed or foreign salt is refused, never overwritten (that woul
   }
 });
 
-test("salt: readable by others → tightened to 0600; still the same salt", () => {
+test("salt: readable by others → tightened to 0600 by a caller that may create it (a plain read changes nothing); still the same salt", () => {
   const env = tempEnv("salt");
   try {
     const p = homePaths(env.wh);
@@ -163,6 +163,8 @@ test("salt: readable by others → tightened to 0600; still the same salt", () =
     const s = loadSalt(p.salt, { create: true });
     spawnSync("/bin/chmod", ["0644", p.salt]);
     assert.equal(loadSalt(p.salt, { create: false }), s);
+    assert.equal(statSync(p.salt).mode & 0o777, 0o644, "create: false (read-only scans, wasitme exclude) only reads");
+    assert.equal(loadSalt(p.salt, { create: true }), s);
     assert.equal(statSync(p.salt).mode & 0o777, 0o600);
   } finally {
     env.cleanup();

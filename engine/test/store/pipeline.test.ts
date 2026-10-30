@@ -21,6 +21,7 @@ import { DECISIONS_SCHEMA } from "../../src/store/decisions.js";
 import { ensureHome, homePaths } from "../../src/store/home.js";
 import { loadSalt } from "../../src/store/salt.js";
 import { ScanFailure, type ScanOptions, type ScanReport } from "../../src/store/scan.js";
+import { ATTRIBUTION_VERSION } from "../../src/store/settings.js";
 import { corpusOnDisk } from "../../src/synth/testkit.js";
 import { makeHash } from "../../src/util.js";
 import { addDays, writeCorpus, type CorpusSpec, type WrittenSession } from "./corpus.js";
@@ -78,7 +79,7 @@ test("brand-new user: the shipped calibration gives too early to tell (row 2); a
     assert.ok(b.g.agents[0].progress !== null, "insufficient with progress");
     const d = readJson(join(env.wh, "state", "decisions.json"));
     assert.equal(d.schema, DECISIONS_SCHEMA);
-    assert.deepEqual([d.errorsVote, d.methodId, d.version], ["toolErrorsNonCmd", "session-t95-cr2", 1]);
+    assert.deepEqual([d.errorsVote, d.methodId, d.version], ["toolErrorsNonCmd", "session-t95-cr2", ATTRIBUTION_VERSION]);
     assert.equal(d.agents["claude-code"].state, "insufficient");
     assert.equal("raw" in d.agents["claude-code"], false);
     assert.equal("rule" in d.agents["claude-code"].persistence, false);
@@ -268,8 +269,8 @@ test("persistence resets when the voting construct, the calibrated method or the
     writeFileSync(path, saved.replace('"errorsVote":"toolErrorsNonCmd"', '"errorsVote":"toolErrors"'));
     const r1 = await scanIn(env, cal({ until: until("2026-08-16") }));
     assert.deepEqual([claudeOf(r1).decision.persistence.rule, claudeOf(r1).decision.pending, claudeOf(r1).decision.state], ["first", false, "you"]);
-    // Another attribution version.
-    writeFileSync(path, saved.replace('"version":1', '"version":0'));
+    // Another attribution version (the one before the current: what an upgrade leaves behind).
+    writeFileSync(path, saved.replace(`"version":${ATTRIBUTION_VERSION}`, `"version":${ATTRIBUTION_VERSION - 1}`));
     const r2 = await scanIn(env, cal({ until: until("2026-08-15") }));
     assert.equal(claudeOf(r2).decision.persistence.rule, "first");
     // Another calibrated method (a new artifact choosing another estimator): the file's methodId no longer matches.

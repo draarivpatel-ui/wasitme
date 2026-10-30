@@ -93,6 +93,26 @@ test("projected window = real past part + pace × future days; the largest sessi
   assert.equal(projectWindow(noNew, T, { from: T + 3, to: T + 4 }).maxSessionShare, 1);
 });
 
+test("projection: no MDE when the kept scheme's df is not valid, as the range has none (never one from normal quantiles)", () => {
+  // c = 1e300 under sessions: that scheme's model variance squared overflows, so its Welch–Satterthwaite df is NaN while
+  // its SE (about 1e149) is the larger one and is kept. measureShift returns no range when the kept scheme's df is not
+  // valid, and minimumDetectableChange would quietly use normal quantiles for a NaN df. perClusterVariance keeps c ≤ 2K
+  // on real cells, so this pins the rule rather than a case the engine's own data reaches.
+  const m: ProjectionMetric = {
+    id: "toolErrors", family: "errors", floor: "binomial", minDenominator: 0, c: { "session-day": 1, session: 1e300 }, anchors: [],
+    pace: { sessionDays: 2, newSessions: 2, events: 20, denominator: 200 }, days: [],
+  };
+  const input: ProjectionInput = {
+    todayIdx: T, historyDays: 30, tiers: TIERS, level: 0.99, schemes: ["session-day", "session"], families: ["errors"], metrics: [m],
+  };
+  const p = projectMetric(input, m, TIERS[0]!, 30);
+  assert.deepEqual([p.scheme, p.se, p.df, p.mde, p.sensitive], [null, Infinity, 0, Infinity, false]);
+  // Valid df under both schemes: computed as before, the larger SE with the smaller df.
+  const both = projectMetric(input, { ...m, c: { "session-day": 1, session: 2 } }, TIERS[0]!, 30);
+  assert.equal(both.scheme, "session");
+  assert.ok(both.df > 0 && Number.isFinite(both.df) && Number.isFinite(both.mde), `df ${both.df}, mde ${both.mde}`);
+});
+
 /**
  * Golden fixture. 30 days of history; every day two new one-day sessions, each one exchange:
  *  - tool errors: 100 calls, 1 or 19 failures (rate 10%) → per-cluster variance c = 0.81 in both schemes
