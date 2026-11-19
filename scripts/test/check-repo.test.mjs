@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { mkdirSync, symlinkSync, writeFileSync } from "node:fs";
+import { symlinkSync, writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import {
   assetFindings, bufferHasEmail, emailFindings, emailMatchers, gitIdentityFindings, homePathFindings, isAssetScope,
