@@ -49,7 +49,6 @@ const SHARED_AGENT = [
 ];
 const EFFORT = { day: '2026-09-21', side: 'you', kind: 'effort', label: 'Effort high → medium' };
 const MCP = { day: '2026-09-27', side: 'you', kind: 'mcp', label: 'MCP server added (MCP-1)' };
-const MODEL = { day: '2026-09-22', side: 'you', kind: 'model', label: 'Model opus-5 → opus-5-5' };
 const sortT = t => [...t].sort((a, b) => a.day.localeCompare(b.day) || (a.side === 'you' ? -1 : 1));
 const label = t => { let y = 0, a = 0; return sortT(t).map(e => ({ ...e, marker: e.side === 'you' ? String(++y) : String.fromCharCode(65 + a++) })); };
 

@@ -1,5 +1,5 @@
 // Glance surfaces: the menu bar popover (352 x 480) and the desktop panel (170 x 170, 360 x 170).
-import { T, DEMO, STAMP, esc, fdate, num, x2, glyph, chip, page, strip } from './kit.mjs';
+import { T, DEMO, STAMP, esc, num, x2, glyph, chip, page, strip } from './kit.mjs';
 
 const POP_CSS = `
 .pop { width: var(--size-popover-width); height: var(--size-popover-height); background: var(--surface-raised); border: 1px solid var(--rule-strong); border-radius: var(--radius-popover); display: flex; flex-direction: column; overflow: hidden; }
@@ -34,7 +34,6 @@ function metricRows(c) {
 export function popover(key) {
   const stale = key === 'stale';
   const c = DEMO.cases[stale ? 'insufficient' : key];
-  const tm = c.metrics.find(m => m.id === 'toolErrors');
   const head = stale
     ? `<div class="pop-head">${chip('stale')}<span class="agent">Claude Code</span></div><div class="pop-body"><h1>Out of date.</h1><p class="deck">The last check ran at 06:34, 2 h 40 min ago. Below is what it found then.</p></div>`
     : `<div class="pop-head">${chip(c.state)}<span class="agent">Claude Code</span></div><div class="pop-body"><h1>${esc(c.headline)}</h1><p class="deck">${esc(c.because)}</p></div>`;
