@@ -81,7 +81,7 @@ class SessionWriter {
   private humanUuids = new Set<string>();
 
   constructor(
-    private p: SynthParams, private s: Session, private project: Project, private noise: ClaudeNoise,
+    p: SynthParams, private s: Session, private project: Project, private noise: ClaudeNoise,
     private resumed: SessionWriter | undefined,
   ) {
     this.rng = new Rng(p.seed, `claude/${s.idx}`);

@@ -102,7 +102,7 @@ class CodexWriter {
   private metaMs = 0;
 
   constructor(
-    private p: SynthParams, private s: Session, private project: Project, private noise: CodexNoise,
+    p: SynthParams, private s: Session, private project: Project, private noise: CodexNoise,
     private parent: CodexWriter | undefined, private all: Session[],
   ) {
     this.rng = new Rng(p.seed, `codex/${s.idx}`);
